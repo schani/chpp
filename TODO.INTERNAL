@@ -2,7 +2,9 @@
 
 ** bis 0.4
 
-+ solaris flock
++ sql sets in hashes umkurden
+
++ docen: flock, scrypt, listSelect
 
 + env* leiwander docen
 
@@ -39,6 +41,8 @@
 + dynamically linked builtins
 
 *** schani:
+
+- solaris flock
 
 - --without-mysql, msql kurden
 

@@ -263,8 +263,9 @@ homepage (@pxref{Obtaining chpp}) for more information.
 
 Our thanks go to Tatjana Svizensky for proofreading (an older edition
 of) this manual and to Herbert P@"otzl for donating the hash-table
-functions, which we were too lazy, erm, too busy to implement, and for
-not reading the examples chapter of this document.
+functions, which we were too lazy, erm, too busy to implement, for not
+reading the examples chapter of this document and for using PHP3
+instead.
 
 @c ************* Guided Tour
 
@@ -1863,6 +1864,20 @@ All times are given in seconds since January 1, 1970, 00:00:00 GMT. For
 detailed description of these values see @code{stat(2)}.
 @end defmac
 
+@defmac flock (@var{file}[,@var{operation}])
+Performs a file locking operation on @var{file}. If @var{operation} is
+provided and contains the character @code{l}, a shared lock is obtained,
+if it contains @code{x}, an exclusive lock is obtained and if it
+contains @code{u}, the file is unlocked. If @var{operation} contains the
+additional character @code{n}, the operation is performed non-blocking,
+i.e. returns immediately independent on whether it could be carried
+out. The default (@code{n} not contained in @var{operation}) is to
+block. If @var{operation} is not supplied, the default is @var{x}.
+
+Returns a boolean value of TRUE if the locking operation was successful,
+otherwise returns FALSE.
+@end defmac
+
 @defmac funlink (@var{filename})
 Removes the file with name @var{filename} using the @code{unlink} system
 call. Returns a boolean value of TRUE if successful, otherwise returns
@@ -2066,6 +2081,16 @@ length. Example:
 @example
 %smap(%srange(a,z),%srange(A,Z),Heinzi Deinzi)
 @result{} HEINZI DEINZI
+@end example
+@end defmac
+
+@defmac scrypt (@var{key},@var{salt})
+Uses the library function @code{crypt} to encrypt @var{key} using
+@var{salt}.
+
+@example
+%scrypt(schmieren,po)
+@result{} pobFlZl7EueEA
 @end example
 @end defmac
 
@@ -2431,6 +2456,17 @@ sequential elements the string @var{string}. Example:
 @example
 %listJoin(:,%list(the,quick,brown,fox))
 @result{} the:quick:brown:fox
+@end example
+@end defmac
+
+@defmac listSelect (@var{criterion},@var{list})
+Returns a list containing all elements of @var{list} for which
+@var{criterion} returns boolean TRUE in the same order as they occur in
+@var{list}.
+
+@example
+%encode(%listSelect(%lambda(e,%[e>4]),%list(3,1,4,1,5,9,2,6,5,3,5)))
+@result{} %list(%'5',%'9',%'6',%'5',%'5')
 @end example
 @end defmac
 

@@ -1759,8 +1759,8 @@ in naechster zeit kommt dann auch noch break und continue dazu.
 
 ** flock
 
-flock lockt a file. erster parameter ist der filename. zweiter
-optionaler parameter ist die lockoption:
+flock lockt a file. erster parameter ist das file. zweiter optionaler
+parameter ist die lockoption:
 
   l      shared
   x      exclusive

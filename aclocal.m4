@@ -12,7 +12,7 @@ dnl PARTICULAR PURPOSE.
 
 AC_DEFUN(AM_PATH_MYSQL,
 [
-AC_ARG_WITH(mysql,[  --with-mysql=PFX  Prefix where mysql client is installed (optional)],
+AC_ARG_WITH(mysql,[  --with-mysql=PFX        Prefix where mysql client is installed (optional)],
             mysql_config_prefix="$withval", mysql_config_prefix="")
 AC_MSG_CHECKING(for libmysql)
 
@@ -71,7 +71,7 @@ AC_SUBST(MYSQL_LIBS)
 
 AC_DEFUN(AM_PATH_MSQL,
 [
-AC_ARG_WITH(msql,[  --with-msql=PFX  Prefix where msql client is installed (optional)],
+AC_ARG_WITH(msql,[  --with-msql=PFX         Prefix where msql client is installed (optional)],
             msql_config_prefix="$withval", msql_config_prefix="")
 AC_MSG_CHECKING(for libmsql)
 

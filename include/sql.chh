@@ -57,6 +57,14 @@
                   %equal(%result{colinfo}{%colname}{type},datetime),
                       %foreach(row,%&result{rows},
                           %<row{%colname}=%timeFromString(%conn{dbinfo}{datetimeformat},%row{%colname})>
+                      ),
+                  %equal(%result{colinfo}{%colname}{type},set),
+                      %foreach(row,%&result{rows},
+                          %<row{%colname}=%if(%[%slength(%row{%colname}) > 0],
+                                              %let(h,%hash(),%foreach(e,%ssplit(%',',%row{%colname}),%<h{%e}=>)%&h)
+                                          ,
+                                              %hash()
+                                          )>
                       )
             )
         )

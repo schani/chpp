@@ -5,7 +5,7 @@
  *
  * chpp
  *
- * Copyright (C) 1997-1998 Mark Probst
+ * Copyright (C) 1997-1999 Mark Probst
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,6 +34,9 @@
 #include <unistd.h>
 #include <sys/file.h>
 #include <glob.h>
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h>
+#endif
 
 #ifndef PATH_MAX
 #ifdef MAXPATHLEN
@@ -392,25 +395,76 @@ builtInFlock (int numArgs, macroArgument *args, environment *env, outputWriter *
 	issueError(ERRMAC_INVALID_MACRO_ARG, "flock", args[0].value.value->v.scalar.scalar.data, 0);
     else
     {
+#ifdef USE_FCNTL
+	struct flock lck;
 	int operation;
+
+	memset(&lck, 0, sizeof(struct flock));
+
+	operation = F_SETLKW;
+	lck.l_whence = SEEK_SET;
+#endif
+#ifdef USE_FLOCK
+	int operation;
+#endif
 
 	if (numArgs == 2)
 	{
 	    char *opstring = transformArgumentToScalar(&args[1])->v.scalar.scalar.data;
 
 	    if (strchr(opstring, 'l') != 0)
+	    {
+#ifdef USE_FCNTL
+		lck.l_type = F_RDLCK;
+#endif
+#ifdef USE_FLOCK
 		operation = LOCK_SH;
+#endif
+	    }
 	    else if (strchr(opstring, 'x') != 0)
+	    {
+#ifdef USE_FCNTL
+		lck.l_type = F_WRLCK;
+#endif
+#ifdef USE_FLOCK
 		operation = LOCK_EX;
+#endif
+	    }
 	    else if (strchr(opstring, 'u') != 0)
+	    {
+#ifdef USE_FCNTL
+		lck.l_type = F_UNLCK;
+#endif
+#ifdef USE_FLOCK
 		operation = LOCK_UN;
+#endif
+	    }
 	    if (strchr(opstring, 'n') != 0)
+	    {
+#ifdef USE_FCNTL
+		operation = F_SETLK;
+#endif
+#ifdef USE_FLOCK
 		operation |= LOCK_NB;
+#endif
+	    }
 	}
 	else
+	{
+#ifdef USE_FCNTL
+	    lck.l_type = F_WRLCK;
+#endif
+#ifdef USE_FLOCK
 	    operation = LOCK_EX;
+#endif
+	}
 
+#ifdef USE_FCNTL
+	if (fcntl(fileTable[fileNum].fd, operation, &lck) == 0)
+#endif
+#ifdef USE_FLOCK
 	if (flock(fileTable[fileNum].fd, operation) == 0)
+#endif
 	{
 	    OUT_CHAR(ow, '1');
 	}
@@ -620,4 +674,3 @@ registerFileOps (void)
     registerBuiltIn("funlink", builtInFunlink, 1, 0, 0);
     registerBuiltIn("frmdir", builtInFrmdir, 1, 0, 0);
 }
-

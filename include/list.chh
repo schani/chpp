@@ -75,4 +75,5 @@
 %define(listJoin,sep,lst,
     %listLeftAccumulate(%lambda(a,b,%a%sep%b),%&lst,%'')
 )\
+\
 #endif
