@@ -933,19 +933,19 @@ evaluates to.
 
 @deffn Command if @var{condition}
 Evaluates @var{condition}. If its boolean value is FALSE, it skips
-everything up to the corresponding @code{endif}.
+everything up to the corresponding @code{end}.
 @end deffn
 
 @deffn Command ifdefined @var{symbol}
 @deffnx Command ifdef @var{symbol}
 If a variable with the name @var{symbol} does not exist, skips
-everything up to the corresponding @code{endif}.
+everything up to the corresponding @code{end}.
 @end deffn
 
 @deffn Command ifnotdefined @var{symbol}
 @deffnx Command ifndef @var{symbol}
 If a variable with the name @var{symbol} exists, skips everything
-up to the corresponding @code{endif}.
+up to the corresponding @code{end}.
 @end deffn
 
 @deffn Command error @var{message}
@@ -954,7 +954,7 @@ Produces an error message with the text @var{message}.
 
 @deffn Command discard
 @deffnx Command disc
-Discards everything up to the corresponding @code{endd}.
+Discards everything up to the corresponding @code{end}.
 @end deffn
 
 @node The Meta-Char, Data Types, Commands, Language Reference
@@ -1500,7 +1500,67 @@ evaluated. If @code{or} is called without parameters, it returns
 @defspec define (@var{name},@var{argname}[,@var{argname}...],@var{body})
 Defines a macro with the name @var{name} and the specified argument
 names. The body @var{body} is not evaluated.
+
+If the last @var{argname} matches the pattern
+@var{lstname}@code{:}[@var{lower}]@code{:}[@var{upper}] then the macro
+takes a variable number of arguments. All @var{argname}s but the last
+are treated as single arguments. The last @var{argname} corresponds to a
+number of arguments not less than @var{lower} and not greater than
+@var{upper}. When the macro is called, these arguments are bound to the
+@var{lstname} in the form of a list. If @var{lower} is not given, zero
+arguments for @var{lstname} are allowed. If @var{upper} is not given,
+there is no upper limit on the number of arguments.
+
+Examples:
+
+@example
+%define(mac,a,b,a=%a b=%b)
+@end example
+
+defines a macro @code{mac} taking exactly two arguments.
+
+@example
+%define(mac,a,b,c:2:3,a=%a b=%b c=%encode(%c))
+%mac(1,2,3,4)
+@result a=1 b=2 c=%list(%'3',%'4')
+@end example
+
+defines a macro @code{mac} taking four or five arguments.
+
+@example
+%define(mac,a,b,c::3,a=%a b=%b c=%encode(%c))
+@end example
+
+defines a macro @code{mac} taking at most five arguments.
+
+@example
+%define(mac,a,b,c:2:,a=%a b=%b c=%encode(%c))
+@end example
+
+defines a macro @code{mac} taking at least four arguments.
 @end defspec
+
+@defspec lambda (@var{argname}[,@var{argname}...],@var{body})
+Creates an anonymous macro (closure) with the specified argument names
+and the body @var{body}, which is not evaluated.
+
+If the last @var{argname} matches the pattern
+@var{lstname}@code{:}[@var{lower}]@code{:}[@var{upper}] then the closure
+takes a variable number of arguments. The semantics of this feature are
+equal to that of @code{define}.
+
+The definition
+
+@example
+%define(mac,a,b,a=%a b=%b)
+@end example
+
+is semantically equivalent to
+
+@example
+%<mac=%lambda(a,b,a=%a b=%b)>
+@end example
+@end defmac
 
 @defspec locals (@var{symbol}[,@var{symbol}...],@var{body})
 Evaluates @var{body} in a new scope with the specified local variables.
@@ -1628,22 +1688,34 @@ order.
 @defmac fopen (@var{filename}[,@var{mode}])
 Opens the file named @var{filename} and returns a handle to it. If the
 file could not be opened, for example because it does not exists, for
-lack of permission or if @var{mode} is illegal, returns @code{-1}.  The
-file is opened for reading if @var{mode} is omitted or is @code{r}. The
-file is opened for writing if @var{mode} is @code{w}.
+lack of permission or if @var{mode} is illegal, returns
+@code{-1}. @var{mode} describes for what purposes the file is opened and
+must be one of the following:
+
+@table @code
+@item r
+Reading.
+@item w
+Writing.
+@item a
+Appending.
+@end table
+
+If @var{mode} is omitted, the file is opened for reading.
 @end defmac
 
-@defmac fpipe (@var{executable}[,@var{arg}...])
+@defmac fpipe (@var{mode},@var{executable}[,@var{arg}...])
 Forks off a child process, starts the specified executable with the
-specified parameters and returns a handle for reading this processes
-standard output. Returns @code{-1} if something goes wrong. Note that
-the arguments are not subject to shell expansion, since the process does
-not start a subshell. If you want shell expansion, you have to start a
-subshell explicitly. For example, to list all files beginning with an
-@code{a}:
+specified parameters. If @var{mode} is @code{r}, returns a handle for
+reading the processes standard output. If @var{mode} is @code{w},
+returns a handle for writing to the processes standard input. Returns
+@code{-1} if something goes wrong. Note that the arguments are not
+subject to shell expansion, since the process does not start a
+subshell. If you want shell expansion, you have to start a subshell
+explicitly. For example, to list all files beginning with an @code{a}:
 
 @example
-%pipe(/bin/sh,-c,ls a*)
+%fpipe(r,/bin/sh,-c,ls a*)
 @end example
 
 @end defmac
@@ -1693,6 +1765,14 @@ Time of last change.
 
 All times are given in seconds since January 1, 1970, 00:00:00 GMT. For
 detailed description of these values see @code{stat(2)}.
+@end defmac
+
+@defmac fgetwd ()
+Returns the current working directory.
+@end defmac
+
+@defmac fchdir (@var{path})
+Changes the current working directory to @var{path}.
 @end defmac
 
 @node String Operations, Miscellaneous, File Operations, Macro Reference

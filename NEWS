@@ -1,0 +1,13 @@
+Changes since version 0.3.1:
+
+  * bugfixes
+
+  * new macros: fgetwd, fchdir
+
+  * macros changes: fpipe, fopen
+
+  * varargs are now documented (see define)
+
+  * lambda is documented
+
+  * configuration now happens through autoconf
