@@ -54,8 +54,8 @@ tested on the following platforms:
     openstep-i386
     digitalunix-alpha
 
-CHPP is written very portably and should compile and run out-of-the-box
-on pretty much any UN*X platform, provided that the tools required for
+CHPP is very portable and should compile and run out-of-the-box on
+pretty much any UN*X platform, provided that the tools required for
 building it (GNU make, flex, bison) are available.
 
 
