@@ -1,0 +1,33 @@
+CHPP Mailing List
+=================
+
+CHPP, the general purpose macro preprocessor, now has two mailing
+lists:
+
+  chpp-announce@mondoshawan.unix.cslab.tuwien.ac.at
+                      Announcements regarding CHPP.
+  chpp-general@mondoshawan.unix.cslab.tuwien.ac.at
+                      Discussions about using CHPP, bug reports,
+                      development of CHPP etc.
+
+Everything that gets posted to chpp-announce gets posted to
+chpp-general too, so you only have to subscribe to one list.  To
+subscribe to one of the lists, write a mail to either
+
+  chpp-announce-request@mondoshawan.unix.cslab.tuwien.ac.at
+  chpp-general-request@mondoshawan.unix.cslab.tuwien.ac.at
+
+with the line
+
+  subscribe
+
+in the body.
+
+For more information about CHPP, visit
+
+  http://chakotay.ml.org/
+
+
+----------
+Heinz Deinhart & Mark Probst
+chpp@unix.cslab.tuwien.ac.at
