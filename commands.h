@@ -45,6 +45,7 @@ void cmd_ende( const char * args );
 void cmd_define( const char *args );
 void cmd_error( const char *args );
 void cmd_rem( const char *what );
+void cmd_end( const char *arg );
 
 /* ------------- Internal defs for flow control */
 

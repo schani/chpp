@@ -114,6 +114,7 @@ void recordChangeTape() {
 }
 
 void recordNewLine( const int bufPos, const int lineNumber ) {
+  // fprintf( stderr, "] bufPos = %i - line = %i [\n", bufPos, lineNumber );
   if( recLNPos > RECORD_BASE_LN_SIZE ) {
     fprintf( stderr, "\nFATAL ERROR in recorder.c: recLNPos is illegal, call the police!\n" );
     exit( 1 );

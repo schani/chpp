@@ -141,6 +141,10 @@ cmd_rem( const char *what ) {
 
 void
 cmd_elseif( const char *what ) {
+  if( !what ) {
+    issueWarning( ERRCMD_ONE_ARG, "ifdef", 0, 0 );
+    return;
+  }
   cmd_endif( 0 );
   cmd_if( what );
 }
@@ -148,7 +152,13 @@ cmd_elseif( const char *what ) {
 void
 cmd_if( const char *what ) {
   FlowStack *tmpFS = (FlowStack *)memXAlloc( sizeof( FlowStack ));
-  dynstring eds, ds = dsNewFrom( what );
+  dynstring eds, ds;
+
+  if( !what ) {
+    issueWarning(  ERRCMD_ONE_ARG, "if", 0, 0);
+    return;
+  }
+  ds = dsNewFrom( what );
 
   if( flowStack->flowLevel ) {
     dynstring tmpDS;
@@ -171,8 +181,14 @@ cmd_if( const char *what ) {
 void
 cmd_ifdef( const char *what ) {
   FlowStack *tmpFS = (FlowStack *)memXAlloc( sizeof( FlowStack ));
-  dynstring eds, ds = dsNewFrom( what );
+  dynstring eds, ds;
 
+  if( !what ) {
+    issueWarning(  ERRCMD_ONE_ARG, "ifdef", 0, 0);
+    return;
+  }
+  ds = dsNewFrom( what );
+  
   if( flowStack->flowLevel ) {
     dsRemoveOuterWS( &ds );
     eds = evalDS( &ds );
@@ -192,7 +208,13 @@ cmd_ifdef( const char *what ) {
 void
 cmd_ifndef( const char *what ) {
   FlowStack *tmpFS = (FlowStack *)memXAlloc( sizeof( FlowStack ));
-  dynstring eds, ds = dsNewFrom( what );
+  dynstring eds, ds;
+
+  if( !what ) {
+    issueWarning(  ERRCMD_ONE_ARG, "ifdef", 0, 0);
+    return;
+  }
+  ds = dsNewFrom( what );
 
   if( flowStack->flowLevel ) {
     dsRemoveOuterWS( &ds );
@@ -212,7 +234,7 @@ cmd_ifndef( const char *what ) {
 
 void
 cmd_else( const char *arg ) {
-   if( arg ) issueWarning(WARNCMD_UNUSED_ARGS, "else", 0, 0);
+   if( arg ) issueWarning( WARNCMD_UNUSED_ARGS, "else", 0, 0);
 
    switch( flowStack->openCmd ) {
    case CMD_IFDEF:
@@ -234,7 +256,7 @@ void
 cmd_endif( const char *arg ) {
   FlowStack *tmpFS = flowStack;
 
-  if( arg ) issueWarning(WARNCMD_UNUSED_ARGS, "endif", 0, 0);
+  if( arg ) issueWarning( WARNCMD_UNUSED_ARGS, "endif", 0, 0);
 
   switch( flowStack->openCmd ) {
   case CMD_IFDEF:
@@ -257,7 +279,7 @@ void
 cmd_discard( const char *arg ) {
   FlowStack *tmpFS = (FlowStack *)memXAlloc( sizeof( FlowStack ));
 
-  if( arg ) issueWarning( WARNCMD_UNUSED_ARGS, "discard", 0, 0);
+  if( arg ) issueWarning(  WARNCMD_UNUSED_ARGS, "discard", 0, 0);
 
   tmpFS->flowLevel = 0; /* discard all */
   tmpFS->openCmd = CMD_DISCARD;
@@ -271,7 +293,7 @@ void
 cmd_endd( const char *arg ) {
   FlowStack *tmpFS = flowStack;
 
-  if( arg ) issueWarning( WARNCMD_UNUSED_ARGS, "endd", 0, 0);
+  if( arg ) issueWarning(  WARNCMD_UNUSED_ARGS, "endd", 0, 0);
   if( flowStack->openCmd != CMD_DISCARD )
     issueError( ERRCMD_UNMATCHED_COMMAND, "endd", 0, 0);
 
@@ -283,9 +305,14 @@ cmd_endd( const char *arg ) {
 
 void
 cmd_include( const char *fileName ) {
-  dynstring evald, fn = dsNewFrom( fileName );
+  dynstring evald, fn;
 /*  FILE *ifi;*/
 
+  if( !fileName ) {
+    issueWarning(  ERRCMD_ONE_ARG, "include", 0, 0);
+    return;
+  }
+  fn = dsNewFrom( fileName );
   if( !flowStack->flowLevel ) return;
   
   evald = evalDS( &fn );
@@ -299,10 +326,7 @@ cmd_include( const char *fileName ) {
   */
 
   if( !includeFile( evald.data ))
-    issueError(ERRCMD_NO_INCLUDE, evald.data, 0, 0);
-  else {
-   
-  }
+    issueError( ERRCMD_NO_INCLUDE, evald.data, 0, 0 );
 }
 
 static dynstring *edef_dynAr;
@@ -398,7 +422,7 @@ cmd_ende( const char * args ) {
   FlowStack *tmpFS = flowStack;
   dynstring ef2;
 
-  if( args ) issueWarning(WARNCMD_UNUSED_ARGS, "endd", 0, 0);
+  if( args ) issueWarning( WARNCMD_UNUSED_ARGS, "endd", 0, 0);
   if( flowStack->openCmd != CMD_EDEF )
     issueError(ERRCMD_UNMATCHED_COMMAND, "ende", 0, 0);
 
@@ -426,6 +450,23 @@ cmd_ende( const char * args ) {
 					 globalEnvironment),
 			  globalEnvironment);
 
+  }
+}
+
+void
+cmd_end( const char * args ) {
+  if( args ) issueWarning( WARNCMD_UNUSED_ARGS, "endd", 0, 0 );
+  switch( flowStack->openCmd ) {
+  case CMD_EDEF: return cmd_ende( 0 );
+  case CMD_IFDEF:
+  case CMD_IFDEF_ELSE:
+  case CMD_IFNDEF:
+  case CMD_IFNDEF_ELSE:
+  case CMD_IF:
+  case CMD_IF_ELSE: return cmd_endif( 0 );
+  case CMD_DISCARD: return cmd_endd( 0 );
+  default:
+    issueError(ERRCMD_UNMATCHED_COMMAND, "end", 0, 0);
   }
 }
 

@@ -150,7 +150,6 @@ includeFile( const char *name ) {
     for( i = (nrOfDefDirs-1); i>=0; i-- ) {
       tmpDy = dsCopy( &defDirs[i] );
       dsAppendString( &tmpDy, name, strlen_name );
-      /*      fprintf( stderr, "sucke in include paths nach '%s'.\n", tmpDy.data ); */
       if( (ifi = fopen( tmpDy.data, "r" )) != 0 ) {
 	i = 0;
 	path = getPathFromFileName( tmpDy.data );
@@ -163,16 +162,19 @@ includeFile( const char *name ) {
     dsAppendString( &tmpDy, name, strlen_name );
     if( !(ifi = fopen( tmpDy.data, "r" ))) { /* try working dir */
       if( !(ifi = fopen( name, "r" ))) {
+	return 0;
+      } else {
 	path = dsNewFrom( "./" );
-	return 1;
+	//	return 1;  *** warum steht das hier ?
       }
     } else {
       path = getPathFromFileName( tmpDy.data );
     }
   }
 
-  if( !path.data ) { /* file not found */
-	issueError(ERRCMD_NO_INCLUDE, name, 0, 0);		    
+  if( !ifi ) { /* file not found */
+    // issueError(ERRCMD_NO_INCLUDE, name, 0, 0);
+    return 0;
   }
 
   tmpIFS = ifStack;
@@ -183,7 +185,7 @@ includeFile( const char *name ) {
   ifStack->name = currentFileName;
   ifStack->path = currentFilePath;
   currentFileName = getLastPathComponent( name );
-  /*                                                assert(path.data != 0); */
+
   currentFilePath = path;
   zeilenNummer = 0;
   inFile = ifi;
@@ -254,13 +256,15 @@ generateCommands() {
   hash_insert( cmdHash, "elseif", cmd_elseif );
   hash_insert( cmdHash, "elif", cmd_elseif );
 
+  hash_insert( cmdHash, "end", cmd_end );
+  
   hash_insert( cmdHash, "!", cmd_rem );
   hash_insert( cmdHash, "rem", cmd_rem );
   hash_insert( cmdHash, "error", cmd_error );
 }
 
 void
-initCommands( FILE *inputFile, char commandChar, const char *filename ) {
+initCommands( FILE *inputFile, char commandChar, const char *filename/* hierher */ ) { /* ,const char *filepath ) { */
   inFile = inputFile;
   incFiles = 1;
   filler_cmdChar = commandChar;
@@ -277,7 +281,7 @@ initCommands( FILE *inputFile, char commandChar, const char *filename ) {
   flowStack->openCmd = 0;
 
   currentFileName = dsNewFrom(filename);
-  currentFilePath = dsNewFrom( "./" );
+  currentFilePath = dsNewFrom( /* hierher */"./" ); /* filepath ); */
 }
 
 /* processActiveNL
