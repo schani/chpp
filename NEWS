@@ -1660,8 +1660,9 @@ den rest im cvs manual lesen.
 
 ** fopen, fpipe
 
-bei fopen gibts jetz auch mode a - damit man was anhängen kann an a file
-fpipe hat vorn an neuen parameter, der bestimmt obs a reading oder a writing pipe is:
+bei fopen gibts jetz auch mode a - damit man was anhaengen kann an a
+file fpipe hat vorn an neuen parameter, der bestimmt obs a reading
+oder a writing pipe is:
 
   %fpipe(r, /bin/sh, -c, ls)
   %fpipe(w, /usr/sbin/sendmail,philipp)
