@@ -1656,3 +1656,14 @@ dann
 
 den rest im cvs manual lesen.
 
+* murman, 4.5.1998, nachm aufstehen aber vorm schlafengehn
+
+** fopen, fpipe
+
+bei fopen gibts jetz auch mode a - damit man was anhängen kann an a file
+fpipe hat vorn an neuen parameter, der bestimmt obs a reading oder a writing pipe is:
+
+  %fpipe(r, /bin/sh, -c, ls)
+  %fpipe(w, /usr/sbin/sendmail,philipp)
+
+damit is der chpp scho viel mehr cgi-tauglich...

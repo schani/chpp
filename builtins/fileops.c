@@ -100,7 +100,7 @@ builtInFopen (int numArgs, macroArgument *args, environment *env, outputWriter *
 	openMode = args[1].value.value->v.scalar.scalar.data;
     }
 
-    if (strcmp(openMode, "r") != 0 && strcmp(openMode, "w") != 0)
+    if (strcmp(openMode, "r") != 0 && strcmp(openMode, "w") != 0 && strcmp(openMode, "a") != 0 )
     {
 	OUT_STRING(ow, "-1", 2);
 	return;
@@ -125,8 +125,9 @@ builtInFpipe (int numArgs, macroArgument *args, environment *env, outputWriter *
     int thePipe[2];
     int fileNum;
     char fileNumString[64];
+    enum { PIPE_READ, PIPE_WRITE } pipeMode = PIPE_READ;
 
-    if (!(numArgs >= 1))
+    if (!(numArgs >= 2))
     {
 	issueError(ERRMAC_WRONG_NUM_ARGS, "fpipe");
 	return;
@@ -137,6 +138,21 @@ builtInFpipe (int numArgs, macroArgument *args, environment *env, outputWriter *
 	issueError(ERRMAC_CALL_FAILED, "fpipe", strerror(errno), 0);
 	OUT_STRING(ow, "-1", 2);
     }
+
+    transformArgumentToScalar(&args[0]);
+    
+    if (args[0].value.value->v.scalar.scalar.length > 1 ||
+	(args[0].value.value->v.scalar.scalar.length == 1 && 
+	 strcmp(args[0].value.value->v.scalar.scalar.data, "r") != 0 &&
+	 strcmp(args[0].value.value->v.scalar.scalar.data, "w") != 0) )
+    {
+	issueError(ERRMAC_INVALID_MACRO_ARG, "fpipe", args[0].value.value->v.scalar.scalar.data, 0);
+	OUT_STRING(ow, "-1", 2);
+    }
+
+    if (args[0].value.value->v.scalar.scalar.length == 1 &&
+	strcmp(args[0].value.value->v.scalar.scalar.data, "w") == 0)
+        pipeMode = PIPE_WRITE;
 
     switch (fork())
     {
@@ -149,12 +165,21 @@ builtInFpipe (int numArgs, macroArgument *args, environment *env, outputWriter *
 		int i;
 		char **execArgs = (char**)memXAlloc((numArgs + 1) * sizeof(char*));
 
-		close(thePipe[0]);
-		dup2(thePipe[1], 1);
+		switch (pipeMode)
+		{
+		  case PIPE_READ:
+		    close(thePipe[0]);
+		    dup2(thePipe[1], 1);
+		    break;
 
-		for (i = 0; i < numArgs; ++i)
-		    execArgs[i] = transformArgumentToScalar(&args[i])->v.scalar.scalar.data;
-		execArgs[i] = 0;
+		  default:
+		    close(thePipe[1]);
+		    dup2(thePipe[0], 0);
+		}
+
+		for (i = 1; i < numArgs; ++i)
+		    execArgs[i-1] = transformArgumentToScalar(&args[i])->v.scalar.scalar.data;
+		execArgs[i-1] = 0;
 
 		if (execvp(execArgs[0], execArgs) == -1)
 		{
@@ -165,10 +190,19 @@ builtInFpipe (int numArgs, macroArgument *args, environment *env, outputWriter *
 	    break;
 
 	default :
-	    close(thePipe[1]);
-
 	    fileNum = getNewFileNum();
-	    fileTable[fileNum] = fdopen(thePipe[0], "r");
+
+	    switch (pipeMode)
+	    {
+	      case PIPE_READ:
+		close(thePipe[1]);
+		fileTable[fileNum] = fdopen(thePipe[0], "r");
+		break;
+
+	      default:
+		close(thePipe[0]);
+		fileTable[fileNum] = fdopen(thePipe[1], "w");
+	    }
 
 	    if (fileTable[fileNum] == 0)
 	    {
