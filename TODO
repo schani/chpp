@@ -6,7 +6,9 @@
 
 + bytecode in file schreiben (i.e. precompiled code)
 
-+ chpp schneller machen
++ chpp schneller machen (listen, ...)
+
++ autoconf
 
 + glob makro
 
