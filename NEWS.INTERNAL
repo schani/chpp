@@ -1755,68 +1755,6 @@ gibt
 
 in naechster zeit kommt dann auch noch break und continue dazu.
 
-* schani, 29.9.1998, abend
-
-** flock
-
-es gibt ein flock makro. erstes argument ist das file, das zu locken
-ist, zweites optionales argument ist die operation:
-
-  l     shared lock
-  x     exclusive lock
-  u     unlock
-  n     non-blocking
-
-n kann man zu l, x oder u dazugeben. ohne zweiten parameter ist x
-default.
-
-* schani, 12.6.1998, hehe
-
-** srange und smap
-
-srange macht einen string aus zwei chars indem er alle chars
-dazwischen aneinanderhaengt. zb
-
-  %srange(0,9)
-
-gibt
-
-  0123456789
-
-und
-
-  %srange(a,z,0,9)
-
-gibt
-
-  abcdefghijklmnopqrstuvwxyz0123456789
-
-smap funkt wie tr. konvertiert die chars aus dem ersten parameter zu
-den chars aus dem zweiter parameter. bsp:
-
-  %smap(%srange(a,z),%srange(A,Z),Heinzi Deinzi)
-
-gibt
-
-  HEINZI DEINZI
-
-* schani, 5.7.1998, kurz nachdem deutschland gegen kroatien abbissen hat
-
-** return
-
-es gibt ein makro namens return, welches ein makro einfach beendet.
-parameter nimmts keinen, weil werte zurueckgeben kamma anders auch.
-bleistift:
-
-  %define(heinz,%for(i,0,9,%i%if(%[i==5],%return())))
-  %heinz()
-
-gibt
-
-  012345
-
-in naechster zeit kommt dann auch noch break und continue dazu.
-
 * schani, 31. 9. 1998, nachmittag
 
 ** flock
