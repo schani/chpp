@@ -562,6 +562,80 @@ builtInChr (int numArgs, macroArgument *args, environment *env, outputWriter *ow
 }
 
 void
+builtInSrange (int numArgs, macroArgument *args, environment *env, outputWriter *ow)
+{
+    int i;
+
+    if (!(numArgs % 2 == 0))
+    {
+	issueError(ERRMAC_WRONG_NUM_ARGS, "srange");
+	return;
+    }
+
+    for (i = 0; i < numArgs; i += 2)
+    {
+	int c1,
+	    c2;
+
+	transformArgumentToScalar(&args[i]);
+	transformArgumentToScalar(&args[i + 1]);
+
+	if (args[i].value.value->v.scalar.scalar.length != 1)
+	{
+	    issueError(ERRMAC_INVALID_MACRO_ARG, "srange",
+		       args[i].value.value->v.scalar.scalar.data);
+	    continue;
+	}
+	if (args[i + 1].value.value->v.scalar.scalar.length != 1)
+	{
+	    issueError(ERRMAC_INVALID_MACRO_ARG, "srange",
+		       args[i + 1].value.value->v.scalar.scalar.data);
+	    continue;
+	}
+	
+	c1 = args[i].value.value->v.scalar.scalar.data[0];
+	c2 = args[i + 1].value.value->v.scalar.scalar.data[0];
+
+	for (; c1 <= c2; ++c1)
+	    OUT_CHAR(ow, c1);
+    }
+}
+
+void
+builtInSmap (int numArgs, macroArgument *args, environment *env, outputWriter *ow)
+{
+    char map[256];
+    int i;
+
+    if (!(numArgs == 3))
+    {
+	issueError(ERRMAC_WRONG_NUM_ARGS, "smap");
+	return;
+    }
+
+    transformArgumentToScalar(&args[0]);
+    transformArgumentToScalar(&args[1]);
+    transformArgumentToScalar(&args[2]);
+
+    if (args[0].value.value->v.scalar.scalar.length !=
+	args[1].value.value->v.scalar.scalar.length)
+    {
+	issueError(ERRMAC_INVALID_MACRO_ARG, "smap",
+		   args[1].value.value->v.scalar.scalar.data);
+	return;
+    }
+
+    for (i = 0; i < 256; ++i)
+	map[i] = i;
+    for (i = 0; i < args[0].value.value->v.scalar.scalar.length; ++i)
+	map[args[0].value.value->v.scalar.scalar.data[i]] =
+	    args[1].value.value->v.scalar.scalar.data[i];
+
+    for (i = 0; i < args[2].value.value->v.scalar.scalar.length; ++i)
+	OUT_CHAR(ow, map[args[2].value.value->v.scalar.scalar.data[i]]);
+}
+
+void
 builtInNumber (int numArgs, macroArgument *args, environment *env, outputWriter *ow)
 {
     long number,
@@ -704,6 +778,8 @@ registerStringOps (void)
     registerBuiltIn("ssub", builtInSubstring, 1, 0, 0);
     registerBuiltIn("scmp", builtInStrcmp, 1, 0, 0);
     registerBuiltIn("schr", builtInChr, 1, 0, 0);
+    registerBuiltIn("srange", builtInSrange, 1, 0, 0);
+    registerBuiltIn("smap", builtInSmap, 1, 0, 0);
     registerBuiltIn("snumber", builtInNumber, 1, 0, 0);
     registerBuiltIn("shexencode", builtInHexencode, 1, 0, 0);
     registerBuiltIn("shexdecode", builtInHexdecode, 1, 0, 0);

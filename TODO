@@ -1,7 +1,5 @@
 *** prioritaeten:
 
-+ varargs docen
-
 + metachar aenderbar machen
 
 + break etc.
@@ -9,8 +7,6 @@
 + bytecode in file schreiben (i.e. precompiled code)
 
 + chpp schneller machen (listen, ...)
-
-+ autoconf
 
 + glob makro
 
@@ -35,6 +31,10 @@
 + tutorial schreim
 
 *** schani:
+
+- varargs docen
+
+- autoconf
 
 - beim for einbauen, dass nicht immer globale vars definiert werden.
 

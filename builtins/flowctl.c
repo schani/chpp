@@ -32,6 +32,7 @@
 #include "../chash.h"
 #include "../environment.h"
 #include "../bytecode.h"
+#include "../jump.h"
 
 #include "builtins.h"
 
@@ -203,7 +204,19 @@ builtInFor (int numArgs, macroArgument *args, environment *env, outputWriter *ow
 	sprintf(numberString, "%d", i);
 	envAddBinding(newEnv, &counter, valueNewScalarFromCString(numberString));
 
-	bcExecute(args[numArgs - 1].bytecode, newEnv, ow);
+	DO_JUMP_CODE {
+	    bcExecute(args[numArgs - 1].bytecode, newEnv, ow);
+	} WITH_JUMP_HANDLER {
+	    JUMP_HANDLE_RETURN;
+
+	    if (JUMP_CODE == JUMP_CODE_BREAK)
+	    {
+		if (JUMP_INFO == 0)
+		    return;
+		else
+		    JUMP(JUMP_CODE_BREAK | (JUMP_INFO - 1));
+	    }
+	} END_JUMP_HANDLER;
 
 	/* i = atoi(entry->value->v.scalar.scalar.data); */
 	i += increment;
@@ -490,6 +503,46 @@ builtInNot (int numArgs, macroArgument *args, environment *env, outputWriter *ow
 }
 
 void
+builtInReturn (int numArgs, macroArgument *args, environment *env, outputWriter *ow)
+{
+    if (!(numArgs == 0))
+    {
+	issueError(ERRMAC_WRONG_NUM_ARGS, "return");
+	return;
+    }
+
+    JUMP(JUMP_CODE_RETURN);
+}
+
+void
+builtInBreak (int numArgs, macroArgument *args, environment *env, outputWriter *ow)
+{
+    int depth;
+
+    if (!(numArgs == 0 || numArgs == 1))
+    {
+	issueError(ERRMAC_WRONG_NUM_ARGS, "break");
+	return;
+    }
+
+    if (numArgs == 1)
+    {
+	transformArgumentToScalar(&args[0]);
+	depth = atoi(args[0].value.value->v.scalar.scalar.data);
+	if (depth < 0)
+	{
+	    issueError(ERRMAC_INVALID_MACRO_ARG, "break",
+		       args[0].value.value->v.scalar.scalar.data);
+	    return;
+	}
+    }
+    else
+	depth = 0;
+
+    JUMP(JUMP_CODE_BREAK | depth);
+}
+
+void
 registerFlowCtl (void)
 {
     registerBuiltIn("if", builtInIf, 0, builtInIfGlobalEffector, 0);
@@ -505,4 +558,6 @@ registerFlowCtl (void)
     registerBuiltIn("and", builtInAnd, 0, builtInAndGlobalEffector, 0);
     registerBuiltIn("or", builtInOr, 0, builtInOrGlobalEffector, 0);
     registerBuiltIn("not", builtInNot, 1, 0, 0);
+    registerBuiltIn("return", builtInReturn, 1, 0, 0);
+    registerBuiltIn("break", builtInBreak, 1, 0, 0);
 }

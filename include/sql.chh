@@ -44,15 +44,17 @@
 %define(sqlQuery,conn,query,
 %locals(result,
     %<result=%conn{driver}{query}(%&conn{connection},%query)>\
-    %foreachkey(colname,%&result{colinfo},
-        %cond(%equal(%result{colinfo}{%colname}{type},date),
-                  %foreach(row,%&result{rows},
-                      %<row{%colname}=%timeFromString(%conn{dbinfo}{dateformat},%row{%colname})>
-                  ),
-              %equal(%result{colinfo}{%colname}{type},time),
-                  %foreach(row,%&result{rows},
-                      %<row{%colname}=%timeFromString(%conn{dbinfo}{timeformat},%row{%colname})>
-                  )
+    %if(%result,
+        %foreachkey(colname,%&result{colinfo},
+            %cond(%equal(%result{colinfo}{%colname}{type},date),
+                      %foreach(row,%&result{rows},
+                          %<row{%colname}=%timeFromString(%conn{dbinfo}{dateformat},%row{%colname})>
+                      ),
+                  %equal(%result{colinfo}{%colname}{type},time),
+                      %foreach(row,%&result{rows},
+                          %<row{%colname}=%timeFromString(%conn{dbinfo}{timeformat},%row{%colname})>
+                      )
+            )
         )
     )\
     %&result

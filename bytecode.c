@@ -31,6 +31,7 @@
 #include "input.h"
 #include "parser.h"
 #include "bcoutput.h"
+#include "jump.h"
 
 #include "bytecode.h"
 
@@ -502,7 +503,11 @@ bcExecute (bytecode *bc, environment *env, outputWriter *ow)
 					      theList);
 			    }
 
-			    bcExecute(aValue->v.lambda.code, macroEnv, ow);
+			    DO_JUMP_CODE {
+				bcExecute(aValue->v.lambda.code, macroEnv, ow);
+			    } WITH_JUMP_HANDLER {
+				assert(jumpResult == JUMP_CODE_RETURN);
+			    } END_JUMP_HANDLER;
 			}
 			else
 			    assert(0);
