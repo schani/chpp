@@ -1,0 +1,5 @@
+#define rek3(cnt,a,b,c)    rek3(%cnt,%a,%b,%c)%"\n"%if(%[cnt>0],%rek1(%[cnt-1],%b,%c,%a))
+#define rek2(cnt,a,b,c)    rek2(%cnt,%a,%b,%c)%"\n"%if(%[cnt>0],%rek3(%[cnt-1],%b,%c,%a))
+#define rek1(cnt,a,b,c)    rek1(%cnt,%a,%b,%c)%"\n"%if(%[cnt>0],%rek2(%[cnt-1],%b,%c,%a))
+
+%rek1(5,a,b,c)

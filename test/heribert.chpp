@@ -1,0 +1,20 @@
+#include ../include/files.chh
+%<tokens=%list()>\
+%<curtoc=0>\
+%define(tokenize,filename,
+    %<contents=%fwholefile(%filename)>\
+    %<contents=%sgsub(%contents,%"([ \t\n]+)|([{};])|(\\\"([^\"]|\\\\.)*\\\")",%lambda(r,p,
+        %cond(%slength(%r[1]),_:%[p+%slength(%r[0])]:_,
+              %slength(%r[2]),_:%p:_%r[2]_:%[p+%slength(%r[0])]:_,
+              %slength(%r[3]),_:%p:_%r[3]_:%[p+%slength(%r[0])]:_)))>\
+    %<tokens=%list()>\
+    %foreach(x,%ssplit(%contents,%"_:([0-9]+):_",
+                       %lambda(f,s,r,%hash(pos,%if(%[%llength(%f)==2],%f[1],0),str,%s))),
+        %if(%slength(%x{str}),%lappend(%&tokens,%x))
+    )
+)\
+\
+%tokenize(Demo.txt)\
+%foreach(token,%tokens,
+    %token{pos}  :  %token{str}%"\n"
+)

@@ -1,0 +1,2 @@
+%<file=%open(heinz,w)>
+%write(heinz,deinz)

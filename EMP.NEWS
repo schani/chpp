@@ -1,0 +1,71 @@
+*****  Password: -*- mode:outline; minor-mode:outl-mouse -*- (top secret) *****
+
+* die SCHEISSE ausgwipt
+
+die scheisse ist nicht mehr
+jetz gibts im root ein filler.c/h und commands.c/h
+filler ist das zeug was den buffa anfuellt
+commands sollte theoretisch nur vom filler selber verwendet wern
+
+(bist du depat im hirn, des war a hackn)
+
+* -Wall
+
+meine Warnings sind ausgwipet .. aber dein san no da:
+-----------------------------------------------------------------------------
+bison -o arithparse.c -d arithparse.y
+gcc -g -Wall -c arithparse.c
+/usr/share/bison.simple: In function `yyparse':
+/usr/share/bison.simple:327: warning: implicit declaration of function `yyerror'
+/usr/share/bison.simple:387: warning: implicit declaration of function `yylex'
+flex -oarithscan.c arithscan.fl
+gcc -g -Wall -c arithscan.c
+arithscan.c:1017: warning: `yyunput' defined but not used
+gcc -g -Wall -c regex.c
+regex.c: In function `regex_compile':
+regex.c:2042: warning: implicit declaration of function `free'
+-----------------------------------------------------------------------------
+weissnet ob das an mein linux liegt ..
+
+* - bitte bitte machen dynstring.appendInt
+
+* - dynstring AppendString ..argl bargl
+  was is da denn da eingfalln ? das ma length angeben muss
+
+* ERROR & WARNING & ZeilenNummern
+
+  commands geben jetzt tolle fehlermeldungen aus
+  mit zeilennummern und mehr
+
+  zeilennummern fuer macro fehler .. weiss net wie du das dir vorstellst
+  vielleicht vor fillbuffer einlesen, und haendlisch mitzaehle
+
+  WICHTIG: du musst vor dem ersten aufruf von fillbuffa den 
+   dynsring currentFileName richtig setzen !!!
+  std maessig ist er auf "<stdin>" gesetzt
+
+* 'if' command gibts jetzt 
+  (hat 5 minuten dauert, weil der rechna einmal abgraucht is dazwischen :(   )
+
+  ich verwende
+    dynstring arithEvalDS (dynstring *ds);
+  um das was rechts vom #if steht zu evaluieren
+  falls des unrichtig ist, sagen tun
+
+  if ist der einzige befehl der keine andere form hat .. scheisse.
+  aber 'i' ist bloed, und 'wenn' rult auch nix - weisst du ne loesung ?
+
+* Include pfade geistiger natur
+
+  hmm argl bargl darueber mussma reden weil
+  i net genau weiss nach was i file namen parsen soll
+  es vielleicht eine -I option (gcc like) geben sollte
+  und ueberhaupt weiss i net ob das eigentlich sinn macht
+  weil die include files sind na net solche wie in C sondern
+  naja andere halt .. und so i weiss net
+
+* Mehrere files alert
+
+  naja, hmm .. ich schreib eine reset function die du aufrufen kannst,
+  bevor du ein neues file machst vielleicht
+

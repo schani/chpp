@@ -1,0 +1,42 @@
+# -*- Makefile -*-
+
+# Makefile.sys.linux
+#
+# chpp
+#
+# Copyright (C) 1997-1998 Mark Probst
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+# If you want support for mSQL, uncomment the following line
+#ENABLE_MSQL=yes
+
+# If you want support for MySQL, uncomment the following two lines
+#ENABLE_MYSQL=yes
+
+CC=cc
+CFLAGS=-g -Wall -D_NEXT
+
+ifdef ENABLE_MSQL
+CFLAGS+=-I/usr/local/Hughes/include -DENABLE_MSQL
+LIBS+=-L/usr/local/Hughes/lib -lmsql
+endif
+
+ifdef ENABLE_MYSQL
+CFLAGS+=-DENABLE_MYSQL
+LIBS+=-L/usr/local/lib/mysql -lmysqlclient
+endif
+
+include Makefile.common

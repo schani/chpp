@@ -1,0 +1,3 @@
+#include ../include/sql.chh
+%<connection=%_sqlMsqlConnect(localhost,chpp,,)>\
+%encode(%_sqlMsqlQuery(%connection,select * from testtable))

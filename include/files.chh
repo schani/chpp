@@ -1,0 +1,22 @@
+#ifndef __FILES_CHH__
+#define __FILES_CHH__
+%define(frest,file,%until(%feof(%file),%fgets(%file)))\
+%define(fwholefile,filename,%locals(file,%<file=%fopen(%filename)>%frest(%file)%fclose(%file)))\
+%<define( fexists, file1, 
+  %<locals( tmpfile,
+    %<tmpfile=%<fopen( %<file1> )>>\
+    %<if( %[ %<tmpfile> == -1 ], 0, %<fclose( %<tmpfile> )>1)>
+  )>
+)>\
+%<define( fneweras, file1, file2,
+  %<locals( tmp1, tmp2,
+    %<tmp1=%<fstat( %<file1> )>>\
+    %<if( %<fexists( %<file2> )>,
+      %<tmp2=%<fstat( %<file2> )>>\
+      %<if( %[ %<tmp1{mtime}> > %<tmp2{mtime}> ], 1, 0 )>
+    ,
+      1
+    )>
+  )>
+)>\
+#endif

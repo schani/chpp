@@ -1,0 +1,27 @@
+%<file=%fopen(grammar)>\
+%<current=runaway>\
+%<data=%hash(runaway,%list())>\
+%<regs=%list()>\
+%until(%feof(%file),
+    %<line=%sremovews(%fgets(%file))>\
+    %if(%[%smatch(%'^--([a-zA-Z0-9_]+)',%line,%&regs)!=-1],
+        %<current=%regs[1]>\
+        %<data{%current}=%list()>\
+        %if(%not(%bound(start)),%<start=%current>)
+    ,
+        %if(%line,%<data{%current}[%llength(%data{%current})]=%line>)
+    )
+)\
+%fclose(%file)\
+\
+%if(%not(%bound(n)),%<n=10>)\
+%define(repl,str,s,l,ns,%ssub(%str,0,%s)%ns%ssub(%str,%[s+l]))\
+%define(some,nt,%&data{%nt}[%random(%llength(%data{%nt}))])\
+%for(i,1,%n,
+    %<current=%some(%start)>\
+    %<mp=-1>\
+    %while(%<mp=%smatch(%'\\$([a-zA-Z0-9_]+)',%current,%&regs)>%[mp!=-1],
+        %<current=%repl(%&current,%&mp,%slength(%regs[0]),%some(%regs[1]))>
+    )\
+    %current%'\n\n'
+)\

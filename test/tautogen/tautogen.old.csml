@@ -1,0 +1,27 @@
+%define(repl,str,s,l,ns,%substring(0,%s,%str)%ns%substring(%[%s+%l],%str))\
+%ifdef(n,,%define(n,10))\
+%define(data,%open(data))\
+%define(cn,runaway)\
+%adefine(nums,runaway,0)\
+%define(line,%"")\
+%until(%eof(%data),
+    %define(line, %removews(%readline(%data)))\
+    %if(%[%match(%"^--([a-zA-Z0-9_]+)",%line)!=-1],
+        %define(cn,%1)\
+        %adefine(nums,%cn,0)\
+        %ifdef(sc,,%define(sc,%1))
+    ,
+        %if(%line,
+            %adefine(data,%cn;%nums[%cn],%line)\
+            %adefine(nums,%cn,%[%nums[%cn]+1])
+        )
+    )
+)\
+%define(some,c,%data[%c;%[random% %nums[%c]]])\
+%for(i,1,%n,
+    %define(cs,%some(%sc))\
+    %while(%define(mp,%match(%"\\$([a-zA-Z0-9_]+)",%cs))%[mp!=-1],
+        %define(cs,%repl(%cs,%mp,%strlength(%0),%some(%1)))
+    )\
+    %cs%"\n\n"
+)\

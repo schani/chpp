@@ -1,0 +1,25 @@
+#!/bin/sh
+
+echo -n "machine: " >test.out
+hostname >>test.out
+uname -a >>test.out
+date >>test.out
+echo >>test.out
+
+sync
+
+echo -- fibonacci >>test.out
+time ../../macros fib.txt >/dev/null 2>>test.out
+echo >>test.out
+
+echo -- hanoi >>test.out
+time ../../macros hanoi.txt >/dev/null 2>>test.out
+echo >>test.out
+
+echo -- tautogen >>test.out
+time ../../macros tautogen.csml >/dev/null 2>>test.out
+echo >>test.out
+
+echo -- tng log book >>test.out
+time ../../macros tnglogbk.txt >/dev/null 2>>test.out
+

@@ -1,0 +1,4 @@
+%<regs=%list()>\
+"%smatch(a+,heianzi)" = "3"
+"%smatch([^/]+$,/heinzi/deinzi/test.jpg,%&regs) %regs[0]" = "15 test.jpg"
+"%smatch(%'a+(b+)c+',aaabbbccc,%&regs) %regs[1]" = "0 bbb"

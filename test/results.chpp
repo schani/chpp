@@ -1,0 +1,280 @@
+%void(
+theo:prak
+
+
+fehlen tun:
+
+prichter
+mac game praktisch
+)\
+\
+%define(strinlength,str,len,
+    %str\
+    %for(i,1,%[len-%slength(%str)],1,%" ")
+)\
+%<exercises=%list()>\
+%<exweights=%hash()>\
+%<students=%hash()>\
+%<allweights=0>\
+%<markthresholds=%list(%list(52,4),%list(68,3),%list(84,2),%list(95,1))>\
+\
+%define(results,exercise,weights,table,
+    %<thisweights=%ssplit(%weights,:)>\
+    %<exweights{%exercise}=%thisweights>\
+    %<allweights=%[%allweights+%thisweights[0]+%thisweights[1]]>\
+    %lappend(%&exercises,%exercise)\
+    %foreachkey(student,%table,
+        %ifdefkey(%students,%student,,%<students{%student}=%hash()>)\
+        %<students{%student}{%exercise}=%ssplit(%table{%student},:)>\
+    )
+)\
+\
+%define(testconsistency,
+    %foreachkey(student,%students,
+        %foreach(exercise,%exercises,
+            %ifdefkey(%students{%student},%exercise,
+                %if(%[%slength(%students{%student}{%exercise}[0])==0],
+                    %student has no theoretical result for %exercise%"\n"
+                )\
+                %if(%[%slength(%students{%student}{%exercise}[1])==0],
+                    %student has no practical result for %exercise%"\n"
+                )
+            ,
+                %student has no results for %exercise%"\n"
+            )
+        )
+    )
+)\
+\
+%define(makeresults,
+    %foreach(student,%lsort(%hkeys(%students)),
+        %<studpoints=0>\
+        %foreach(exercise,%exercises,
+            %ifdefkey(%students{%student},%exercise,
+                %if(%[%slength(%students{%student}{%exercise}[0])>0],
+                    %<studpoints=%[%studpoints+%exweights{%exercise}[0]*%students{%student}{%exercise}[0]]>
+                )\
+                %if(%[%slength(%students{%student}{%exercise}[1])>0],
+                    %<studpoints=%[%studpoints+%exweights{%exercise}[1]*%students{%student}{%exercise}[1]]>
+                )
+            )
+        )\
+        %<studmark=5>\
+        %<studpoints=%[%studpoints/%allweights]>\
+        %foreach(mark,%markthresholds,
+            %if(%[%studpoints>=%mark[0]],
+                %<studmark=%mark[1]>
+            )
+        )\
+        %strinlength(%student,10)         %strinlength(%studpoints,3)        %studmark%"\n"
+    )
+)\
+\
+%results(PixL,1:1,%hash(
+fmayer,94:90,
+bgeradz,98:90,
+bnovak,93:100,
+hstratil,75:95,
+gczoppel,58:40,
+konrad,100:100,
+hvr,99:100,
+grumatow,85:80,
+
+gplutzar,74:82,
+skral,100:100,
+bhammer,100:100,
+mbliem,95:95,
+akostyrk,100:100,
+gwolber,92:100,
+apoisel,100:95,
+
+rbruckne,98:100,
+jfilseke,65:70,
+gweis,93:75,
+pfuerede,44:75,
+akanzler,100:100,
+
+ezmill,10:85,
+heller,100:100,
+tkopetzk,90:73,
+jmisek,90:88,
+dwagner,100:99,
+mzannoni,100:99,
+mertel,100:83,
+bhegedue,100:99,
+gfuchs,100:100,
+jin,100:85,
+
+blettner,80:100,
+swright,97:100,
+pvotruba,100:100,
+culbrich,100:100,
+
+bthallne,97:100,
+gwaidach,90:100,
+csimonut,100:95,
+ffreund,100:95,
+
+dzanetti,99:100,
+lzhai,97:100,
+rgriehsl,83:90,
+rkirner,100:100,
+skatzenb,100:100,
+sstiasny,100:100,
+tfahmy,90:95
+))\
+\
+%results(Movie,1:1,%hash(
+grumatow,100:90,
+ezmill,65:80,
+hvr,100:100,
+culbrich,100:100,
+pvotruba,100:95,
+gfuchs,100:100,
+heller,99:100,
+
+blettner,100:100,
+dwagner,100:73,
+rgriehsl,100:100,
+bnovak,100:100,
+jin,100:100,
+csimonut,100:100,
+bhegedue,100:100,
+rbruckne,100:100,
+gplutzar,80:95,
+
+tkopetzk,85:100,
+apoisel,99:90,
+gwaidach,96:85,
+mertel,95:99,
+jfilseke,100:99,
+
+bgeradz,65:80,
+tfahmy,85:87,
+rkirner,100:98,
+akostyrk,60:96,
+sstiasny,100:100,
+dzanetti,100:99,
+mzannoni,95:89,
+gwolber,99:100,
+
+mbliem,100:98,
+bhammer,100:99,
+skatzenb,100:100,
+swright,98:70,
+fmayer,75:85,
+
+ffreund,100:95,
+bthallne,100:96,
+skral,100:100,
+pfuerede,90:90,
+
+akanzler,98:100,
+gczoppel,93:95,
+hstratil,100:100,
+jmisek,97:100,
+lzhai,89:90
+))\
+\
+%results(YaHe,1:2,%hash(
+rkirner,83:80,
+bgeradz,72:91,
+grumatow,86:100,
+gplutzar,54:75,
+
+rbruckne,100:99,
+akanzler,100:100,
+blettner,92:100,
+bthallne,97:100,
+bnovak,97:100,
+bhammer,100:100,
+skral,100:100,
+mertel,85:0,
+
+dwagner,100:85,
+bhegedue,84:85,
+dzanetti,98:80,
+lzhai,54:50,
+hvr,100:95,
+
+akostyrk,55:100,
+heller,90:90,
+jmisek,95:72,
+gczoppel,95:60,
+tkopetzk,60:78,
+mbliem,90:100,
+ezmill,80:81,
+
+swright,83:85,
+skatzenb,100:90,
+rgriehsl,95:99,
+mzannoni,70:63,
+fmayer,82:63,
+culbrich,100:100,
+jin,89:65,
+tfahmy,54:80,
+
+apoisel,96:85,
+csimonut,96:85,
+gfuchs,100:85,
+gwaidach,81:90,
+gwolber,98:90,
+hstratil,97:95,
+pvotruba,100:95
+))\
+\
+%results(Game,1:3,%hash(
+dwagner,95:85,
+fmayer,78:100,
+mertel,90:100,
+jfilseke,85:100,
+skatzenb,97:100,
+bthallne,95:100,
+jmisek,95:0,
+gplutzar,91:0,
+gczoppel,80:0,
+
+bgeradz,95:91,
+rkirner,95:100,
+rgriehsl,98:85,
+bnovak,91:100,
+blettner,89:100,
+gfuchs,84:100,
+akanzler,95:100,
+
+swright,82:100,
+mbliem,94:100,
+tkopetzk,75:85,
+grumatow,61:100,
+pfuerede,:100,
+culbrich,98:85,
+pvotruba,95:85,
+tfahmy,67:85,
+
+rbruckne,100:100,
+bhammer,98:100,
+gweis,96:100,
+
+gwolber,83:90,
+dzanetti,94:90,
+mzannoni,71:90,
+ezmill,88:91,
+akostyrk,:85,
+skral,100:100,
+hstratil,98:100,
+
+bhegedue,54:90,
+
+lzhai,47:90,
+heller,100:100,
+apoisel,84:100,
+hvr,97:90,
+csimonut,91:100,
+ffreund,:100,
+gwaidach,83:100,
+jin,90:90,
+
+sstiasny,:90
+))\
+\
+%makeresults()\

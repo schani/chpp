@@ -1,0 +1,9 @@
+%<file=%fopen(test.data,w)>\
+%fputs(%file,
+heinzi deinzi
+schani banani%'\n'
+)\
+%fclose(%file)\
+%<file=%fopen(test.data)>\
+%dountil(%fgets(%file),%feof(%file))\
+%fclose(%file)\

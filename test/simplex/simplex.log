@@ -1,0 +1,61 @@
+This is TeX, Version 3.14159 (C version 6.1) (format=latex 97.11.15)  20 APR 1998 09:39
+**simplex.tex
+(simplex.tex
+LaTeX2e <1996/12/01> patch level 1
+Babel <v3.6h> and hyphenation patterns for american, german, loaded.
+(/usr/lib/teTeX/texmf/tex/latex/base/article.cls
+Document Class: article 1996/10/31 v1.3u Standard LaTeX document class
+(/usr/lib/teTeX/texmf/tex/latex/base/size10.clo
+File: size10.clo 1996/10/31 v1.3u Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+) (simplex.aux)
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 6.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 6.
+
+Overfull \hbox (80.47302pt too wide) in paragraph at lines 44--53
+[][] 
+ []
+
+
+Overfull \hbox (80.47302pt too wide) in paragraph at lines 54--63
+[][] 
+ []
+
+[1
+
+] [2] (simplex.aux) ) 
+Here is how much of TeX's memory you used:
+ 220 strings out of 10906
+ 2097 string characters out of 72186
+ 63613 words of memory out of 262141
+ 3169 multiletter control sequences out of 9500
+ 5172 words of font info for 19 fonts, out of 150000 for 255
+ 14 hyphenation exceptions out of 607
+ 23i,8n,18p,131b,168s stack positions out of 300i,40n,60p,3000b,4000s
+
+Output written on simplex.dvi (2 pages, 14148 bytes).

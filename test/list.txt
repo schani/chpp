@@ -1,0 +1,4 @@
+#include ../include/list.chh
+%<l=%list(a,b,c)>\
+"1" = "%listSearch(%&l,%lambda(p,%seq(%&p,b)))"
+"-1" = %listSearch(%&l,%lambda(p,0))"

@@ -1,0 +1,13 @@
+#include list.chh
+<h5><center>
+%<barentries=%list()>\
+%foreach(menuentry,%menu,
+    %lappend(%&barentries,
+        %if(%equal(%menuentry{filename},%thisentry{filename}),
+            %menuentry{name}
+        ,
+            <a href="%menuentry{htmlfilename}">%menuentry{name}</a>
+        ))
+)\
+%listJoin(%' | ',%barentries)
+</center></h5>

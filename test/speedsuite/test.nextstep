@@ -1,0 +1,15 @@
+machine: vader
+NEXTSTEP
+Sat Aug  2 14:14:00 GMT 1997
+
+-- fibonacci
+        6.2 real         5.9 user         0.1 sys  
+
+-- hanoi
+        3.7 real         3.3 user         0.1 sys  
+
+-- tautogen
+        2.9 real         2.5 user         0.1 sys  
+
+-- tng log book
+        1.1 real         0.4 user         0.2 sys  

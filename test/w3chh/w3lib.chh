@@ -1,0 +1,57 @@
+%define( fexists, file1, 
+  %<tmp=%fopen( %file1 )>\
+  %if( %[ %tmp == -1 ], 0, %<fclose( %tmp )>1)
+)\
+%define( fneweras, file1, file2,
+  %<tmp1=%<fstat( %file1 )>>\
+  %if( %fexists( %file2 ),
+    %<tmp2=%<fstat( %file2 )>>\
+    %if( %[ %<tmp1{mtime}> > %<tmp2{mtime}> ], 1, 0 )
+  ,
+    1
+  )
+)\
+heusl
+%define( w3jpg, filename,
+  %if( %dependencing,
+    %if( %fexists( %filename ), %<image=%filename>,
+      %if( %fexists( %<filename>.jpg ), %<image=%filename.jpg>,
+        %if( %fexists( %<filename>.jpeg ), %<image=%filename.jpeg>,
+                                           %<image=0> )
+      )\
+    )\
+    %if( %image,
+      %if( %fneweras( %image, %<image>d ),
+        %<pppipe=%<fpipe( ./picscan, jpg, %image )>>\
+        %if( %[ %<pppipe> == -1 ],
+          %error( w3lib: error calling picscan (%filename%")". )
+        ,
+          %<line=%removews( %fgets( %pppipe ))>\
+          %if( %[ %match( %"^([^[:blank:]]+)[[:blank:]]+([^[:blank:]]+)"\
+                          %"[[:blank:]]+([^[:blank:]]+)[[:blank:]]+"\
+                          %"([^[:blank:]]+)", %line ) == -1 ], \
+            %error(w3lib: corrupt out received from picscan (%filename%")".)
+          ,
+            %if( %strcmp(%1,jpg),
+              %error( w3lib: image corrupt or wrong format (%image%")". )
+            )\
+            %<w3images=%hash()>
+            %<w3images{%filename}=%hash()>\
+            %<w3images{%filename}{width}=%3>\
+            %<w3images{%filename}{height}=%4>\
+            %<w3images{%filename}{format}=jpg>\
+            %<w3images{%filename}{src}=%image>\
+            %<tmpofi=%fopen( %<image>d, w )>\
+            %<fputs( %tmpofi, %encode( %<w3images{%filename}> ))>\
+            %fclose( %tmpofi )\
+            %depend( %image )
+          )
+        )
+      )
+    ,
+      %error( w3lib: image not found (%filename%")". )
+    )
+  ,
+    <IMG src=<w3images{%filename}{src}>
+  )
+)

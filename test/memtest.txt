@@ -1,0 +1,2 @@
+%define(xyz,arg,)
+%for(i,1,100000,%xyz(heinz)%<deinz=%i>%void(%list(a,b,c))%void(%match(:,:::)))

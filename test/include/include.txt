@@ -1,0 +1,9 @@
+#ifndef __INCLUDE_TXT__
+#define __INCLUDE_TXT__
+--- include.txt
+now including include2.txt
+#include include2.txt
+back in include.txt
+--- !include.txt
+#include recinc1.txt
+#endif

@@ -1,0 +1,4 @@
+"%" = "%"
+"$$" = "$v_metachar"
+"%%" = "%v_metachar"
+%<v_metachar=$>"$" = "$"

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if [ -f "Makefile.sys.$1" ] ; then
+    rm -f Makefile
+    ln -s "Makefile.sys.$1" Makefile
+else
+    echo "Syntax :"
+    echo "  configure <system-name>"
+    echo ""
+    echo "where <system-name> is one of"
+    echo "  linux       GNU/Linux"
+    echo "  next        NEXTSTEP/OPENSTEP"
+    echo "  dgux        Digital UNIX"
+fi

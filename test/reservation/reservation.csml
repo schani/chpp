@@ -1,0 +1,33 @@
+#include ../../include/sql.chh
+#include ../../include/list.chh
+#include ../../include/time.chh
+%<connection=%sqlConnect(chdbc:msql://localhost/chpp/,%hash())>\
+\
+%<result=%sqlResultData(%sqlQuery(%&connection,select * from timeslots where exercise = 1))>\
+%<times=%hash()>\
+%<days=%hash()>\
+%<table=%hash()>\
+%foreach(row,%&result,
+    %<day=%row{day}{month}%row{day}{day}>\
+    %<time=%row{timeofday}{hour}%row{timeofday}{minute}>\
+    %<times{%time}=%&row{timeofday}>\
+    %<days{%day}=%&row{day}>\
+    %ifdefkey(%table,%time,,%<table{%time}=%hash()>)\
+    %<table{%time}{%day}=%&row>\
+)\
+\
+<table>
+<tr><td>\
+%foreach(day,%lsort(%hkeys(%&days),%&scmp),
+    <td>%timeToString($d.$m.$Y,%&days{%day})
+)
+%foreach(time,%lsort(%hkeys(%&times),%&scmp),
+    <tr><td>%timeToString($H:$M,%&times{%time})\
+    %foreach(day,%lsort(%hkeys(%&days),%&scmp),
+        <td>\
+        %ifdefkey(%table{%time},%day,here)
+    )%"\n"
+)\
+</table>
+
+%sqlClose(%&connection)\

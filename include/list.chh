@@ -1,0 +1,67 @@
+#ifndef __LIST_CHH__
+#define __LIST_CHH__
+%define(listSearch,lst,crit,
+%locals(length,pos,
+    %<length=%llength(%lst)>\
+    %<pos=0>\
+    %while(%and(%[pos<length],
+                %not(%crit(%&lst[%pos]))),
+        %<pos=%[pos+1]>
+    )\
+    %if(%[pos<length],
+        %pos
+    ,
+        -1
+    )
+))\
+\
+%define(listIndexOf,lst,val,
+    %listSearch(%&lst,%lambda(e,%equal(%&e,%&val)))
+)\
+\
+%define(listMap,mapping,lsts:1:,
+%locals(newlst,lst,numlsts,
+    %<newlst=%list()>\
+    %<numlsts=%llength(%lsts)>\
+    %for(i,0,%[%llength(%lsts[0]) - 1],1,
+        %<lst=%list()>\
+        %for(j,0,%[numlsts - 1], 
+            %lappend(%&lst,%&lsts[%j][%i])
+        )\
+        %lappend(%&newlst,%apply(%&mapping,%&lst))
+    )\
+    %&newlst
+))\
+\
+%define(listLeftAccumulate,accumulator,lst,zero,
+    %if(%[%llength(%lst)==0],
+        %&zero
+    ,
+        %locals(sum,
+            %<sum=%&lst[0]>\
+            %for(i,1,%[%llength(%lst)-1],1,
+                %<sum=%accumulator(%&sum,%&lst[%i])>
+            )\
+            %&sum
+        )
+    )
+)\
+\
+%define(listRightAccumulate,accumulator,lst,zero,
+    %if(%[%llength(%lst)==0],
+        %&zero
+    ,
+        %locals(sum,
+            %<sum=%&lst[%[%llength(%lst)-1]]>\
+            %for(i,%[%llength(%lst)-2],0,-1,
+                %<sum=%accumulator(%&lst[%i],%&sum)>
+            )\
+            %&sum
+        )
+    )
+)\
+\
+%define(listJoin,sep,lst,
+    %listLeftAccumulate(%lambda(a,b,%a%sep%b),%&lst,%'')
+)\
+#endif

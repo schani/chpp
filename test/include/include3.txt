@@ -1,0 +1,5 @@
+--- include3.txt
+now including include.txt
+#include include.txt
+back in include3.txt
+--- !include3.txt

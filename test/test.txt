@@ -1,0 +1,106 @@
+deinzi = %{%%heinzi}
+deinzideinzi = %heinzi%heinzi
+deinzi = %{%"%heinzi"}
+deinzi = %{%"%"heinzi}
+deinzi = %{%{%%%%heinzi}}
+
+#define abc %"%xyz"
+muhkuyh
+#discard 
+maka
+der faz ruled im hirn.
+#endd
+m,imi
+#define xyz         123         
+
+#ifdef notdef
+#ifdef xyz
+schlecht
+#else
+schlecht
+#endif
+#else
+gut
+#endif
+
+#ifdef xyz
+xyz defined
+#ifdef kurde
+kurde defined
+#else
+kurde not defined
+#endif
+#else
+xyz not defined
+#endif
+#ifndef kurde
+kurde not defined
+#else
+kurde defined
+#endif
+
+xyz = "%{%abc}"
+
+%<if(0,a,b)>
+
+%<if(1,x)>
+
+#define argl
+
+#ifdef argl                  
+argl is defined: "%argl"
+#endif
+
+#discard
+
+#define v_metachar $
+
+quotechar is $v_quotechar
+
+$<for(i,1,10,$i )>
+
+#endd
+
+metachar is %v_metachar
+
+#define moo(a,b,c,d)    %d%c%b%a
+
+#define a 5
+
+%<moo(1,%heinzi,3,4)>
+
+%a%b%c%d
+
+%[1+%a+3]
+
+%heinzi
+#edefine grummel
+%heinzi
+wenn einer, der mit muehe kaum
+#ifdef heinzi
+gekrochen ist auf einen %heinzi,
+#else
+schon meint, dass er ein vogel waer,
+#endif
+ro irrt sich der.
+#ende
+-------
+%grummel
+-------
+hallo, tutten
+
++++++++
+#ifdef muhkuh
+heisldreck
+#else
+lachmichtot
+#endif
+ro
++++++++
+
+%<muhkuh>
+
+%"des \"is\"\n\ta str\\ing"
+
+%moo(1,2,3,4)
+%<muhkuh(1,2,3,4)>

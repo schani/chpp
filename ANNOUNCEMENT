@@ -1,0 +1,78 @@
+Announcing
+
+    CHPP Version 0.3
+    ================
+
+
+CHPP is a powerful preprocessor originally designed for, but not
+limited to, HTML.
+
+We have used CHPP successfully in the creation of simple and complex
+web-pages, QuakeWorld (tm) configuration files and data processing
+tasks usually done with tools like GAWK.
+
+
+Features
+--------
+
+CHPP combines features of CPP, M4, Perl and Scheme. Still, we have
+tried and succeeded in keeping the language pretty simple.
+
+Among the features of CHPP are:
+
+    - CHPP is non-intrusive, i.e. you can take already existing text and
+      just pipe it through CHPP and it is likely it won't change.
+
+    - User-defined macros, which can be recursive
+
+    - Complex data structures (lists and hashes)
+
+    - Powerful looping constructs
+
+    - Regular expression matching
+
+    - Support for CGI scripting
+
+    - An interface to SQL-Servers (at the moment mSQL and MySQL).
+
+
+Documentation
+-------------
+
+A reference manual for CHPP is included in the distribution.
+
+
+Platforms
+---------
+
+Our main development platform for CHPP is linux-i386. CHPP has been
+tested on the following platforms:
+
+    linux-i386
+    linux-alpha
+    linux-powerpc
+    openstep-i386
+    digitalunix-alpha
+
+CHPP is written very portably and should compile and run out-of-the-box
+on pretty much any UN*X platform, provided that the tools required for
+building it (GNU make, flex, bison) are available.
+
+
+Licence and Availability
+------------------------
+
+CHPP is distributed under the terms of the GPL.
+
+The source of CHPP is available at the CHPP homepage at
+
+  http://chakotay.ml.org/
+
+or, if your browser does not grok HTTP/1.1
+
+  http://chakotay.ml.org/chpp/
+
+
+----------
+Heinz Deinhart & Mark Probst
+chpp@unix.cslab.tuwien.ac.at

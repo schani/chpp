@@ -1,0 +1,2323 @@
+\input texinfo     @c -*- texinfo -*-
+
+@include version.texi
+@c %**start of header
+@setfilename chpp.info
+@settitle CHPP Tutorial and Reference
+@c %**end of header
+
+@defindex ma
+
+@iftex
+@afourpaper
+@end iftex
+
+@ifinfo
+This file documents the @code{chpp} Preprocessor.
+
+Copyright (C) 1997, 1998, Mark Probst
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies. 
+@end ifinfo
+
+@titlepage
+@title chpp
+@subtitle Tutorial (in spe) and Reference
+@subtitle last updated @value{UPDATED} for version @value{VERSION}
+@author Mark Probst (schani@@unix.cslab.tuwien.ac.at)
+@page
+@vskip 0pt plus 1filll
+Copyright @copyright{} 1997, 1998 Mark Probst
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+@end titlepage
+
+@node  Top, Introduction, (dir), (dir)
+@comment  node-name,  next,  previous,  up@node Top, , (dir), (dir)
+
+@menu
+* Introduction::                Overview
+* Guided Tour::                 A Guided Tour through @code{chpp}
+* Examples::                    A few examples illustrating @code{chpp} features
+* Invoking chpp::               @code{chpp} command line syntax
+* Language Reference::          Detailed description of @code{chpp} syntax and semantics
+* Extending chpp::              
+* Special Forms::               
+* Macro Reference::             Detailed description of all @code{chpp} macros
+* Internal Variables::          Detailed description of all internal variables
+* Package Reference::           Description of all standard @code{chpp} packages
+* Macro Index::                 
+@end menu
+
+@c ************* Introduction
+
+@node  Introduction, Guided Tour, Top, Top
+@comment  node-name,  next,  previous,  up@node Introduction, Macro Reference, Top, Top
+@chapter Introduction
+
+@code{chpp} is a preprocessor. Therefore, its main purpose is to modify
+input text by including other input files and by macro expansion.
+Programs performing these tasks already exist, among them the popular C
+Preprocessor (@code{cpp}) and @code{m4}, which have proven to be
+convenient and valuable tools suitable for a variety of tasks. The
+motivation for @code{chpp} is thus questionable.
+
+What distinguishes @code{chpp} from at least the two programs mentioned
+above are mainly two features:
+
+@itemize @bullet
+@item
+@code{chpp} is non-intrusive. This means that you can take your
+favourite text and it is very unlikely that it will be changed when
+piped through @code{chpp}. Due to this feature it is pretty easy to
+start using @code{chpp} since you can just start writing your text and
+need not concern yourself with @code{chpp} sitting in the background
+changing it for no obvious reason.
+
+@item
+@code{chpp} is not just a package for performing simple macro expansion,
+but can indeed be considered a full-fledged programming language. Most
+importantly, it provides support for complex data structures, namely
+lists and hashes (associative arrays), which can be nested arbitrarily.
+@end itemize
+
+@code{chpp} consists of two parts which could, in some sense, be
+regarded as two separate passes over the input file. This is not
+entirely true, though, since the two parts are intertwined and cannot be
+separated. The first part, which performs command processing, is similar
+to what @code{cpp} does.  It allows the inclusion of other files, simple
+macro definitions and conditional inclusion and exclusion of parts of
+the input. The second part does macro processing and is the actual
+workhorse and core of @code{chpp}.
+
+Although macro processing on its own could do anything that can be
+accomplished with commands, the latter are not only easier to use but
+also easier to read and therefore improve clarity.
+
+
+@menu
+* The Name::                    What @code{chpp} stands for
+* Uses::                        Uses for @code{chpp}
+* Non Uses::                    What @code{chpp} should not be used for
+* Planned Features::            Planned but not yet implemented features
+* Obtaining chpp::              How to get @code{chpp}
+* History::                     The History of @code{chpp}
+* Bugs::                        Known bugs in @code{chpp}
+* Reporting Bugs::              How to report bugs to the authors
+* Licence::                     Licencing terms and warranty of @code{chpp}
+* The Authors::                 About the authors of @code{chpp}
+* Acknowledgements::            We would like to thank...
+@end menu
+
+@node  The Name, Uses, Introduction, Introduction
+@comment  node-name,  next,  previous,  up
+@section What @code{chpp} stands for
+
+@code{chpp} does @strong{not} stand for Chakotay Preprocessor.
+
+@node Uses, Non Uses, The Name, Introduction
+@comment  node-name,  next,  previous,  up
+@section Uses for @code{chpp}
+
+@code{chpp} can be used very well as
+
+@itemize @bullet
+@item
+a preprocessor for HTML (@pxref{Web Site}). This was, by the way, our
+original motivation for @code{chpp} (@pxref{History}).
+
+@item
+a CGI scripting language. @code{chpp} will become even more attractive
+for this kind of application when the planned database interface
+(@pxref{Planned Features}) is available.
+
+@item
+a generator of Quake(tm) configuration files.
+
+@item
+a producer of funny sentences (@pxref{Tautogen}).
+
+@item
+and a lot more@dots{}
+@end itemize
+
+
+@node Non Uses, Planned Features, Uses, Introduction
+@comment  node-name,  next,  previous,  up
+@section What @code{chpp} should not be used for
+
+@code{chpp} should, due to its nature, not be used for
+
+@itemize @bullet
+@item
+interactive applications.
+
+@item
+applications where text output is only a secondary function.
+
+@item
+applications which require speed. Unfortunately, @code{chpp} is not a
+fast program. However, this may change in the future
+(@pxref{Planned Features}).
+@end itemize
+
+@node Planned Features, Obtaining chpp, Non Uses, Introduction
+@comment  node-name,  next,  previous,  up
+@section Planned but not yet Implemented Features
+
+We will, in some of the next releases, improve the performance of
+@code{chpp} by yet another factor of two for typical applications.
+
+It will be possible to write new built-in macros in C, which @code{chpp}
+will load dynamically at run-time (@pxref{Extending chpp}).
+
+We would also like to add a few extension packages to @code{chpp}, which
+will make it more suitable for and easier to apply to various
+applications, most notably CGI scripting, HTML generation and database
+interfacing.
+
+@node Obtaining chpp, History, Planned Features, Introduction
+@comment  node-name,  next,  previous,  up
+@section Obtaining @code{chpp}
+
+@code{chpp} is available for free download on the world-wide-web. Point
+your web-browser at @url{http://chakotay.ml.org/} (or
+@url{http://chakotay.ml.org/chpp/} if you are using an ancient
+browser). From there you can download the latest version of @code{chpp}.
+
+@node History, Bugs, Obtaining chpp, Introduction
+@comment  node-name,  next,  previous,  up
+@section The History of @code{chpp}
+
+Not much here, yet.
+
+@node Bugs, Reporting Bugs, History, Introduction
+@comment  node-name,  next,  previous,  up
+@section Problems and Known Bugs
+
+@code{chpp} is far from error-free in its current version. It works
+quite reliably now when not stressed too far, though. The biggest
+problem is currently that @code{chpp}'s error handling is
+insufficient. @code{chpp} does not report some errors, while others
+cause it to crash or to hang up in an endless loop. We do, of course,
+plan to change this in the future.
+
+@node Reporting Bugs, Licence, Bugs, Introduction
+@comment  node-name,  next,  previous,  up
+@section Reporting Bugs
+
+Before you tell us about a bug, please check that you are using the
+latest version of @code{chpp} (@pxref{Obtaining chpp}). If this is not
+the case, please upgrade and try again.
+
+Please do not report bugs that concern @code{chpp}'s error handling. We
+know that it is unreliable and buggy and we will change that. You
+should, however, report any incident where @code{chpp} does anything
+wrong with a script which you believe is correct. In such a case, please
+write us an email containing the script that causes @code{chpp} to fail
+and any additional files that your script needs. Better yet, try to
+narrow the bug down to the smallest script possible. Do also include
+information on the configuration you ran @code{chpp} on, especially if
+the bug only happens to show up with this configuration. The email
+address you should send your bug-report to is
+@email{chpp@@unix.cslab.tuwien.ac.at}.
+
+@node Licence, The Authors, Reporting Bugs, Introduction
+@comment  node-name,  next,  previous,  up
+@section Licence and Warranty
+
+@code{chpp} is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+@code{chpp} is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with @code{chpp}; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+@node The Authors, Acknowledgements, Licence, Introduction
+@comment  node-name,  next,  previous,  up
+@section The Authors
+
+@code{chpp} was designed and implemented by Heinz Deinhart
+(@email{heinz@@unix.cslab.tuwien.ac.at}) and Mark Probst
+(@email{schani@@unix.cslab.tuwien.ac.at}). Check out the @code{chpp}
+homepage (@pxref{Obtaining chpp}) for more information.
+
+@node Acknowledgements,  , The Authors, Introduction
+@comment  node-name,  next,  previous,  up
+@section Acknowledgements
+
+Our thanks go to Tatjana Svizensky for proofreading this manual and to
+Herbert P@"otzl for donating the hash-table functions, which we were too
+lazy, erm, too busy to implement, and for not reading the examples
+chapter of this document.
+
+@c ************* Guided Tour
+
+@node  Guided Tour, Examples, Introduction, Top
+@comment  node-name,  next,  previous,  up@node Macro Reference, Concept Index, Introduction, Top
+@chapter A Guided Tour through @code{chpp}
+
+
+@c ************* Examples
+
+@node  Examples, Invoking chpp, Guided Tour, Top
+@comment  node-name,  next,  previous,  up@node Macro Reference, Concept Index, Introduction, Top
+@chapter Examples
+
+This chapter gives a few more practical examples of the use of
+@code{chpp}, illustrating a few of its many possible applications.
+
+@menu
+* Song Lyrics::                 
+* Web Site::                    
+* Tautogen::                    
+@end menu
+
+@node Song Lyrics, Web Site, Examples, Examples
+@comment  node-name,  next,  previous,  up
+@section Song Lyrics
+
+Let us assume you have gathered a collection of song lyrics by various
+performers as text files. You wish to generate not only HTML files for
+all the songs but also an index page for each performer which contains,
+sorted by album, hyperlinks to all the song HTML files.
+
+The song files you have collected all look like this:
+
+@example
+Gloria
+
+I try to sing this song.
+I try to stand up.
+But I can't find my feet.
+I try, I try to speak up.
+But only in you I'm complete.
+...
+@end example
+
+Furthermore, assume you have created a directory for each performer
+containing a directory for each album where the song files reside. The
+names of the directories not necessarily match the corresponding
+performer's name or the album's, as these often contain spaces, which
+are uncommon in file names. The same applies to the song file
+names. Thus, our first task is to somehow associate the names of the
+performers, albums and songs with the song files. We have a bonus for
+the song names since these are included in the song files themselves (in
+the first line). For simplicity we will include this information in the
+files themselves, namely as HTML comments containing assignments in
+@code{chpp} syntax. To modify the files, we will use the following
+@code{chpp} script:
+
+@example
+#include files.chh
+%<file=%fopen(%SONGFILENAME)>\
+%<songname=%sremovews(%fgets(%file))>\
+<!-- %%<song=%songname>%%<album=%ALBUM>%%<perf=%PERF> -->
+%frest(%file)\
+%fclose(%file)\
+@end example
+
+The variables @code{SONGFILENAME}, @code{ALBUM} and @code{PERF} must be
+set via the command-line. We can now convert all files in one album with
+the following shell-command (assuming we are in the correct directory
+and that all song files have the extension @file{.txt}):
+
+@example
+$ pwd
+/home/schani/lyrics/u2/october
+$ for fn in *.txt ; do
+>   chpp -DSONGFILENAME=$fn -DALBUM='October' \
+>        -DPERF='U2' ../../convert.ch >../$fn
+> done
+@end example
+
+Note that we have generated the modified files in the performer's
+directory. After we have done this for all albums, we can delete the
+album directories. The song files now look like this:
+
+@example
+<!-- %<song=Gloria>%<album=October>%<perf=U2> -->
+
+I try to sing this song.
+I try to stand up.
+But I can't find my feet.
+I try, I try to speak up.
+But only in you I'm complete.
+...
+@end example
+
+We will now generate HTML files for the songs. For simplicity, we will
+generate a simple HTML file which contains the song text in a
+@code{<pre>} block:
+
+@example
+#include files.chh
+%<file=%fopen(%SONGFILENAME)>%void(%@{%fgets(%file)@})\
+\
+<html> <head>
+<title>%song - %album - %perf</title>
+</head> <body>
+<h1>%song</h1>
+<pre>
+%frest(%file)\
+</pre>
+</body>
+</html>
+%fclose(file)\
+@end example
+
+Since the information about the song title, album and performer is coded
+as @code{chpp} code in the first line, we can obtain it by just
+evaluating it and ignoring its result. With this script we can now
+generate HTML files for all songs of one performer with the following
+@code{bash} command:
+
+@example
+$ pwd
+/home/schani/lyrics/u2
+$ for fn in *.txt ; do
+>   chpp -DSONGFILENAME=$fn ../template.ch >$@{fn%.txt@}.html
+> done
+@end example
+
+Finally, we need to generate an index file for each performer containing
+hyperlinks to all songs. This file is generated by the following
+@code{chpp} script:
+
+@example
+#include files.chh
+%<albums=%hash()>\
+%<file=%fpipe(/bin/sh,-c,ls *.txt)>\
+%foreach(songfilename,%ssplit(%'[ \n]+',%sremovews(%frest(file))),
+    %<songfile=%fopen(%songfilename)>\
+    %void(%@{%fgets(%songfile)@})\
+    %fclose(%songfile)\
+    %<regs=%list()>%void(%smatch(%'(.*)\\.',%songfilename,%&regs))\
+    %<htmlfile=%regs[1].html>\
+    %if(%hcontains(%albums,%album),
+        %<albums@{%album@}@{%song@}=%htmlfile>
+    ,
+        %<albums@{%album@}=%hash(%song,%htmlfile)>
+    )\
+)\
+%fclose(file)\
+\
+<html>
+<head>
+<title>%perf</title>
+</head>
+<body>
+<h1>%perf</h1>
+%foreach(album,%lsort(%hkeys(%albums)),\
+    <h2>%album</h2>%'\n'<blockquote>%'\n'\
+    %foreach(song,%lsort(%hkeys(%albums@{%album@})),\
+        <p><a href="%albums@{%album@}@{%song@}">%song</a>%'\n'\
+    )\
+    </blockquote>%'\n'\
+)\
+</body>
+</html>
+@end example
+
+The first part of the file gets all information about the songs in the
+current directory. It generates an entry in the hash @code{%albums} for
+each album, which in turn is a hash containing all names of the HTML
+files indexed by the song names. The second part just iterates through
+this table, producing an @code{<h2>} for each album and an anchor for
+each song within.
+
+@node Web Site, Tautogen, Song Lyrics, Examples
+@comment  node-name,  next,  previous,  up
+@section Web Site
+
+Suppose you were to create a web-site with three main pages: News, Tips
+and Tricks. Each of these pages should have a layout similar to this:
+
+@example
+  N   N EEEE W     W  SSS         News
+  NN  N E    W     W S
+  N N N EEE   W W W   SSS         _Tips_
+  N  NN E     W W W      S
+  N   N EEEE   W W    SSS         _Tricks_
+
+--------------------------------------------
+
+This is good news!
+
+--------------------------------------------
+
+         News | _Tips_ | _Tricks_
+@end example
+
+The header consists of a big graphic banner denoting the title of this
+particular page. On the right side of the banner are three little
+graphics, each standing for one of the pages. Two of them lead to the
+other two pages, whereas the one for the actual page is not functional
+and grayed out.
+
+The footer consists of a textual link bar with two active links and one
+'inactive link' (normal text) for the actual page.
+
+Although these three pages are easy to implement with conventional
+methods, this becomes increasingly difficult when there are more pages
+or even hierarchical structures of pages. Therefore, we will use this as
+an example of how to easily create HTML pages with @code{chpp}, leaving
+more sophisticated designs to the gentle reader.
+
+Ideally, we would like, say, the news source file (which we name
+@file{news.csml}), as rendered above, to look like this:
+
+@example
+#include header.chml
+
+This is good news!
+
+#include footer.chml
+@end example
+
+This way, we need not be concerned with the design of the header and
+footer when we work on the pages and we can easily modify the header and
+footer in one central place, although they apply to our whole web-site.
+
+Now we need a place where we can enter all the names of the main pages
+of our web-site and associate them with their corresponding files. We
+call this file @file{menu.chml}:
+
+@example
+%addmenuentry(News,news.csml)
+%addmenuentry(Tips,tips.csml)
+%addmenuentry(Tricks,tricks.csml)
+@end example
+
+We simply assume that the generated HTML files will have the same
+base-name as the sources but the extension @file{.html}. We furthermore
+assume that for each main-page we have three additional graphics
+available, namely one containing the large banner and two containing the
+small icons, where one of the two is grayed out. These images have the
+format JPEG, hence the extension @file{.jpg}. Their base-names consist
+of the base-names of their main-pages followed by one of the suffixes
+@file{_l}, @file{_s} and @file{_s_g}, where @file{l} denotes large,
+@file{s} small and @file{g} gray.
+
+The include-file @file{header.chml} fulfills two purposes: Firstly, it
+must process the information of the file @file{menu.chml} and secondly,
+it must generate the header of the HTML file. Since the latter depends
+on the former, we will first focus our attention on processing the
+information of @file{menu.chml}. Each main page will be represented by a
+hash containing the keys @code{filename}, @code{name},
+@code{htmlfilename}, @code{imglarge}, @code{imgsmall} and
+@code{imgsmallgray}, the meanings of which should be obvious. We will
+collect all these hashes in a list named @code{menu}, which will contain
+these hashes in the order in which they were entered in
+@file{menu.chml}. Since @file{menu.chml} is already in @code{chpp}
+syntax, all we need to do is to define a macro @code{addmenuentry} which
+creates such a hash and appends it to the list @code{menu}:
+
+@example
+%<menu=%list()>\
+%define(addmenuentry,name,filename,
+    %<regs=%list()>%void(%smatch(%'(.*)\\.csml$',%filename,%&regs))\
+    %<basename=%regs[1]>\
+    %lappend(%&menu,
+        %hash(filename,%filename,
+              name,%name,
+              htmlfilename,%basename.html,
+              imglarge,%<basename>_l.jpg,
+              imgsmall,%<basename>_s.jpg,
+              imgsmallgray,%<basename>_s_g.jpg))
+)\
+@end example
+
+Now we can include @file{menu.chml} for its side-effects:
+
+@example
+%void(
+#include menu.chml
+)\
+@end example
+
+Finally, for convenience, we define a variable @code{thisentry} which
+contains the hash that applies to the currently processed page:
+
+@example
+%<thisentry=%foreach(menuentry,%menu,
+    %if(%equal(%menuentry@{filename@},%mainfilename),%menuentry))>\
+@end example
+
+Now we are set and can generate the header of the HTML file:
+
+@example
+<html>
+<head>
+<title>%thisentry@{name@}</title>
+</head>
+<body>
+<table>
+<td>
+<img src="%thisentry@{imglarge@}" alt="%thisentry@{name@}">
+<td>
+#include choicestrip.chml
+</table>
+<hr>
+@end example
+
+The file @file{choicestrip.chml} generates a vertical table consisting
+of the small images for the main-pages with links. It is quite simple:
+
+@example
+<table border=0 cellspacing=0 cellpadding=0>
+%foreach(menuentry,%menu,
+    <tr><td>\
+    %if(%equal(%menuentry@{filename@},%thisentry@{filename@}),
+        <img src="%menuentry@{imgsmallgray@}" alt="%menuentry@{name@}">
+    ,
+        <a href="%menuentry@{htmlfilename@}">\
+        <img border=0 src="%menuentry@{imgsmall@}" alt="%menuentry@{name@}">\
+        </a>
+    )
+)
+</table>
+@end example
+
+The footer is even more simple: It contains a horizontal rule and a
+choice-bar:
+
+@example
+<hr>
+#include choicebar.chml
+</body>
+</html>
+@end example
+
+@file{choicebar.chml} is similar to @file{choicestrip.chml}:
+
+@example
+#include list.chh
+<h5><center>
+%<barentries=%list()>\
+%foreach(menuentry,%menu,
+    %lappend(%&barentries,
+        %if(%equal(%menuentry@{filename@},%thisentry@{filename@}),
+            %menuentry@{name@}
+        ,
+            <a href="%menuentry@{htmlfilename@}">%menuentry@{name@}</a>
+        )
+    )
+)\
+%listJoin(%' | ',%barentries)
+</center></h5>
+@end example
+
+All we need now is a comfortable way to create all HTML files from the
+sources. That is what makefiles are for. They have the additional
+advantage that files are regenerated only if needed, i.e. when one of
+the files that the file to be created depends on has changed. A makefile
+for @code{gnumake} suitable for our simple purposes would look like
+this:
+
+@example
+CHFILES=header.chml footer.chml choicebar.chml choicestrip.chml
+
+all : news.html tips.html tricks.html
+
+%.html : %.csml
+	../../macros -o $@ $<
+
+news.html tricks.html tips.html : $(CHFILES)
+
+clean :
+	rm -f news.html tips.html tricks.html
+@end example
+
+@node Tautogen,  , Web Site, Examples
+@comment  node-name,  next,  previous,  up
+@section Tautogen
+
+Suppose we have a simple context-sensitive grammar, which we want to use
+to generate sentences, which is quite the opposite of parsing sentences
+of that grammar. To illustrate this more clearly, let us assume we have
+a file like this:
+
+@example
+--sentence
+$subject $verb $object.
+$subject, while $gerund $object, $verb $object.
+$subject watches $object $gerund $object.
+
+--subject
+$person
+The $adjective $person
+
+--object
+$person
+
+--person
+Butthead
+Mrs Krabappel
+Charlie Brown
+Mrs Robinson
+
+--adjective
+observant
+naive
+embarassed
+
+--verb
+kisses
+kicks
+envies
+
+--gerund
+holding
+zapping
+hugging
+smashing
+@end example
+
+The file is separated into several categories containing so-called
+productions for so-called non-terminals. The first non-terminal is
+called the start non-terminal, which is, in our case, @code{sentence}.
+We start by randomly picking one of the right-hand-sides of the
+productions of the start non-terminal (i.e. one of the lines following
+the introduction of @code{sentence}). Now we repeat the following cycle
+until our string contains no more placeholders (words prefixed by the
+dollar sign (@code{$})): Replace the first placeholder by the
+right-hand-side of a randomly picked production for that placeholder.
+
+The process could evolve like this:
+
+@example
+$sentence
+$subject, while $gerund $object, $verb $object.
+The $adjective $person, while $gerund $object, $verb $object.
+The naive $person, while $gerund $object, $verb $object.
+The naive Charlie Brown, while $gerund $object, $verb $object.
+The naive Charlie Brown, while hugging $object, $verb $object.
+The naive Charlie Brown, while hugging $person, $verb $object.
+The naive Charlie Brown, while hugging Mrs Robinson, $verb $object.
+The naive Charlie Brown, while hugging Mrs Robinson, kicks $object.
+The naive Charlie Brown, while hugging Mrs Robinson, kicks $person.
+The naive Charlie Brown, while hugging Mrs Robinson, kicks Butthead.
+@end example
+
+It is easy to see that this simple algorithm even allows for recursive
+grammars.
+
+This example is not a typical application for a pre-processor. It should
+rather demonstrate that @code{chpp} can be used very successfully for
+tackling problems not within its direct field of application, i.e. that
+it is suitable for more general problems.
+
+You may have noticed that our grammar file is not in @code{chpp} syntax,
+so we have the choice of either converting it or parsing it at
+run-time. Since the former has the disadvantage of being more
+complicated in usage (the grammar would have to be converted each time
+it is changed) and is not easier to implement than the latter, the
+choice is obvious.
+
+The first step of our application is reading in the grammar file, which
+we call @file{grammar}. Its content will be stored in a hash
+@code{data}, where the keys are the names of the non-terminals and the
+values are the lists of the right-hand-sides of the corresponding
+productions.
+
+@example
+%<file=%fopen(grammar)>\
+%<current=runaway>\
+%<data=%hash(runaway,%list())>\
+%until(%feof(%file),
+    %<line=%sremovews(%fgets(%file))>\
+    %<regs=%list()>\
+    %if(%[%smatch(%'^--([a-zA-Z0-9_]+)',%line,%&regs)!=-1],
+        %<current=%regs[1]>\
+        %<data@{%current@}=%list()>\
+        %if(%not(%bound(start)),%<start=%current>)
+    ,
+        %if(%line,%<data@{%current@}[%llength(%data@{%current@})]=%line>)
+    )
+)\
+%fclose(%file)\
+@end example
+
+We then proceed to define some variables and macros. First, if the
+variable @code{n}, which will denote the number of sentences generated,
+is not defined (it could be defined on the command-line), it is set to
+@code{10}:
+
+@example
+%if(%not(%bound(n)),%<n=10>)\
+@end example
+
+The macro @code{some}, when called with the name of a non-terminal,
+returns the right-hand-side of a random production for that
+non-terminal:
+
+@example
+%define(some,nt,%data@{%nt@}[%random(%llength(%data@{%nt@}))])\
+@end example
+
+The generation of the sentences is now a fairly trivial task:
+
+@example
+#include strings.chh
+%for(i,1,%n,
+    %<current=%some(%start)>\
+    %<regs=%list()>\
+    %while(%<mp=%smatch(%'\\$([a-zA-Z0-9_]+)',%current,%&regs)>%[mp!=-1],
+        %<current=%replacesubstring(%current,%mp,%slength(%regs[0]),
+                                    %some(%regs[1]))>
+    )\
+    %current%'\n\n'
+)\
+@end example
+
+
+@c ************* Invoking chpp
+
+@node  Invoking chpp, Language Reference, Examples, Top
+@comment  node-name,  next,  previous,  up@chapter Syntax Reference
+@chapter Invoking @code{chpp}
+
+To get a quick overview of @code{chpp} command line syntax, just type
+
+@example
+chpp --help
+@end example
+
+The general @code{chpp} syntax is
+
+@example
+chpp [@var{option} ...] [@var{filename} ...]
+@end example
+
+@code{chpp} reads and processes all specified files in sequential order,
+as if they were one file. If no file is specified, @code{chpp} reads
+from standard input. Output is written to standard output if not
+otherwise specified.
+
+The following is a summary and description of all available @code{chpp}
+options:
+
+@table @code
+@item --version
+Prints out the version number of the invoked @code{chpp}.
+
+@item --help
+Prints out a summary of @code{chpp} command line syntax.
+
+@item --output @var{filename}
+@itemx -o @var{filename}
+Specifies that output should be written to file @var{filename}.
+
+@item --include-dir @var{dir}
+@itemx -I @var{dir}
+Adds @var{dir} to the list of standard include directories.
+
+@item -D @var{name}=@var{value}
+Defines the @code{chpp} variable @var{name} with the value @var{value}.
+
+@item --generate-dependencies
+@itemx -M
+Generates a dependency list suitable for @code{make} like @code{cpp}.
+@end table
+
+
+@c ************* Language Reference
+
+@node  Language Reference, Extending chpp, Invoking chpp, Top
+@comment  node-name,  next,  previous,  up@chapter Syntax Reference
+@chapter Language Reference
+
+Files processed with @code{chpp} are passed through two stages, which
+are, however, not sequential in nature but can rather be viewed as
+coroutines. The first stage processes commands
+(@pxref{Commands}). Command processing is a sequential process, i.e. no
+loops or recursions occur. The second stage is macro processing
+(@pxref{The Meta-Char}) and allows for loops as well as for recursion.
+
+@menu
+* Commands::                    
+* The Meta-Char::               
+* Data Types::                  
+* Variables::                   
+* Arithmetic Expansion::        
+* Quotation::                   
+* Explicit Evaluation::         
+@end menu
+
+@node Commands, The Meta-Char, Language Reference, Language Reference
+@comment  node-name,  next,  previous,  up
+@section Commands
+
+Command processing is line-oriented. It affects only lines which have,
+as their first non-whitespace character, the command-char
+(@code{#}). All other lines are passed through literally. Another
+function of command processing is the concatenation of lines: If the
+last character of a line is the backslash (@code{\}), then the
+backslash, the following newline and all leading whitespace of the next
+line are ignored.
+
+A line invoking a command consists of optional whitespace at the
+beginning, the command-char @code{#}, optional whitespace, the command
+name, whitespace and the command arguments (if any). Thus, the following
+lines are all commands (given that the command names exist):
+
+@example
+#abc
+    #def arg
+ #  ghi too many arguments
+@end example
+
+while the following lines are not:
+
+@example
+this is a line without commands.
+although this line contains a # it is not a command.
+@end example
+
+@menu
+* Comments::                    
+* Command Reference::           
+@end menu
+
+@node Comments, Command Reference, Commands, Commands
+@comment  node-name,  next,  previous,  up
+@subsection Comments
+
+The command @code{!} (exclamation mark) is a special case among
+commands, as it does nothing, independent of its parameters, i.e. can be
+used to write comments, or, if used in the first line of a file, to
+specify the command line to be used if the containing file is
+executed. Thus, this is a "Hello world" program in @code{chpp}:
+
+@example
+#! /usr/local/bin/chpp
+Hello world!
+@end example
+
+After setting the executable bit for this file, it can be called like
+any command and will produce the output
+
+@example
+Hello world!
+@end example
+
+Note that the exclamation mark must be followed by whitespace.
+
+@node Command Reference,  , Comments, Commands
+@comment  node-name,  next,  previous,  up
+@subsection Command Reference
+
+@deffn Command include @var{filename}
+Includes the file @var{filename}. If @var{filename} is relative, it is
+first searched for in the directory of the including file, then in the
+directories contained in the include search path (@pxref{Invoking chpp}).
+If the file is not found, an error message is produced.
+@end deffn
+
+@deffn Command define @var{name} @var{value}
+Defines the global variable @var{name} to contain whatever @var{value}
+evaluates to.
+@end deffn
+
+@deffn Command if @var{condition}
+Evaluates @var{condition}. If its boolean value is FALSE, it skips
+everything up to the corresponding @code{endif}.
+@end deffn
+
+@deffn Command ifdefined @var{symbol}
+@deffnx Command ifdef @var{symbol}
+If a variable with the name @var{symbol} does not exist, skips
+everything up to the corresponding @code{endif}.
+@end deffn
+
+@deffn Command ifnotdefined @var{symbol}
+@deffnx Command ifndef @var{symbol}
+If a variable with the name @var{symbol} exists, skips everything
+up to the corresponding @code{endif}.
+@end deffn
+
+@deffn Command error @var{message}
+Produces an error message with the text @var{message}.
+@end deffn
+
+@deffn Command discard
+@deffnx Command disc
+Discards everything up to the corresponding @code{endd}.
+@end deffn
+
+@node The Meta-Char, Data Types, Commands, Language Reference
+@comment  node-name,  next,  previous,  up
+@section The Meta-Char
+
+The second stage processes everything that is passed through by the
+first stage. It is called macro processing because its main use is the
+expansion of macros. There is just one special character for this stage,
+namely the meta-char (@code{%}). Only character sequences beginning with
+the meta-char are modified by the macro processing stage. All other
+characters are simply passed through. Since @code{chpp} was designed to
+be non-intrusive, even uses of the meta-char which do not correspond to
+the uses described in this chapter are copied verbatim. For example:
+
+@example
+Temperature today is 10% above average.
+@result{} Temperature today is 10% above average.
+@end example
+
+In cases where it is absolutely necessary that the meta-char not be
+interpreted as special, it can be quoted with itself (i.e. @code{%%}),
+yielding one meta-char. Example:
+
+@example
+%<heinz=deinz>\
+%%heinz evals to %heinz.
+@result{} %heinz evals to deinz.
+@end example
+
+@node Data Types, Variables, The Meta-Char, Language Reference
+@comment  node-name,  next,  previous,  up
+@section Data Types
+
+The only primitive type in @code{chpp} is the string. Values of that
+type are referred to as scalars (@pxref{Scalars}). Values of any type
+can be combined arbitrarily to lists (@pxref{Lists}) and hashes
+(@pxref{Hashes}). Closures (@pxref{Closures}) also form a data type as
+they can be stored and used, even though they cannot be directly
+manipulated.
+
+@menu
+* Scalars::                     
+* Lists::                       
+* Hashes::                      
+* Closures::                    
+@end menu
+
+@node Scalars, Lists, Data Types, Data Types
+@comment  node-name,  next,  previous,  up
+@subsection Scalars
+
+Scalars are strings of arbitrary length (including the length 0).
+
+@node Lists, Hashes, Scalars, Data Types
+@comment  node-name,  next,  previous,  up
+@subsection Lists
+
+Lists are ordered collections of arbitrary values indexed by consecutive
+numbers starting at 0. It follows that lists cannot have gaps.
+
+@node Hashes, Closures, Lists, Data Types
+@comment  node-name,  next,  previous,  up
+@subsection Hashes
+
+Hashes are ordered collections of arbitrary values indexed by arbitrary
+scalars, i.e. they establish a so-called key/value mapping.
+
+@node Closures,  , Hashes, Data Types
+@comment  node-name,  next,  previous,  up
+@subsection Closures
+
+A closure is a piece of code associated with an environment in which it
+is to be executed, as created by @code{lambda} (or @code{define}, for
+that matter). Thus, the names macro and closure actually stand for the
+same thing, although one usually tends to call anonymous macros
+(i.e. values returned by @code{lambda}) closures, whereas named closure
+(i.e. @code{define}d macros) are usually called macros.
+
+@node Variables, Arithmetic Expansion, Data Types, Language Reference
+@comment  node-name,  next,  previous,  up
+@section Variables
+
+In order to be able to retain values for subsequent use it is necessary
+to store them in variables.
+
+@menu
+* Accessing Variables::         
+* Subscription::                
+* Copies and References::       
+* Macro Invocation::            
+* Subscribing Non-Variables::   
+* Assignment::                  
+* Scoping::                     
+@end menu
+
+@node Accessing Variables, Subscription, Variables, Variables
+@comment  node-name,  next,  previous,  up
+@subsection Accessing Variables
+
+There are two different syntactic forms of variable access, called the
+short and the long form.
+
+The short form consists of the meta-char followed by an optional
+ampersand (@code{&}) followed by the variable name, e.g. @code{%name} or
+@code{%&name}. The variable name is taken as-is, i.e. is not
+evaluated. The variable name ends with the first char that is not a
+letter, a digit or the underscore (@code{_}). If a variable with the
+given name does not exist, the whole string is not interpreted as a
+variable access and is copied verbatim, i.e. @code{%name} evaluates to
+@code{%name} if there is no variable with the name @code{name}.
+
+The long form consists of the meta-char followed by the optional
+ampersand and the variable name within angle brackets,
+e.g. @code{%<name>} or @code{%<&name>}. The variable name is evaluated
+before the variable is looked up, making it possible, for example, to
+use variable names containing right angle brackets: The term
+@code{%<%'>>>'>} accesses the variable @code{>>>}. If a variable with
+the name does not exists, an error message is issued. @strong{Note:}
+Although it is possible to use macros to construct variable names
+(e.g. @code{%<%name>}), this feature is deprecated. Please don't use it.
+
+@node Subscription, Copies and References, Accessing Variables, Variables
+@comment  node-name,  next,  previous,  up
+@subsection List and Hash Subscription
+
+If the variable is a list or a hash, it can be subscribed by appending
+the index in brackets or curly braces to the name, in both the short and
+the long form. In order to access nested data structures, any number of
+such indexes can be used in one access, for example
+@code{%name[3]@{foo@}}.
+
+@node Copies and References, Macro Invocation, Subscription, Variables
+@comment  node-name,  next,  previous,  up
+@subsection Copies and References
+
+Accessing a variable or a subscript without an ampersand produces a
+shallow copy of its value, i.e. accessing a list produces a copy of the
+list containing the elements of the original list. Example:
+
+@example
+%<lst1=%list(a,b,c)>%<lst2=%lst1>\
+%same(%&lst1,%&lst2) : %same(%&lst1[0],%&lst2[0])
+@result{} 0 : 1
+@end example
+
+Accessing a variable or subscript with an ampersand produces the same
+value, i.e. can be used to bind two names to the same value:
+
+@example
+%<str1=abc>%<str2=%&str1>\
+%same(%&str1,%&str2)
+@result{} 1
+@end example
+
+There are several important issues to this:
+
+@itemize @bullet
+@item
+Copying values is of course slower than just reusing the same
+value. @code{chpp}'s built-in macros, however, are wise enough not to
+copy their arguments when they don't need to. For example, calling
+@code{llength} never copies its argument.
+
+@item
+Circular data structures can be built easily. Care has to be taken when
+processing these structures, or one might end up in an endless loop.
+
+@item
+Memory management becomes more complicated when arbitrary
+cross-references in data-structures are allowed. This, however, need not
+concern the @code{chpp} user, as it employs garbage collection to free
+unused memory.
+@end itemize
+
+@node Macro Invocation, Subscribing Non-Variables, Copies and References, Variables
+@comment  node-name,  next,  previous,  up
+@subsection Macro Invocation
+
+A macro can be invoked by appending, in the short or long form of
+variable access, to the variable name or subscript a left parenthesis
+followed by the actual arguments separated by commas followed by a right
+parenthesis, e.g. @code{%list(a,b)}. The value that is yielded by the
+macro invocation cannot be subscribed further, i.e. @code{%list(a,b)[1]}
+is not allowed. However, see @ref{Subscribing Non-Variables} for a
+method to achieve this goal.
+
+Arguments of a macro-call are processed as follows: First, all leading
+and trailing whitespace from all arguments is removed. Then, the
+remaining strings are evaluated and the results are passed as arguments
+to the macro. In order to pass an argument with leading or trailing
+whitespace to a macro, it must be quoted. For example:
+
+@example
+%define(foobar,arg,"%arg")
+
+%foobar(  xyz  )
+@result{} "xyz"
+%foobar(    )
+@result{} ""
+%foobar(  %'  '  )
+@result{} "  "
+%foobar(%'  xyz  ')
+@result{} "  xyz  "
+@end example
+
+@node Subscribing Non-Variables, Assignment, Macro Invocation, Variables
+@comment  node-name,  next,  previous,  up
+@subsection Subscribing Non-Variables
+
+It is possible to subscribe values that are not variables, for example
+ones that are returned from macros, by using a modified long form of
+variable access. Instead of the variable name the expression yielding
+the value enclosed in parentheses is used. Upon evaluation, the
+expression is evaluated and all following subscriptions are applied to
+its value. Example:
+
+@example
+%<(%list(a,b))[1]>
+@result{} b
+@end example
+
+@node Assignment, Scoping, Subscribing Non-Variables, Variables
+@comment  node-name,  next,  previous,  up
+@subsection Assignment
+
+Assignment syntax is an enhancement of the long form of variable access.
+The last subscription (or the variable name, if no subscription is used)
+is followed by an equal sign (@code{=}) which is followed by an
+expression yielding the value to be assigned.
+
+When assignment is attempted to an element of a list which is out of
+bounds, the list is enlarged. Elements between the formerly last element
+and the newly added element default to the empty string. Indexes less
+then 0 are not allowed.
+
+Assigning to a key in a hash which is not part of it, adds the key/value
+pair to the hash.
+
+It is not possible to assign to a subscript of a value which is not
+subscribeable, i.e. it is not possible to do @code{%<bar[3]=foo>} if
+@code{bar} is not a list. To make @code{bar} an empty list, simply do
+@code{%<bar=%list()>}.
+
+Assignment usually changes a binding, be it in an environment or in a
+list or hash. This means that the sequence
+
+@example
+%<value=%list()>%<value=%hash()>
+@end example
+
+first binds the name @code{value} to a newly created list and then
+rebinds @code{value} to a newly created hash, leaving the old list
+intact. When using the ampersand-form, however, the old value is changed
+to the new value, which is a destructive process. Example:
+
+@example
+%<value=abc>%<ref=%&value>%<&value=123>%ref
+@result{} 123
+@end example
+
+When an assignment to a variable is executed for which there is no
+binding, a new binding in the global environment is created for this
+variable name.
+
+@node Scoping,  , Assignment, Variables
+@comment  node-name,  next,  previous,  up
+@subsection Scoping Rules
+
+@code{chpp} uses lexical scoping, using an environmental model, very
+similar to Scheme's. An environment contains bindings for names to
+values and a reference to its parent environment. The only environment
+without parent is the global environment. Execution always takes place
+in some environment. If a variable name has to be resolved, the current
+environment is checked for whether it contains a binding for that
+name. If it does not, its parent is checked, and so on until the global
+environment is reached. If it does not contain a corresponding binding,
+the variable name cannot be resolved and an error message is produced.
+
+New environments are created upon several occasions:
+
+@itemize @bullet
+@item
+The execution of a @code{locals} expression. The new environment is set
+up to contain bindings for all the variables mentioned as parameters to
+@code{locals}. The parent environment of the new environment is the
+environment active at the time of execution of the expression. The
+environment is active throughout the body of the @code{locals}
+expression.
+
+@item
+The execution of a closure (i.e. the value returned by an invocation of
+@code{lambda} or the value bound to a name as a result of an invocation
+of @code{define}). The environment is set up to contain bindings for all
+the parameters of the closure. The parent environment of this new
+environment is the environment active at the time of the generation of
+the closure, i.e. of the invocation of @code{lambda}. That makes it
+possible to do things like this:
+
+@example
+%define(newcounter,%locals(c,%<c=0>%lambda(%<c=%[c+1]>%c)))\
+%<counter=%newcounter()>\
+%counter() %counter() %counter()
+@result{} 1 2 3
+@end example
+
+The parent environment for the environments of the closure invocations
+is the environment created by @code{locals}, mapping @code{c} to
+@code{0}, which is itself created every time @code{newcounter} is
+executed. Thus, in a way, @code{counter} carries a state, namely its
+private variable @code{c}. Had we called @code{newcounter} a second
+time, a second counter would have been created, with its own @code{c},
+initally set to @code{0}, completely independent of the first.
+
+@item
+The execution of @code{for}, @code{foreach} and @code{foreachkey}
+expressions (@pxref{Special Forms}).
+@end itemize
+
+@node Arithmetic Expansion, Quotation, Variables, Language Reference
+@comment  node-name,  next,  previous,  up
+@section Arithmetic Expansion
+
+@code{chpp} permits the evaluation of arithmetic expressions by
+enclosing the expression in square brackets (@code{[]}) preceded by the
+meta-char. The expression is first evaluated according to @code{chpp}
+rules and the resulting value is treated as an arithmetic expression
+which, in turn, yields a number. Whitespace between operators and
+operands is ignored. The following table is a summary of all available
+operators together with their arity. They are sorted by precedence, the
+first line being of the highest precedence. All binary operators
+evaluate from left to right. All operators have the same meaning as the
+corresponding operators in the C language.
+
+@multitable @columnfractions .2 .8
+@item @strong{Operators}                       @tab @strong{Arity}
+@item @code{!}, @code{~}, @code{-}             @tab unary
+@item @code{*}, @code{/}, @code{%}             @tab binary
+@item @code{+}, @code{-}                       @tab binary
+@item @code{<}, @code{>}, @code{<=}, @code{>=} @tab binary
+@item @code{==}, @code{!=}                     @tab binary
+@item @code{&}                                 @tab binary
+@item @code{^}                                 @tab binary
+@item @code{|}                                 @tab binary
+@item @code{&&}                                @tab binary
+@item @code{||}                                @tab binary
+@end multitable
+
+Precedence of operators can be overridden by using parentheses
+(@code{()}).
+
+In order to make arithmetic expressions more readable, it is allowed to
+refer to the values of variables within an arithmetic expression by
+writing its name---without a preceding meta-char. Note that subscription
+and macro invocation using this syntax is not allowed.
+
+Some examples:
+
+@example
+%[1+2]
+@result{} 3
+%[1.5+3.3]
+@result{} 4.800000
+%[3==3]
+@result{} 1
+%[3!=3]
+@result{} 0
+%[(1+2)*(3+4)]
+@result{} 21
+%<x=4>%[%x+1]
+@result{} 5
+%<x=4>%[x+1]
+@result{} 5
+@end example
+
+@node Quotation, Explicit Evaluation, Arithmetic Expansion, Language Reference
+@comment  node-name,  next,  previous,  up
+@section Quotation
+
+To prevent some string from evaluation, it can be quoted by enclosing it
+in a pair of single-quotes (@code{''}), preceded by the meta-char. The
+only special characters after the first double-quote are the quote-char
+(the backslash, @code{\}) and the closing double-quote. The quote-char
+gives special meanings to some characters following it: an @code{n}
+becomes a newline character and a @code{t} is interpreted as a
+tabulator. All other character preceded by the quote-char stand for
+themselves. This includes the quote-char and the double-quote,
+i.e. @code{%'\\\''} evaluates to @code{\'}.
+
+@node Explicit Evaluation,  , Quotation, Language Reference
+@comment  node-name,  next,  previous,  up
+@section Explicit Evaluation
+
+In order to evaluate a string twice, for example to evaluate the
+contents of a variable, the string must be enclosed in curly braces
+(@code{@{@}}), preceded by the meta-char. Example:
+
+@example
+%<a=abc>%<b=%%a>%@{%b@}
+@result{} abc
+@end example
+
+
+@c ************* Special Forms
+
+@node Extending chpp, Special Forms, Language Reference, Top
+@comment  node-name,  next,  previous,  up
+@chapter Extending @code{chpp}
+
+
+@c ************* Special Forms
+
+@node Special Forms, Macro Reference, Extending chpp, Top
+@comment  node-name,  next,  previous,  up
+@chapter Special Forms
+
+Special forms, although syntactically equivalent to macros, differ from
+macros in that their arguments are not automatically evaluated before
+they are called. The evaluation of their arguments usually depend on
+some condition of some other argument.
+
+@defspec if (@var{condition},@var{consequent}[,@var{alternative}])
+Evaluates @var{condition} and, if its boolean value is TRUE, evaluates
+@var{consequent}. Otherwise, @var{alternative} is evaluated, if
+specified.
+@end defspec
+
+@defspec cond ([@var{condition},@var{consequent}[,...]])
+Evaluates the @var{condition}s one at a time and checks for their
+boolean value. If a @var{condition} with a value of TRUE is encountered,
+its corresponding @var{consequent} is evaluated and its result
+returned. If no @var{condition} evaluates to TRUE, nothing is
+done. Example:
+
+@example
+%<number=23>\
+%cond(%[number < 10],less than 10,
+      %[number < 50],less than 50 but greater than 9,
+      else,greater than 49)
+@result{} less than 50 but greater than 9
+@end example
+@end defspec
+
+@defspec case (@var{string},@var{list},@var{consequent}[,...[,@code{else},@var{alternative}]])
+Evaluates @var{string} to a scalar. Then, one at a time evaluates each
+@var{list} and checks whether @var{string} is contained in the resulting
+list. If it is, the corresponding @var{consequent} is evaluated and its
+result returned. If the @code{else} clause is specified and the string
+is contained in no list, its @var{alternative} is evaluated. Otherwise,
+nothing is done. Example:
+
+@example
+%<number=7>\
+%case(%number,
+      %list(0,2,4,6,8),even,
+      %list(1,3,5,7,9),odd)
+@result{} odd
+@end example
+@end defspec
+
+@defspec for (@var{counter},@var{start},@var{stop},[@var{increment},]@var{body})
+Evaluates @var{counter}, @var{start}, @var{stop} and, if specified,
+@var{increment}. The values of @var{start}, @var{stop} and
+@var{increment} must be integer numbers. If @var{increment} is not
+specified, an increment of @math{1} is used if @var{start} is greater
+than @var{stop}, otherwise @math{-1}. Then counts, beginning with
+@var{start}, while the value of the counter is before or equal to
+@var{stop} in the counting direction. For each step, evaluates
+@var{body} in a new environment where @var{counter} is bound to the
+value of the counter.
+
+A few examples:
+
+@example
+%for(i,1,10,%i%' ')
+@result{} 1 2 3 4 5 6 7 8 9 10
+%for(i,10,1,%i%' ')
+@result{} 10 9 8 7 6 5 4 3 2 1
+%for(i,1,10,2,%i%' ')
+@result{} 1 3 5 7 9
+%for(i,10,1,-2,%i%' ')
+@result{} 10 8 6 4 2
+%for(i,1,10,0,%i%' ')
+@error{} increment in for-loop cannot be zero
+%for(i,10,1,1,%i%' ')
+@result{}
+@end example
+@end defspec
+
+@defspec foreach (@var{counter},@var{list},@var{body})
+Evaluates @var{counter} and @var{list}, which must yield a list. Then
+iterates over this list evaluating @var{body} in a new environment in which
+@var{counter} is bound to the current list element.
+@end defspec
+
+@defspec foreachkey (@var{counter},@var{hash},@var{body})
+Evaluates @var{counter} and @var{hash}, which must yield a hash. Then
+iterates over all keys in the hash evaluating @var{body} in a new environment
+in which @var{counter} is bound to the current hash key.
+@end defspec
+
+@defspec while (@var{condition},@var{expr})
+Evaluates @var{condition}. If this yields a boolean value of TRUE,
+@var{expr} is evaluated, otherwise the loop is finished. Then repeats the
+cycle.
+@end defspec
+
+@defspec until (@var{condition},@var{expr})
+Evaluates @var{condition}. If this yields a boolean value of TRUE, the
+loop is finished, otherwise @var{expr} is evaluated. Then repeats the
+cycle.
+@end defspec
+
+@defspec dowhile (@var{expr},@var{condition})
+Evaluates @var{expr}, then evaluates @var{condition}. If this yields
+a boolean value of TRUE, the cycle is repeated.
+@end defspec
+
+@defspec dountil (@var{expr},@var{condition})
+Evaluates @var{expr}, then evaluates @var{condition}. If this yields a
+boolean value of TRUE, the loop is finished, otherwise the cycle is
+repeated.
+@end defspec
+
+@defspec and ([@var{expr}[,...]])
+Evaluates the @var{expr}s from left to right. For the first @var{expr}
+evaluating to boolean FALSE, returns @code{0}. If all @var{expr}s
+evaluate to boolean TRUE, returns @code{1}. This means that if one
+@var{expr} evaluates to FALSE, all @var{expr}s to its right do not get
+evaluated. If @code{and} is called without parameters, it returns
+@code{1}.
+@end defspec
+
+@defspec or ([@var{expr}[,...]])
+Evaluates the @var{expr}s from left to right. For the first @var{expr}
+evaluating to boolean TRUE, returns @code{1}. If all @var{expr}s
+evaluate to boolean FALSE, returns @code{0}. This means that if one
+@var{expr} evaluates to TRUE, all @var{expr}s to its right do not get
+evaluated. If @code{or} is called without parameters, it returns
+@code{0}.
+@end defspec
+
+@defspec define (@var{name},@var{argname}[,@var{argname}...],@var{body})
+Defines a macro with the name @var{name} and the specified argument
+names. The body @var{body} is not evaluated.
+@end defspec
+
+@defspec locals (@var{symbol}[,@var{symbol}...],@var{body})
+Evaluates @var{body} in a new scope with the specified local variables.
+@end defspec
+
+
+@c ************* Macro Reference
+
+@node  Macro Reference, Internal Variables, Special Forms, Top
+@comment  node-name,  next,  previous,  up@node Macro Reference, Concept Index, Introduction, Top
+@chapter Macros
+
+@menu
+* List Operations::             
+* Hash Operations::             
+* File Operations::             
+* String Operations::           
+* Miscellaneous::               
+@end menu
+
+@node List Operations, Hash Operations, Macro Reference, Macro Reference
+@comment  node-name,  next,  previous,  up
+@section List Operations
+
+@defmac list ([@var{element},...])
+Returns a list containing all specified @var{element}s in the specified
+order, beginning with index 0. Note that @code{%list()} returns an empty
+list while @code{%list(%'')} returns a list with one element, which is
+the empty string.
+@end defmac
+
+@defmac llength (@var{list})
+Returns the number of elements in the list @var{list}.
+@end defmac
+
+@defmac linsert (@var{list},@var{index},@var{element})
+Inserts the element @var{element} into the list @var{list} at index
+@var{index}. If @var{index} is greater or equal the length of
+@var{list}, the list is enlarged by appending empty strings. Examples:
+
+@example
+%<lst=%list(a,b,c)>
+
+%linsert(%&lst,1,x)%encode(%lst)
+@result{} %list(%'a',%'x',%'b',%'c')
+%linsert(%&lst,5,y)%encode(%lst)
+@result{} %list(%'a',%'x',%'b',%'c',%'',%'y')
+@end example
+@end defmac
+
+@defmac ldelete (@var{list},@var{index})
+Deletes from the list @var{list} the element at index
+@var{index}. Example:
+
+@example
+%<lst=%list(a,b,c)>%ldelete(%&lst,1)%encode(%lst)
+@result{} %list(%'a',%'c')
+@end example
+@end defmac
+
+@defmac lsort (@var{list}[,@var{comparator}])
+Sorts the elements of the list @var{list}, which should be strings,
+according to the order specified by @var{comparator}, which must be a
+closure taking two arguments and returning an integer. A return value of
+@code{0} denotes that the two arguments are equal, less than @code{0}
+means that the first argument should come before the second, greater
+than @code{0} means that the first argument should come after the
+second. If @var{comparator} is omitted, the macro @code{scmp} is used.
+Returns the resulting list. Examples:
+
+@example
+%encode(%lsort(%list(b,c,a)))
+@result{} %list(%'a',%'b',%'c')
+%encode(%lsort(%list(b,c,a),%lambda(a,b,%scmp(%b,%a))))
+@result{} %list(%'c',%'b',%'a')
+@end example
+@end defmac
+
+@defmac lappend (@var{list},@var{value}[,@var{value}...])
+Appends all @var{value}s to the list @var{list}. Returns nothing,
+i.e. is called for its side effects, which means that the first
+parameter should be a list to be modified, not a copy of a list.
+@end defmac
+
+@defmac luniq (@var{list}[,@var{comparator}])
+Removes all but the first occurrences of all sequential occurrences of the
+same element in @var{list}, where the sameness is determined by the
+closure @var{comparator}, which must accept two arguments and return a
+boolean value of TRUE if they are equal, FALSE otherwise. If
+@var{comparator} is omitted, @code{seq} is used. Returns the modified
+@var{list}.
+
+@example
+%encode(%luniq(%list(a,b,b,c,d,e,e,e,f)))
+@result{} %list(%'a',%'b',%'c',%'d',%'e',%'f')
+@end example
+@end defmac
+
+@node Hash Operations, File Operations, List Operations, Macro Reference
+@comment  node-name,  next,  previous,  up
+@section Hash Operations
+
+@defmac hash ([@var{key},@var{value},...])
+Returns a hash containing all the specified key/value pairs.
+@end defmac
+
+@defmac hcount (@var{hash})
+Returns the number of key/value pairs in the hash @var{hash}.
+@end defmac
+
+@defmac hcontains (@var{hash},@var{key})
+Returns @code{1}, if the key @var{key} is contained in the hash
+@var{hash}. Otherwise, returns @code{0}.
+@end defmac
+
+@defmac hkeys (@var{hash})
+Returns a list of all keys in the hash @var{hash} in no particular
+order.
+@end defmac
+
+@node File Operations, String Operations, Hash Operations, Macro Reference
+@comment  node-name,  next,  previous,  up
+@section File Operations
+
+@defmac fopen (@var{filename}[,@var{mode}])
+Opens the file named @var{filename} and returns a handle to it. If the
+file could not be opened, for example because it does not exists, for
+lack of permission or if @var{mode} is illegal, returns @code{-1}.  The
+file is opened for reading if @var{mode} is omitted or is @code{r}. The
+file is opened for writing if @var{mode} is @code{w}.
+@end defmac
+
+@defmac fpipe (@var{executable}[,@var{arg}...])
+Forks off a child process, starts the specified executable with the
+specified parameters and returns a handle for reading this processes
+standard output. Returns @code{-1} if something goes wrong. Note that
+the arguments are not subject to shell expansion, since the process does
+not start a subshell. If you want shell expansion, you have to start a
+subshell explicitly. For example, to list all files beginning with an
+@code{a}:
+
+@example
+%pipe(/bin/sh,-c,ls a*)
+@end example
+
+@end defmac
+
+@defmac fclose (@var{file})
+Closes the file associated with the handle @var{file}.
+@end defmac
+
+@defmac fgets (@var{file})
+Reads one line from the file associated with the handle @var{file} and
+returns it. The newline character is included.
+@end defmac
+
+@defmac fputs (@var{file},@var{string})
+Writes @var{string} to the file associated with the handle @var{file},
+which must have been opened for writing.
+@end defmac
+
+@defmac feof (@var{file})
+Returns boolean TRUE if the end of the file associated with the handle
+@var{file} is reached, FALSE otherwise.
+@end defmac
+
+@defmac fstat (@var{filename})
+Returns a hash containing information on the file with name
+@var{filename}. Returns an empty hash if the file does not
+exist. Otherwise, the hash contains values for the following keys:
+
+@table @code
+@item uid
+User ID of owner.
+@item gid
+Group ID of owner.
+@item size
+Size in bytes.
+@item blksize
+Blocksize for filesystem I/O.
+@item blocks
+Number of blocks allocated.
+@item atime
+Time of last access.
+@item mtime
+Time of last modification.
+@item ctime
+Time of last change.
+@end table
+
+All times are given in seconds since January 1, 1970, 00:00:00 GMT. For
+detailed description of these values see @code{stat(2)}.
+@end defmac
+
+@node String Operations, Miscellaneous, File Operations, Macro Reference
+@comment  node-name,  next,  previous,  up
+@section String Operations
+
+@defmac smatch (@var{regexp},@var{string}[,@var{registers}])
+Searches the string @var{string} for the first occurrence of the regular
+expression @var{regexp} and returns the index of the first character of
+this substring. If no match was found, returns @code{-1}. If
+@var{registers} is specified, which must be a list, clears it and sets
+its elements (beginning with @math{1}) to the contents of the
+corresponding submatches (parts of the regular expression enclosed by
+parentheses). The element @code{0} is set to the whole match. For
+example:
+
+@example
+%<regs=%list()>\
+%smatch(%'\.([^.]*)$',alittlepicture.jpg,%&regs) %regs[1]
+@result{} 14 jpg
+@end example
+@end defmac
+
+@defmac ssplit (@var{regexp},@var{string}[,@var{connector}])
+Splits the string @var{string} into parts separated by the regular
+expression @var{regexp}. Returns a list containing these parts. If
+@var{connector} is specified, the parts that are inserted into the list
+are generated by invocations of @var{connector}. @var{connector} is
+always called with three parameters, the first being the registers of
+@var{regexp} for the match right before the string and the third being
+the registers of the match right after the string. The second parameter
+is the string itself. For the very first string, the first parameter is
+an empty list, whereas for the last string, the third parameter is an
+empty list. Thus
+
+@example
+%ssplit(%regex,%string)
+@end example
+
+is equivalent to
+
+@example
+%ssplit(%regex,%string,%lambda(a,b,c,%b))
+@end example
+
+Example:
+
+@example
+%encode(%ssplit(:+,foo::bar:rules))
+@result{} %list(%'foo',%'bar',%'rules')
+@end example
+@end defmac
+
+@defmac stokenize (@var{regexp},@var{string}[,@var{tokener}])
+Returns a list containing all substrings of @var{string} matching
+@var{regexp}. If @var{tokener} is specified, not the whole matches are
+inserted into the result list, but the results of calling @var{tokener}
+with the respective lists of registers of the matches. This means, that
+these two calls have the same result:
+
+@example
+%stokenize(%regexp,%string)
+%stokenize(%regexp,%string,%lambda(r,%r[0]))
+@end example
+
+Examples:
+
+@example
+%encode(%stokenize([a-zA-Z0-9]+,%' a bc d04 d   fsfd, rwe'))
+@result{} %list(%'a',%'bc',%'d04',%'d',%'fsfd',%'rwe')
+%encode(%stokenize(%'-([0-9]+)-',%'  -32- -- 543 -12--43--',
+                   %lambda(r,%r[1])))
+@result{} %list(%'32',%'12',%'43')
+@end example
+@end defmac
+
+@defmac sgsub (@var{regexp},@var{string},@var{replacement}[,@var{options}])
+Replaces all occurrences of the regular expression @var{regexp} in
+@var{string}. If @var{replacement} is a string, the occurrences are
+replaced with this string. Otherwise, @var{replacement} must be a
+closure taking one argument and returning a string. In this case, the
+occurrences are replaced by the result of the closure when called with a
+list containing the regular expression registers in elements beginning
+with @code{1} and the whole match in element @code{0}. @var{options}, if
+specified, should be a string composed of one or more of the following
+characters:
+
+@table @code
+@item i
+Match case insensitively. The default is case-sensitive matching.
+@end table
+
+Examples:
+
+@example
+%sgsub(ei,HEINZI Deinzi,!,i)
+@result{} H!NZI D!nzi
+%sgsub(a+,abaacaaadaaaa,%lambda(r,%slength(%r[0])))
+@result{} 1b2c3d4
+@end example
+@end defmac
+
+@defmac sremovews (@var{string})
+Returns a string which results from removing all leading and trailing
+whitespace from the string @var{string}.
+@end defmac
+
+@defmac slength (@var{string})
+Returns the length of the string @var{string}.
+@end defmac
+
+@defmac ssub (@var{string},@var{start}[,@var{length}])
+Returns a substring of the string @var{string}. If it is called with two
+arguments and @var{start} is positive, then the substring beginning with
+index @var{start} is returned. If @var{start} is negative, the last
+@var{@minus{}start} characters are returned. If called with two
+arguments, @var{start} specifies the index of the first character in the
+substring. If @var{length} is positive, it specifies the length of
+substring. If it is negative, then @var{@minus{}length} specifies the
+index of the character following the last character of the substring.
+Examples:
+
+@example
+%substring(0123456789,3)
+@result{} 3456789
+%substring(0123456789,-3)
+@result{} 789
+%substring(0123456789,2,3)
+@result{} 234
+%substring(0123456789,2,-5)
+@result{} 234
+@end example
+@end defmac
+
+@defmac scmp (@var{string1},@var{string2})
+Returns the result of the @code{strcmp()} C function with @var{string1}
+and @var{string2}.
+@end defmac
+
+@defmac schr (@var{code})
+Returns a string with the character with character code @var{code}.
+@end defmac
+
+@defmac snumber (@var{number},@var{base})
+Formats the decimal integer @var{number} according to the given base
+@var{base}, which must be between 2 and 36 inclusive. Example:
+
+@example
+%snumber(34,2)
+@result{} 100010
+%snumber(-255,16)
+@result{} -ff
+@end example
+@end defmac
+
+@node Miscellaneous,  , String Operations, Macro Reference
+@comment  node-name,  next,  previous,  up
+@section Miscellaneous
+
+@defmac void (@var{expr})
+Executes @var{expr} but discard the result. Example:
+
+@example
+%<regs=%list()>\
+%void(%smatch(%'\.([^.]*)$',alittlepicture.jpg,%&regs))%regs[1]
+@result{} jpg
+@end example
+@end defmac
+
+@defmac outputenable (@var{flag})
+If the boolean value of @var{flag} is TRUE, enables output, otherwise
+disables it. If output is disabled, everything is evaluated as usual,
+but @code{chpp} does not output anything.
+@end defmac
+
+@defmac depend (@var{dependency}[,@var{target}])
+Adds the filename @var{dependency} to the list of dependencies for the
+file @var{target}. If @var{target} is not specified, the name of the
+output file is used.
+@end defmac
+
+@defmac warning (@var{message})
+Causes @code{chpp} to give a warning with the message @var{message}.
+@end defmac
+
+@defmac error (@var{message})
+Causes @code{chpp} to signal an error with the message @var{message}.
+@end defmac
+
+@defmac encode (@var{value})
+Returns a string which, upon evaluation, yields a value equal to @var{value}.
+@end defmac
+
+@defmac random (@var{limit})
+Returns a random number in the interval 0 to @var{limit}@minus{}1. The
+random number are uniformly distributed.
+@end defmac
+
+@defmac same (@var{val1},@var{val2})
+Returns @code{1} if @var{val1} and @var{val2} refer to the same value,
+otherwise @code{0}. Two values are the same if a change in one entails
+the same change in the other, i.e. if they occupy the same memory
+location. Examples:
+
+@example
+%<val=abc>%same(%val,%val)
+@result{} 0
+%<val=abc>%same(%&val,%&val)
+@result{} 1
+%<val=abc>%<val2=%&val>%same(%&val,%&val2)
+@result{} 1
+@end example
+@end defmac
+
+@defmac equal (@var{val1},@var{val2})
+Returns @code{1} if @var{val1} is equal to @var{val2}, otherwise
+@code{0}. Two scalars are equal if the strings they contain are
+equal. Two lists are equal if they have the same length and contain
+equal elements. Two hashes are equal if they have the same count and the
+same keys map to equal values.
+
+@example
+%equal(%list(a,b,c),%list(a,b,c))
+@result{} 1
+%equal(%hash(a,1,b,2,c,3),%hash(c,3,b,2,a,1))
+@result{} 1
+%equal(%list(a,b,c),%list(1,2,3))
+@result{} 0
+@end example
+@end defmac
+
+@defmac typeof (@var{value})
+Returns the type of @var{value}. The result can be one of @code{scalar},
+@code{list}, @code{hash}, @code{lambda}, @code{built-in}.
+
+@example
+%typeof(abc)
+@result{} scalar
+%typeof(%list(a,b,c))
+@result{} list
+%typeof(%hash(a,1,b,2,c,3))
+@result{} hash
+%typeof(%lambda(a,%a%a))
+@result{} lambda
+%typeof(%typeof)
+@result{} built-in
+@end example
+@end defmac
+
+@defmac bound (@var{name})
+Returns @code{1} if the name @var{name} is bound in the current
+environment. If not, returns @code{0}.
+@end defmac
+
+@defmac apply (@var{lambda},@var{arglist})
+Calls @var{lambda} with the elements of @var{arglist} as arguments.
+
+@example
+%apply(%lambda(a,b,c,my args are %a %b %c),%list(1,2,3))
+@result{} my args are 1 2 3
+@end example
+@end defmac
+
+@defmac not (@var{expr})
+Returns the negation of the boolean value of @var{expr}, i.e. returns
+@code{1} if @var{expr} is FALSE and @code{0} if @var{expr} is TRUE.
+@end defmac
+
+@defmac shexencode (@var{string})
+Translates the bytes of @var{string} to a sequence of hexadecimal
+digits.
+
+@example
+%shexencode(hello world!)
+@result{} 68656C6C6F20776F726C6421
+@end example
+@end defmac
+
+@defmac shexdecode (@var{string})
+Translates a sequence of hexadecimal digits as produced by
+@code{shexencode} to a string.
+
+@example
+%shexdecode(68656C6C6F20776F726C6421)
+@result{} hello world!
+@end example
+@end defmac
+
+
+@c ************* Internal Variables
+
+@node Internal Variables, Package Reference, Macro Reference, Top
+@comment  node-name,  next,  previous,  up
+@chapter Internal Variables
+
+@defvar outputenabled
+Is @code{1} if output is enabled, @code{0} otherwise. Output can be
+enabled and disabled with the macro @code{outputenable}.
+@end defvar
+
+@defvar dependencing
+Is @code{1} if @code{chpp} was started to generate dependencies (option
+@code{--generate-dependencies}), @code{0} otherwise.
+@end defvar
+
+@defvar mainfilename
+Is set to the filename of the currently executed top-level source file.
+@end defvar
+
+@defvar env
+Is a hash containing all environment variables of the process.
+
+@example
+%env@{TERM@}
+@result{} xterm
+@end example
+@end defvar
+
+@c ************* Package Reference
+
+@node  Package Reference, Macro Index, Internal Variables, Top
+@comment  node-name,  next,  previous,  up@node Macro Reference, Concept Index, Introduction, Top
+@chapter Packages
+
+@menu
+* files.chh::                   
+* strings.chh::                 
+* list.chh::                    
+* time.chh::                    
+* sql.chh::                     
+* cgi.chh::                     
+@end menu
+
+@node files.chh, strings.chh, Package Reference, Package Reference
+@comment  node-name,  next,  previous,  up
+@section @file{files.chh}
+
+@defmac frest (@var{file})
+Returns the not yet read contents of the file associated with the handle
+@var{file}.
+@end defmac
+
+@defmac fwholefile (@var{filename})
+Returns the whole contents of the file with the name @var{filename}.
+@end defmac
+
+@defmac fneweras (@var{filename1},@var{filename2})
+Returns @code{1} if the modification time of the file with name
+@var{filename1} is more recent than that of the file with name
+@var{filename2} or if the file with name @var{filename2} does not
+exist. Returns @var{0} otherwise.
+@end defmac
+
+@node strings.chh, list.chh, files.chh, Package Reference
+@comment  node-name,  next,  previous,  up
+@section @file{strings.chh}
+
+@defmac replacesubstring (@var{string},@var{start},@var{length},@var{replacement})
+Returns a string resulting from replacing the substring starting at
+index @var{start} with length @var{length} of @var{string} by the string
+@var{replacement}.
+@end defmac
+
+@defmac strneq (@var{string1},@var{string2})
+Returns a boolean value of TRUE if @var{string1} and @var{string2} are
+not equal, otherwise TRUE.
+@end defmac
+
+@node list.chh, time.chh, strings.chh, Package Reference
+@comment  node-name,  next,  previous,  up
+@section @file{list.chh}
+
+@defmac listSearch (@var{list},@var{criterion})
+Returns the index of the first element of @var{list} for which the
+closure @var{criterion}, when called with that element as parameter,
+evaluates to boolean TRUE. Example
+
+@example
+%listSearch(%list(a,bb,ccc,dddd),%lambda(e,%[%slength(%e)>=3]))
+@result{} 2
+@end example
+@end defmac
+
+@defmac listIndexOf (@var{list},@var{value})
+Returns the index of the first element of @var{list} which is
+@code{equal} to @var{value}. Example:
+
+@example
+%listIndexOf(%list(a,b,c,d),b)
+@result{} 1
+@end example
+@end defmac
+
+@defmac listMap (@var{mapping},@var{list}[,@var{list}...])
+All @var{list}s must have the same length, and @var{mapping} must be a
+closure taking as many arguments as there are
+@var{list}s. @code{listMap} creates a new list by applying @var{mapping}
+element-wise to the elements of the @var{list}s and storing the results
+in the corresponding elements of the resulting list. Example:
+
+@example
+%listMap(%lambda(a,b,%[a+b]),%list(2,5,7),%list(4,2,9))
+@result{} %list(%'6',%'7',%'16')
+@end example
+@end defmac
+
+@defmac listLeftAccumulate (@var{accumulator},@var{list},@var{zero})
+If the length of @var{list} is @code{0}, returns @var{zero}. Otherwise,
+accumulates all elements of @var{list} through @var{accumulator}, which
+must be a closure taking two arguments, in a left-associative
+way. Examples:
+
+@example
+%listLeftAccumulate(%lambda(a,b,%[a+b]),%list(1,2,3),0)
+@result{} 6
+%listLeftAccumulate(%lambda(a,b,acc%'('%a%','%b%')'),
+                    %list(a,b,c),zero)
+@result{} acc(acc(a,b),c)
+@end example
+@end defmac
+
+@defmac listRightAccumulate (@var{accumulator},@var{list},@var{zero})
+If the length of @var{list} is @code{0}, returns @var{zero}. Otherwise,
+accumulates all elements of @var{list} through @var{accumulator}, which
+must be a closure taking two arguments, in a right-associative
+way. Examples:
+
+@example
+%listRightAccumulate(%lambda(a,b,acc%'('%a%','%b%')'),
+                     %list(a,b,c),zero)
+@result{} acc(a,acc(b,c))
+@end example
+@end defmac
+
+@defmac listJoin (@var{string},@var{list})
+Joins the elements of the list @var{list} by inserting between two
+sequential elements the string @var{string}. Example:
+
+@example
+%listJoin(:,%list(the,quick,brown,fox))
+@result{} the:quick:brown:fox
+@end example
+@end defmac
+
+@node time.chh, sql.chh, list.chh, Package Reference
+@comment  node-name,  next,  previous,  up
+@section @file{time.chh}
+
+Time values are represented in @code{chpp} by hashes containing values
+for some of the following keys:
+
+@table @code
+@item year
+@item month
+@item day
+@item hour
+@item minute
+@item second
+@end table
+
+@defmac timeToString (@var{format},@var{time})
+Converts a time value to a string according to the format string
+@var{format}. Ordinary characters in @var{format} are copied verbatim,
+while the dollar character (@code{$}), followed by any of the following
+characters is treated specially:
+
+@table @code
+@item $
+The character @code{$}.
+@item d
+The day of the month as a decimal number, beginning with @code{1} for
+the first day of the month.
+@item m
+The month as a decimal number, beginning with @code{1} for January.
+@item b
+The abbreviated month name.
+@item B
+The full month name.
+@item Y
+The year as a decimal number.
+@item H
+The hour as a decimal number (range @code{0} to @code{23}).
+@item M
+The minute as a decimal number (range @code{0} to @code{59}).
+@item S
+The second as a decimal number (range @code{0} to @code{59}).
+@end table
+
+Example:
+
+@example
+%timeToString($d $B $Y,%hash(day,29,month,12,year,1975))
+@result{} 29 December 1975
+@end example
+@end defmac
+
+@defmac timeFromString (@var{format},@var{string})
+Converts the string @var{string}, which must obey the time format
+@var{format}, as described above, to a time value. Example:
+
+@example
+%encode(%timeFromString($d $B $Y,29 December 1975))
+@result{} %hash(%'year',%'1975',%'day',%'29',%'month',%'12')
+@end example
+@end defmac
+
+@node sql.chh, cgi.chh, time.chh, Package Reference
+@comment  node-name,  next,  previous,  up
+@section @file{sql.chh}
+
+This section describes @code{chpp}'s interface to relational databases,
+called @code{chdbc} (@code{chpp} Database Connectivity). The interface
+is a layer above the client libraries for the various database servers,
+making it thus transparent to the user which database she is using.
+
+Connections and results are represented by abstract datatypes. When
+passing a connection or result to a @code{chdbc} macro, do always pass
+the value which was returned by the creating macro, not a copy (i.e. use
+the reference form of variable access (@pxref{Accessing Variables}) to
+pass connection and result parameters).
+
+Drivers are currently implemented for mSQL and MySQL. The latter takes
+a connection hash with keys @code{user} and @code{password}.
+
+@defmac sqlConnect (@var{url},@var{hash})
+Opens a connection to the SQL Server with the given @var{url}, which
+needs to be of the form
+@code{chdbc:}@var{drivername}@code{://}@var{hostname}[@code{:}@var{port}]@code{/}@var{dbname}@code{/}. A
+valid example would be @code{chdbc:mysql://localhost/test/}. @var{hash}
+must be hash containing information required by the driver to connect to
+the server, e.g. username and password. @code{sqlConnect} returns a
+value representing the connection to the server or a boolean value of
+FALSE if the connection could not be made.
+@end defmac
+
+@defmac sqlClose (@var{connection})
+Closes the database connection @var{connection}.
+@end defmac
+
+@defmac sqlDatabaseInfo (@var{connection})
+Returns a hash containing information about the database. The hash
+contains values for the following keys, if appropriate for the database:
+
+@table @code
+@item timeformat
+Format for time values which can be used in inserts and updates, like
+@code{$H:$M:$S}.
+
+@item dateformat
+Format for date values which can be used in inserts and updates, like
+@code{$Y-$m-$d}.
+
+@item datetimeformat
+Format for time plus date values which can be used in inserts and
+updates, like @code{$Y-$m-$d $H:$M:$S}.
+@end table
+@end defmac
+
+@defmac sqlQuery (@var{connection},@var{querystring})
+Performs a query on the database connected to by
+@var{connection}. Returns a value representing the result of the query
+or a boolean value of FALSE if the query could not be executed.
+@end defmac
+
+@defmac sqlResultData (@var{result})
+Returns the result rows of the query result @var{result}, as obtained by
+@code{sqlQuery}, in the form of a list. Each row in this list is
+represented as a hash whose keys are the column names of the
+result. Values for columns representing time (@code{time}, @code{date}
+and @code{datetime}) are automatically converted to @code{chpp}'s time
+format (@pxref{time.chh}).
+@end defmac
+
+@defmac sqlResultColumnInfo (@var{result})
+Returns a hash indexed by the column names of the query result
+@var{result} containing information about the columns. Each value
+contained in the hash is a hash containing values for the following
+keys:
+
+@table @code
+@item type
+Type of the column.
+@end table
+@end defmac
+
+@defmac sqlResultColumnNames (@var{result})
+Returns a list containing the names of the column of the query result
+@var{result}.
+@end defmac
+
+@defmac sqlUpdate (@var{connection},@var{updatestring})
+Performs an SQL statement contained in the string @var{updatestring}
+changing the data of the database connected to by @var{connection}, like
+an insert or an update.
+@end defmac
+
+@node cgi.chh,  , sql.chh, Package Reference
+@comment  node-name,  next,  previous,  up
+@section @file{cgi.chh}
+
+The package @file{cgi.chh} provides rudimentary support for
+CGI scripting.
+
+@defmac cgiGetParameters ()
+Returns a hash containing all parameters passed to the CGI
+script. Supported encodings are @code{application/x-www-form-urlencoded}
+(both @code{GET} and @code{POST}) and @code{multipart/form-data}.
+@end defmac
+
+@c ************* Macro Index
+
+@node  Macro Index,  , Package Reference, Top
+@comment  node-name,  next,  previous,  up@node Concept Index, , Macro Reference, Top
+@unnumbered Macro Index
+
+@printindex fn
+
+
+@c ************* Concept Index
+
+@c @node  Concept Index,  , Macro Index, Top
+@c @comment  node-name,  next,  previous,  up@node Concept Index, , Macro Reference, Top
+@c @unnumbered Concept Index
+
+@c @printindex cp
+
+@contents
+@bye

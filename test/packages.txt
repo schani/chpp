@@ -1,0 +1,4 @@
+#include strings.chh
+
+%strneq(heinz,deinz)
+%strneq(abc,abc)

@@ -1,0 +1,4 @@
+%define(move,from,to,%from -> %to%'\n')\
+%define(_hanoi,cnt,from,to,aux,%if(%[cnt<=1],%move(%from,%to),%<_hanoi(%[cnt-1],%from,%aux,%to)>%move(%from,%to)%<_hanoi(%[cnt-1],%aux,%to,%from)>))\
+%define(hanoi,cnt,%_hanoi(%cnt,source,destination,auxilliary))\
+%hanoi(5)

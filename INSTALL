@@ -1,0 +1,62 @@
+INSTALLING CHPP
+---------------
+
+CHPP currently supports the following configurations through
+the configure script:
+
+    gnu-linux-i386
+    gnu-linux-alpha
+    gnu-linux-powerpc
+    openstep-i386
+    digitalunix-alpha
+
+Building CHPP on other platforms should not be a problem, since
+it is written very portably and does not use a lot of platform
+dependent features. Just try one of the configurations and see
+how it goes.
+
+One big problem on some uncommon architecture may be the garbage
+collector located in directory gc/. Although it runs on a lot of
+platforms out-of-the-box, you may have to change the Makefile to make
+it run on your machine. On some machines it may never run.
+
+Be sure you have GNU make, flex and GNU bison installed.
+
+Change to the directory you have unpacked CHPP in:
+
+    cd chpp-0.3
+
+Use the configure script to choose the platform you want to build on.
+configure recognizes the following configuration names:
+
+    linux       GNU/Linux
+    next        NEXTSTEP, OPENSTEP
+    dgux        Digital UNIX
+
+For example, type
+
+    ./configure linux
+
+If you want to have support for the mSQL or MySQL databases, edit the
+Makefile and uncomment the corresponding lines.
+
+Now, just call GNU make, i.e.
+
+    make
+
+If CHPP builds without errors, you should run the regress tests, just
+to make sure everything is fine:
+
+    cd test/regress
+    ./dotest
+
+If all tests pass, change back to the main directory and install CHPP.
+In this release, CHPP relies on being installed in /usr/local.
+
+    cd ../..
+    make install
+
+Now you are set! Documentation in Texinfo format is contained in the
+directory doc/. HTML-format documentation can be found in doc/html/.
+
+Happy CHPPing

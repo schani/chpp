@@ -1,0 +1,16 @@
+%<arr=%list()>\
+%for(i,0,9,%<arr[%i]=%i>)\
+%for(i,0,9,"%i" = "%arr[%i]"%'\n')
+"0:1:2:3:4:5:6:7:8:9:" = "%foreach(e,%arr,%e:)"
+"10" = "%llength(%arr)"
+"schani:ruled:im:hirn:" = "%<arr=%ssplit(;,schani;ruled;im;hirn)>%for(i,0,%[%llength(%arr)-1],%arr[%i]:)"
+"hirn:im:ruled:schani:" = "%<arr=%lsort(%arr,%&scmp)>%for(i,0,%[%llength(%arr)-1],%arr[%i]:)"
+"hirn:im:ruled:schani" = "%<arr=%luniq(%arr)>%ljoin(:,%arr)"
+"::::" = "%<arr=%ssplit(;,;;;)>%for(i,0,%[%llength(%arr)-1],%arr[%i]:)"
+":" = "%<arr=%luniq(%arr)>%for(i,0,%[%llength(%arr)-1],%arr[%i]:)"
+"aix:x:x::" = "%<arr=%ssplit(ixi|axi,aixaxixixixaxi)>%for(i,0,%[%llength(%arr)-1],%arr[%i]:)"
+"aix:x::" = "%<arr=%luniq(%arr)>%for(i,0,%[%llength(%arr)-1],%arr[%i]:)"
+%<brr=%list()>%lappend(%&brr,0)%lappend(%&brr,1)%lappend(%&brr,2)
+"0" = "%brr[0]"
+"1" = "%brr[1]"
+"2" = "%brr[2]"

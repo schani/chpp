@@ -1,0 +1,28 @@
+%<menu=%list()>\
+%define(addmenuentry,name,filename,
+    %<regs=%list()>\
+    %<basename=%void(%smatch(%'(.*)\\.csml$',%filename,%&regs))%regs[1]>\
+    %lappend(%&menu,
+        %hash(filename,%filename,
+              name,%name,
+              htmlfilename,%basename.html,
+              imglarge,%<basename>_l.jpg,
+              imgsmall,%<basename>_s.jpg,
+              imgsmallgray,%<basename>_s_g.jpg))
+)\
+%void(
+#include menu.chml
+)\
+%<thisentry=%foreach(menuentry,%menu,%if(%equal(%menuentry{filename},%mainfilename),%menuentry))>\
+<html>
+<head>
+<title>%thisentry{name}</title>
+</head>
+<body>
+<table>
+<td>
+<img src="%thisentry{imglarge}" alt="%thisentry{name}">
+<td>
+#include choicestrip.chml
+</table>
+<hr>

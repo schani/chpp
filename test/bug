@@ -1,0 +1,6 @@
+#include ../include/sql.chh
+%<connection=%sqlConnect(chdbc:adabas://localhost/adabas/,%hash(user,demo,password,demo))>
+%encode(%connection)
+
+%sqlClose(%&connection)
+

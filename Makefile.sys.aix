@@ -1,0 +1,5 @@
+CC=gcc
+CFLAGS=-g -Wall -D_AIX #-DDEBUG_VALUE_FREE
+#LIBS=-lefence
+
+include Makefile.common

@@ -1,0 +1,19 @@
+machine: vader
+Linux vader 2.0.29 #2 Tue Jul 22 14:51:56 GMT 1997 i586
+Wed Jul 30 20:28:32 GMT 1997
+
+-- fibonacci
+5.15user 0.02system 0:05.17elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (80major+31minor)pagefaults 0swaps
+
+-- hanoi
+3.06user 0.08system 0:03.16elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (80major+672minor)pagefaults 0swaps
+
+-- tautogen
+3.11user 0.01system 0:03.13elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (89major+245minor)pagefaults 0swaps
+
+-- tng log book
+0.31user 0.02system 0:01.02elapsed 32%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (72major+26minor)pagefaults 0swaps

@@ -1,0 +1,26 @@
+%define( fneweras, file1, file2,
+  %<tmp1=%<fstat( %file1 )>>\
+  %<tmp2=%<fstat( %file2 )>>\
+  %if( %[ %<tmp1{mtime}> > %<tmp2{mtime}> ], 1, 0 )
+)
+%define( fexists, file1, 
+  %<tmp=%fopen( %file1 )>\
+  %if( %[ %tmp == -1 ], 0, %<fclose( %tmp )>1)
+)
+
+%fexists( Makefile2 )
+%fexists( Makefile )
+
+%define( w3jpg, filename,
+  %if( %fexists( %filename ), %<image=%filename>,
+    %if( %fexists( %<filename>.jpg ), %<image=%filename.jpg>,
+      %if( %fexists( %<filename>.jpeg ), %<image=%filename.jpeg>, %<image=0> )
+    )
+  )
+  %if( %image,
+    das bild heisst %image !!!,
+    kein bild namens %filename%"[.jp[e]g]" ...
+  )
+)
+
+%<w3jpg( hallo )>

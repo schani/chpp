@@ -1,0 +1,96 @@
+main.o: main.c memory.h gc/gc.h getopt.h filler.h dynstring.h \
+ builtins/builtins.h builtins/../list.h input.h output.h value.h \
+ chash.h avl.h internals.h error.h depends.h environment.h bcoutput.h \
+ bytecode.h parser.h
+depends.o: depends.c memory.h gc/gc.h depends.h dynstring.h
+dynstring.o: dynstring.c memory.h gc/gc.h dynstring.h
+input.o: input.c memory.h gc/gc.h recorder.h input.h dynstring.h
+output.o: output.c memory.h gc/gc.h output.h dynstring.h value.h \
+ chash.h avl.h internals.h builtins/builtins.h builtins/../list.h
+error.o: error.c dynstring.h main.h output.h value.h chash.h avl.h \
+ internals.h builtins/builtins.h builtins/../list.h input.h error.h
+value.o: value.c memory.h gc/gc.h dynstring.h bytecode.h environment.h \
+ output.h value.h chash.h avl.h internals.h builtins/builtins.h \
+ builtins/../list.h
+environment.o: environment.c memory.h gc/gc.h value.h chash.h avl.h \
+ dynstring.h internals.h builtins/builtins.h builtins/../list.h \
+ environment.h
+bytecode.o: bytecode.c memory.h gc/gc.h arith.h dynstring.h error.h \
+ input.h parser.h bytecode.h environment.h output.h value.h chash.h \
+ avl.h internals.h builtins/builtins.h builtins/../list.h bcoutput.h
+bcoutput.o: bcoutput.c memory.h gc/gc.h bcoutput.h environment.h \
+ dynstring.h output.h value.h chash.h avl.h internals.h \
+ builtins/builtins.h builtins/../list.h bytecode.h
+parser.o: parser.c memory.h gc/gc.h error.h parser.h input.h \
+ dynstring.h bytecode.h environment.h output.h value.h chash.h avl.h \
+ internals.h builtins/builtins.h builtins/../list.h bcoutput.h
+internals.o: internals.c dynstring.h error.h main.h output.h value.h \
+ chash.h avl.h internals.h builtins/builtins.h builtins/../list.h \
+ input.h bytecode.h environment.h
+builtins.o: builtins/builtins.c builtins/../memory.h \
+ builtins/../gc/gc.h builtins/../error.h builtins/../value.h \
+ builtins/../chash.h builtins/../avl.h builtins/../dynstring.h \
+ builtins/../internals.h builtins/../builtins/builtins.h \
+ builtins/../builtins/../list.h builtins/../main.h \
+ builtins/../output.h builtins/../input.h builtins/../depends.h \
+ builtins/../environment.h builtins/../bytecode.h builtins/builtins.h
+values.o: builtins/values.c builtins/../value.h builtins/../chash.h \
+ builtins/../avl.h builtins/../dynstring.h builtins/../internals.h \
+ builtins/../builtins/builtins.h builtins/../builtins/../list.h \
+ builtins/../output.h builtins/../error.h builtins/../environment.h \
+ builtins/../bytecode.h builtins/builtins.h
+stringops.o: builtins/stringops.c builtins/../regex.h \
+ builtins/../error.h builtins/../environment.h builtins/../dynstring.h \
+ builtins/../bytecode.h builtins/../output.h builtins/../value.h \
+ builtins/../chash.h builtins/../avl.h builtins/../internals.h \
+ builtins/../builtins/builtins.h builtins/../builtins/../list.h \
+ builtins/builtins.h
+flowctl.o: builtins/flowctl.c builtins/../memory.h builtins/../gc/gc.h \
+ builtins/../list.h builtins/../error.h builtins/../chash.h \
+ builtins/../environment.h builtins/../dynstring.h \
+ builtins/../bytecode.h builtins/../output.h builtins/../value.h \
+ builtins/../avl.h builtins/../internals.h \
+ builtins/../builtins/builtins.h builtins/../builtins/../list.h \
+ builtins/builtins.h
+fileops.o: builtins/fileops.c builtins/../memory.h builtins/../gc/gc.h \
+ builtins/../error.h builtins/../environment.h builtins/../dynstring.h \
+ builtins/../output.h builtins/../value.h builtins/../chash.h \
+ builtins/../avl.h builtins/../internals.h \
+ builtins/../builtins/builtins.h builtins/../builtins/../list.h \
+ builtins/builtins.h
+arrayops.o: builtins/arrayops.c builtins/../regex.h \
+ builtins/../error.h builtins/../output.h builtins/../dynstring.h \
+ builtins/../value.h builtins/../chash.h builtins/../avl.h \
+ builtins/../internals.h builtins/../builtins/builtins.h \
+ builtins/../builtins/../list.h builtins/../bytecode.h \
+ builtins/../environment.h builtins/builtins.h
+hashops.o: builtins/hashops.c builtins/../error.h \
+ builtins/../environment.h builtins/../dynstring.h \
+ builtins/../output.h builtins/../value.h builtins/../chash.h \
+ builtins/../avl.h builtins/../internals.h \
+ builtins/../builtins/builtins.h builtins/../builtins/../list.h \
+ builtins/builtins.h
+www.o: builtins/www.c builtins/../environment.h \
+ builtins/../dynstring.h builtins/../output.h builtins/../value.h \
+ builtins/../chash.h builtins/../avl.h builtins/../internals.h \
+ builtins/../builtins/builtins.h builtins/../builtins/../list.h \
+ builtins/../error.h builtins/builtins.h
+database.o: builtins/database/database.c builtins/database/database.h
+chash.o: chash.c memory.h gc/gc.h chash.h
+avl.o: avl.c memory.h gc/gc.h avl.h
+list.o: list.c memory.h gc/gc.h list.h
+memory.o: memory.c memory.h gc/gc.h
+arithparse.o: arithparse.c error.h environment.h dynstring.h value.h \
+ chash.h avl.h internals.h builtins/builtins.h builtins/../list.h \
+ arith.h
+arithscan.o: arithscan.c arith.h dynstring.h arithparse.h
+filler.o: filler.c memory.h gc/gc.h dynstring.h chash.h error.h \
+ depends.h filler.h commands.h recorder.h
+recorder.o: recorder.c memory.h gc/gc.h recorder.h
+commands.o: commands.c commands.h filler.h dynstring.h memory.h \
+ gc/gc.h arith.h error.h parser.h input.h bytecode.h environment.h \
+ output.h value.h chash.h avl.h internals.h builtins/builtins.h \
+ builtins/../list.h bcoutput.h
+regex.o: regex.c regex.h
+getopt.o: getopt.c
+getopt1.o: getopt1.c getopt.h

@@ -1,0 +1,8 @@
+%define( fneweras, file1, file2,
+  %if( %[%<(%fstat( %<file1> )){mtime}> == %<(%fstat( %<file2> )){mtime}>],1,0)
+)
+
+%if( 1, ja, nein )
+
+%<fneweras(chppbug,chppbug)>
+

@@ -1,0 +1,5 @@
+#include header.chml
+
+This is a trick.
+
+#include footer.chml

@@ -1,0 +1,123 @@
+Subject: alert
+To: schani@Unix.CSLab.tuwien.ac.at (Mark Probst)
+Date: Tue, 10 Feb 1998 15:57:52 +0100 (MET)
+
+hmm folgendes problem:
+
+#define menuName hauptmenu
+%<(%<w3JSsmenu_%<menuName>>){lastItems}=hallo>
+
+gibt immer eine endlosschleife mit errors
+
+ich weiss nicht ob das genau die syntax ist die du dafuer vorgesehen hast,
+allerdings waere das meines erachtens nach sinnvoll wenn das ginge, oder ?
+
+cu
+emp
+
+
+Subject: noch was
+To: schani@Unix.CSLab.tuwien.ac.at (Mark Probst)
+Date: Tue, 10 Feb 1998 17:35:43 +0100 (MET)
+
+
+hash problem:
+
+hash ist ja typ .. deshalb dachte ich das geht
+
+%<x=%hash()>
+
+%<y=%x>
+
+%<y{schani}=guterhashmacher>
+
+%encode( %x )
+
+==> ..guterhashmacher..
+kommt aber net
+dumme sache, er kopiert den hash also
+
+gibts nen workaround oder sowas ?
+
+emp
+
+
+Subject: WICHTIG SEHR WICHTIG
+To: schani@Unix.CSLab.tuwien.ac.at (Mark Probst)
+Date: Tue, 10 Feb 1998 22:17:49 +0100 (MET)
+Cc: heinz@Unix.CSLab.tuwien.ac.at (Heinz Deinhart)
+
+Hallo
+
+du hast zwar immer no net mail glesen :(... aber es gibt da was ur
+wichtiges
+
+ich mache grade einen menusupport in die w3lib
+die supportet dann auch submenues die dynamisch kopmmen und so scheisse
+aber alles automatisch
+
+das problem ist das ich zum ersten mal wirklich viele hashes und listen
+verwende um die hierachy zu managen
+
+dabei kam ich dahinter das die listen und hash operationen noch sehr mies sind
+
+zum bsp hab ich ne liste ur weit hinten in der hierachy und moechte nur ein
+element einfuegen .. was ungeheuer viel aufwand bedeutet, vor allem weil das mit
+ dem (){} noch buggt
+
+zudem packts die append geistig net und returnd a neue liste .. so a dreck
+
+also wir brauchen UNBEDINGT extendet syntax
+
+z.B. %<liste+=neuesElement>
+     %<liste-=neuesElement>
+     %<liste{element}>  sucht das element und gibt es zurueck (!!!!)
+            ... fuer was gibts denn schliesslich ein typkonzept
+  ( und nicht sag jetz .. blabla das ist doch unnoetig blabla
+    ich weiss wovon ich rede, weil bei den sprachen bei denen ich grosse
+    teile des konzepts abgeschaut habe gibts das alles auch, und es ist
+    einfach legendaer )
+
+etc.etc. da kann man noch viel machen
+das ist _unheimlich_ wichtig, weitaus wichtiger als datenbank scheisse oder so
+
+in den zusammenhang sollten wir auch JETZT naming conventions einfuehren
+also z.B. lappend llength fuer listen
+nicht append und listlength --> scheisse
+also sinnvolle gruppen
+ - w3lib sachen                      w3XXXXX
+ - fileIO                             fXXXXX
+ - list operations                    lXXXXX
+ - hash op..                          hXXXXX
+ - string operations                  sXXXXX
+(hier brechen wir dann mit der C syntax aber chpp ist eben nicht C)
+..
+ - wirklich total generelle            XXXXX
+   (+ auf alle sachen anwendbare)
+das wird den chpp code weit besser lesbar machen und leichter lernbar
+jetz ist es noch nicht soviel aufwand alles umzustellen
+<PRIORITY level="Absolut notwendig, keine diskussionen" spass="off">
+
+btw. schau dir mal ~emperor/Work/Projects/w3chpp/w3lib.chh an
+am belief..
+dann weisst du warum sowas wichtig ist, weil sobald du wirklich komplexe
+sachen mit chpp machst gibst du dir kugel  .. obowhl ich bis jetz erst
+am daten sammeln scheiterte und noch nicht mal beim auswerten war
+
+Aber das ur groesste problem ist das alle sachen immer kopiert werden und keine 
+pointer auf listen und hashes uebergeben werden.
+
+jedenfalls habe ich jetzt kapituliert, den menu support mache ich definitiv nich
+t weiter solange das nicht drinn ist, weil es ist echt scheisse lauter workaroun
+ds zu machen, auch wenn das was geht schon saucool geht.
+in dem zusammenhang wuerde ich sagen wir machen ein macro copy das effektiv copi
+ert sonst nur pointer
+
+also mail mir bitte moeglichst schnell zurueck was du davon haltest
+und was probleme sein koennen
+ich habe jetz naemlich grad zeit fuer die w3lib scheisse
+
+cu
+emp
+
+PS: ich will macros machen ohne argumente mit %define..
