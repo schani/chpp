@@ -182,7 +182,7 @@ quicksortArray (avlTree *tree, avlNode *l, int lIndex, avlNode *r, int rIndex,
     jIndex = rIndex; j = r;
 
     vIndex = (lIndex + rIndex) / 2; v = avlFirst(tree, vIndex);
-    x = NODE_VALUE(v);
+    x = valueCopy(NODE_VALUE(v));
 
     do
     {
