@@ -31,7 +31,7 @@
 #ifndef __recorder_h__
 #define __recorder_h__
 
-#define RECORD_BASE_LN_SIZE 1024
+#define RECORD_BASE_LN_SIZE 1024*4
 #define RECORD_BASE_FN_SIZE 32
 
 /* public: */

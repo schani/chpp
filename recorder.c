@@ -40,24 +40,46 @@ static int recLNPos;
 static RecFiles *recFiles, *activeRecFiles;
 static int recFilesPos;
 
+void dumpRecFiles() {
+  RecFiles *rf = recFiles;
+  int i;
+  
+  fprintf( stderr, "recFile DUMP:\n" );
+  while( rf != activeRecFiles ) {
+    for( i=0; i<(RECORD_BASE_LN_SIZE-1); i++ ) {
+      fprintf( stderr, "  %i: '%s'\n", rf->bufPos[i], rf->fileName[i] );
+    }
+    rf = rf->overflow;
+  }
+  for(  i=0; i<recFilesPos; i++ ) {
+      fprintf( stderr, "  %i: '%s'\n", rf->bufPos[i], rf->fileName[i] );
+  }
+  fprintf( stderr, ".................................done\n" );
+}
+
 const char *unRecordFileName( const int bufPos ) {
   RecFiles *tmpRecFiles = recFiles;
   int i;
   const char *str = 0;
 
+  //fprintf( stderr, "unRecordFileName( %i )\n", bufPos );
+  //dumpRecFiles();
+
   while( tmpRecFiles != activeRecFiles ) {
     str = tmpRecFiles->fileName[0];
-    for( i=0; i<(RECORD_BASE_LN_SIZE-1); i++ ) {
-      if( tmpRecFiles->bufPos[i] > bufPos ) return str;
+    for( i=0; i<RECORD_BASE_LN_SIZE; i++ ) {
+      if( tmpRecFiles->bufPos[i] > bufPos ) {
+return str;
+}
       str = tmpRecFiles->fileName[i];
     }
     tmpRecFiles = tmpRecFiles->overflow;
   }
-  // last buffer
+
   str = tmpRecFiles->fileName[0];
-  for(  i=0; i<(recFilesPos-1); i++ ) {
-    if( tmpRecFiles->bufPos[i] > bufPos ) return str;
-    str = tmpRecFiles->fileName[i];;
+  for(  i=0; i<recFilesPos; i++ ) {
+      if( tmpRecFiles->bufPos[i] > bufPos ) return str;
+    str = tmpRecFiles->fileName[i];
   }
 
   return str;
@@ -67,10 +89,11 @@ int unRecordLineNumber( const int bufPos ) {
   RecLN *tmpRecLN = recLN;
   int i, lNr = -1;
 
+  //fprintf( stderr, "unRecordLineNumber( %i )\n", bufPos );
   while( tmpRecLN != activeRecLN ) {
      
       lNr = tmpRecLN->lineNr[0];
-    for( i=0; i<(RECORD_BASE_LN_SIZE-1); i++ ) {
+    for( i=0; i<RECORD_BASE_LN_SIZE; i++ ) {
       if( tmpRecLN->bufPos[i] > bufPos ) return lNr;
       lNr = tmpRecLN->lineNr[i];
     }
@@ -78,7 +101,7 @@ int unRecordLineNumber( const int bufPos ) {
   }
   /* last buffer */
   lNr = tmpRecLN->lineNr[0];
-  for( i=0; i<(recLNPos-1); i++ ) {
+  for( i=0; i<recLNPos; i++ ) {
     if( tmpRecLN->bufPos[i] > bufPos ) return lNr;
     lNr = tmpRecLN->lineNr[i];
   }

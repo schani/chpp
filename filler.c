@@ -219,12 +219,13 @@ finishFile() {
     inFile = ifStack->f;
     zeilenNummer = ifStack->zeilenNummer;
     /*
-    fprintf( stderr, "i wipe die aus du sau (%p).\n",
+    fprintf( stderr, "i wipe di aus du sau (%p).\n",
              currentFilePath.data );
              */
     currentFileName = ifStack->name;
     currentFilePath = ifStack->path;
     ifStack = tmpIFS->next;
+    recordNewFile( bufPosAtCommandBegin, currentFileName.data );
   }
   incFiles--;
 }
@@ -396,6 +397,7 @@ processActiveNL( char *buf, int max, int akt ) {
   
   if( feof( inFile )) { /* Change files */
       /* go down 1 include level */
+      bufPosAtCommandBegin = bufp; /* hack: end of file is no command */
     finishFile();
     activeNL = 1;
     return bufp;
@@ -528,7 +530,7 @@ fillBuffer( char *buf, int max ) { /* max is anzahl */
   int bufp = 0;
 
   recordChangeTape();
-  recordNewFile(0, currentFileName.data);
+  recordNewFile( 0, currentFileName.data );
   
   if( !incFiles ) return -1;
   if( nextCmdFun ) bufp = processCommand( buf, max, bufp );

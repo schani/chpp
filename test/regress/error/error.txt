@@ -1,7 +1,8 @@
 1
-2%<heinz>
+2%<AimERROR1at2>
 3
 #include error2.txt
+sdhfksd
 5
-6%<heinz>
+6%<BimERROR1at7>
 7

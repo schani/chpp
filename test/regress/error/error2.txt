@@ -1,7 +1,7 @@
-1
-2%<heinz>
+1sdfsdfdssfdsfsds
+2%<AimERROR2at2>
 3
 #include error3.txt
 5
-6%<heinz>
+6%<BimERROR2at6>
 7
