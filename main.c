@@ -149,6 +149,7 @@ main (int argc, char *argv[])
 
 			getwd(currentPath);
 			defDirs[nrOfDefDirs] = dsNewFrom(currentPath);
+			dsAppendChar(&defDirs[nrOfDefDirs], '/');
 		    }
 		    else
 			defDirs[nrOfDefDirs] = dsNew();
