@@ -257,10 +257,10 @@ homepage (@pxref{Obtaining chpp}) for more information.
 @comment  node-name,  next,  previous,  up
 @section Acknowledgements
 
-Our thanks go to Tatjana Svizensky for proofreading this manual and to
-Herbert P@"otzl for donating the hash-table functions, which we were too
-lazy, erm, too busy to implement, and for not reading the examples
-chapter of this document.
+Our thanks go to Tatjana Svizensky for proofreading (an older edition
+of) this manual and to Herbert P@"otzl for donating the hash-table
+functions, which we were too lazy, erm, too busy to implement, and for
+not reading the examples chapter of this document.
 
 @c ************* Guided Tour
 
@@ -1522,7 +1522,7 @@ defines a macro @code{mac} taking exactly two arguments.
 @example
 %define(mac,a,b,c:2:3,a=%a b=%b c=%encode(%c))
 %mac(1,2,3,4)
-@result a=1 b=2 c=%list(%'3',%'4')
+@result{} a=1 b=2 c=%list(%'3',%'4')
 @end example
 
 defines a macro @code{mac} taking four or five arguments.
@@ -1560,7 +1560,7 @@ is semantically equivalent to
 @example
 %<mac=%lambda(a,b,a=%a b=%b)>
 @end example
-@end defmac
+@end defspec
 
 @defspec locals (@var{symbol}[,@var{symbol}...],@var{body})
 Evaluates @var{body} in a new scope with the specified local variables.
