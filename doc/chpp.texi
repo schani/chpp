@@ -22,6 +22,12 @@ this manual provided the copyright notice and this permission notice
 are preserved on all copies. 
 @end ifinfo
 
+@ifinfo
+@direntry
+* chpp::                                A very powerful macro preprocessor.
+@end direntry
+@end ifinfo
+
 @titlepage
 @title chpp
 @subtitle Tutorial (in spe) and Reference

@@ -1,5 +1,7 @@
 *** prioritaeten:
 
++ --without-mysql, msql kurden
+
 + metachar aenderbar machen
 
 + break etc.
@@ -9,6 +11,8 @@
 + chpp schneller machen (listen, ...)
 
 + glob makro
+
++ rm, rmdir
 
 + cgi-interface vercoolen
 

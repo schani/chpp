@@ -32,6 +32,7 @@
 #include <sys/stat.h>
 #include <sys/param.h>
 #include <unistd.h>
+#include <sys/file.h>
 
 #ifndef PATH_MAX
 #ifdef MAXPATHLEN
@@ -48,7 +49,13 @@
 
 #include "builtins.h"
 
-static FILE **fileTable = 0;
+struct fileTableEntry
+{
+    int fd;
+    FILE *file;
+};
+
+static struct fileTableEntry *fileTable = 0;
 static int fileTableSize = 0;
 static int numOpenFiles = 0;
 
@@ -65,14 +72,17 @@ getNewFileNum (void)
 	int i;
 
 	fileTableSize = INITIAL_FILE_TABLE_SIZE;
-	fileTable = (FILE**)memXAlloc(fileTableSize * sizeof(FILE*));
+	fileTable = (struct fileTableEntry*)memXAlloc(fileTableSize * sizeof(struct fileTableEntry));
 	for (i = 0; i < fileTableSize; ++i)
-	    fileTable[i] = 0;
+	{
+	    fileTable[i].fd = -1;
+	    fileTable[i].file = 0;
+	}
 	fileNum = 0;
     }
     else if (numOpenFiles < fileTableSize)
     {
-	for (fileNum = 0; fileTable[fileNum] != 0; ++fileNum)
+	for (fileNum = 0; fileTable[fileNum].fd != -1; ++fileNum)
 	    ;
     }
     else
@@ -81,9 +91,12 @@ getNewFileNum (void)
 
 	fileNum = fileTableSize;
 	fileTableSize += FILE_TABLE_GROW_AMOUNT;
-	fileTable = (FILE**)memXRealloc(fileTable, fileTableSize * sizeof(FILE*));
+	fileTable = (struct fileTableEntry*)memXRealloc(fileTable, fileTableSize * sizeof(struct fileTableEntry));
 	for (i = fileNum; i < fileTableSize; ++i)
-	    fileTable[i] = 0;
+	{
+	    fileTable[i].fd = -1;
+	    fileTable[i].file = 0;
+	}
     }
 
     return fileNum;
@@ -92,7 +105,8 @@ getNewFileNum (void)
 void
 builtInFopen (int numArgs, macroArgument *args, environment *env, outputWriter *ow)
 {
-    int fileNum;
+    int fileNum,
+	flags;
     char fileNumString[64],
 	*openMode = "r";
 
@@ -108,18 +122,31 @@ builtInFopen (int numArgs, macroArgument *args, environment *env, outputWriter *
 	openMode = args[1].value.value->v.scalar.scalar.data;
     }
 
-    if (strcmp(openMode, "r") != 0 && strcmp(openMode, "w") != 0 && strcmp(openMode, "a") != 0 )
+    if (strcmp(openMode, "r") == 0)
+	flags = O_RDONLY;
+    else if (strcmp(openMode, "w") == 0)
+	flags = O_RDWR | O_CREAT;
+    else if (strcmp(openMode, "a") == 0)
+	flags = O_RDWR | O_CREAT | O_APPEND;
+    else
     {
 	OUT_STRING(ow, "-1", 2);
 	return;
     }
 
     fileNum = getNewFileNum();
-    fileTable[fileNum] = fopen(transformArgumentToScalar(&args[0])->v.scalar.scalar.data,
-			       openMode);
-    if (fileTable[fileNum] == 0)
+    fileTable[fileNum].fd = open(transformArgumentToScalar(&args[0])->v.scalar.scalar.data, flags, 0666);
+    if (fileTable[fileNum].fd == -1)
     {
 	OUT_STRING(ow, "-1", 2);
+	return;
+    }
+    fileTable[fileNum].file = fdopen(fileTable[fileNum].fd, openMode);
+    if (fileTable[fileNum].file == 0)
+    {
+	issueError(ERRMAC_CALL_FAILED, "fdopen", strerror(errno), 0);
+	OUT_STRING(ow, "-1", 2);
+	fileTable[fileNum].fd = -1;
 	return;
     }
 
@@ -175,14 +202,14 @@ builtInFpipe (int numArgs, macroArgument *args, environment *env, outputWriter *
 
 		switch (pipeMode)
 		{
-		  case PIPE_READ:
-		    close(thePipe[0]);
-		    dup2(thePipe[1], 1);
-		    break;
+		    case PIPE_READ:
+			close(thePipe[0]);
+			dup2(thePipe[1], 1);
+			break;
 
-		  default:
-		    close(thePipe[1]);
-		    dup2(thePipe[0], 0);
+		    default:
+			close(thePipe[1]);
+			dup2(thePipe[0], 0);
 		}
 
 		for (i = 1; i < numArgs; ++i)
@@ -202,20 +229,24 @@ builtInFpipe (int numArgs, macroArgument *args, environment *env, outputWriter *
 
 	    switch (pipeMode)
 	    {
-	      case PIPE_READ:
-		close(thePipe[1]);
-		fileTable[fileNum] = fdopen(thePipe[0], "r");
-		break;
+		case PIPE_READ:
+		    close(thePipe[1]);
+		    fileTable[fileNum].fd = thePipe[0];
+		    fileTable[fileNum].file = fdopen(thePipe[0], "r");
+		    break;
 
-	      default:
-		close(thePipe[0]);
-		fileTable[fileNum] = fdopen(thePipe[1], "w");
+		default:
+		    close(thePipe[0]);
+		    fileTable[fileNum].fd = thePipe[1];
+		    fileTable[fileNum].file = fdopen(thePipe[1], "w");
 	    }
 
-	    if (fileTable[fileNum] == 0)
+	    if (fileTable[fileNum].file == 0)
 	    {
 		issueError(ERRMAC_CALL_FAILED, "fdopen", strerror(errno), 0);
 		OUT_STRING(ow, "-1", 2);
+		fileTable[fileNum].fd = -1;
+		return;
 	    }
 
 	    break;
@@ -238,12 +269,13 @@ builtInFclose (int numArgs, macroArgument *args, environment *env, outputWriter 
 
     fileNum = atoi(transformArgumentToScalar(&args[0])->v.scalar.scalar.data);
 
-    if (fileNum < 0 || fileNum >= fileTableSize || fileTable[fileNum] == 0)
+    if (fileNum < 0 || fileNum >= fileTableSize || fileTable[fileNum].file == 0)
 	issueError(ERRMAC_INVALID_MACRO_ARG, "fclose", args[0].value.value->v.scalar.scalar.data, 0);
     else
     {
-	fclose(fileTable[fileNum]);
-	fileTable[fileNum] = 0;
+	fclose(fileTable[fileNum].file);
+	fileTable[fileNum].file = 0;
+	fileTable[fileNum].fd = -1;
 	--numOpenFiles;
     }
 }
@@ -263,13 +295,13 @@ builtInFgets (int numArgs, macroArgument *args, environment *env, outputWriter *
 
     fileNum = atoi(transformArgumentToScalar(&args[0])->v.scalar.scalar.data);
 
-    if (fileNum < 0 || fileNum >= fileTableSize || fileTable[fileNum] == 0)
+    if (fileNum < 0 || fileNum >= fileTableSize || fileTable[fileNum].file == 0)
     {
 	issueError(ERRMAC_INVALID_MACRO_ARG, "fgets", args[0].value.value->v.scalar.scalar.data);
 	return;
     }
 
-    file = fileTable[fileNum];
+    file = fileTable[fileNum].file;
     do
     {
 	result = fgetc(file);
@@ -295,7 +327,7 @@ builtInFputs (int numArgs, macroArgument *args, environment *env, outputWriter *
     }
 
     fileNum = atoi(transformArgumentToScalar(&args[0])->v.scalar.scalar.data);
-    if (fileNum < 0 || fileNum >= fileTableSize || fileTable[fileNum] == 0)
+    if (fileNum < 0 || fileNum >= fileTableSize || fileTable[fileNum].file == 0)
     {
 	issueError(ERRMAC_INVALID_MACRO_ARG, "fwrite",
 		   args[0].value.value->v.scalar.scalar.data);
@@ -306,7 +338,7 @@ builtInFputs (int numArgs, macroArgument *args, environment *env, outputWriter *
 
     fwrite(args[1].value.value->v.scalar.scalar.data,
 	   1, args[1].value.value->v.scalar.scalar.length,
-	   fileTable[fileNum]);
+	   fileTable[fileNum].file);
 }
 
 void
@@ -324,13 +356,13 @@ builtInFeof (int numArgs, macroArgument *args, environment *env, outputWriter *o
 
     fileNum = atoi(transformArgumentToScalar(&args[0])->v.scalar.scalar.data);
 
-    if (fileNum < 0 || fileNum >= fileTableSize || fileTable[fileNum] == 0)
+    if (fileNum < 0 || fileNum >= fileTableSize || fileTable[fileNum].file == 0)
     {
 	issueError(ERRMAC_INVALID_MACRO_ARG, "feof", ds.data, 0);
 	return;
     }
 
-    file = fileTable[fileNum];
+    file = fileTable[fileNum].file;
 
     if (feof(file))
     {
@@ -339,6 +371,52 @@ builtInFeof (int numArgs, macroArgument *args, environment *env, outputWriter *o
     else
     {
 	OUT_CHAR(ow, '0');
+    }
+}
+
+void
+builtInFlock (int numArgs, macroArgument *args, environment *env, outputWriter *ow)
+{
+    int fileNum;
+
+    if (!(numArgs == 1 || numArgs == 2))
+    {
+	issueError(ERRMAC_WRONG_NUM_ARGS, "flock");
+	return;
+    }
+
+    fileNum = atoi(transformArgumentToScalar(&args[0])->v.scalar.scalar.data);
+
+    if (fileNum < 0 || fileNum >= fileTableSize || fileTable[fileNum].file == 0)
+	issueError(ERRMAC_INVALID_MACRO_ARG, "flock", args[0].value.value->v.scalar.scalar.data, 0);
+    else
+    {
+	int operation;
+
+	if (numArgs == 2)
+	{
+	    char *opstring = transformArgumentToScalar(&args[1])->v.scalar.scalar.data;
+
+	    if (strchr(opstring, 'l') != 0)
+		operation = LOCK_SH;
+	    else if (strchr(opstring, 'x') != 0)
+		operation = LOCK_EX;
+	    else if (strchr(opstring, 'u') != 0)
+		operation = LOCK_UN;
+	    if (strchr(opstring, 'n') != 0)
+		operation |= LOCK_NB;
+	}
+	else
+	    operation = LOCK_EX;
+
+	if (flock(fileTable[fileNum].fd, operation) == 0)
+	{
+	    OUT_CHAR(ow, '1');
+	}
+	else
+	{
+	    OUT_CHAR(ow, '0');
+	}
     }
 }
 
@@ -453,7 +531,8 @@ registerFileOps (void)
     dynstring nameString = dsNewFrom("stdin");
 
     fileNum = getNewFileNum();
-    fileTable[fileNum] = stdin;
+    fileTable[fileNum].file = stdin;
+    fileTable[fileNum].fd = 0;
     ++numOpenFiles;
     sprintf(fileNumString, "%d", fileNum);
     envAddBinding(0, &nameString, valueNewScalarFromCString(fileNumString));
@@ -464,6 +543,7 @@ registerFileOps (void)
     registerBuiltIn("fgets", builtInFgets, 1, 0, 0);
     registerBuiltIn("fputs", builtInFputs, 1, 0, 0);
     registerBuiltIn("feof", builtInFeof, 1, 0, 0);
+    registerBuiltIn("flock", builtInFlock, 1, 0, 0);
     registerBuiltIn("fstat", builtInFstat, 1, 0, 0);
     registerBuiltIn("fgetwd", builtInFgetwd, 1, 0, 0);
     registerBuiltIn("fchdir", builtInFchdir, 1, 0, 0);
