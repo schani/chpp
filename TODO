@@ -10,15 +10,23 @@
 
 + glob makro
 
++ cgi-interface vercoolen
+
 + datenbank interfaces
 
 + listq und hashq.
 
-+ scheisse reentrant machen.
-
 + nullbyte handeln.
 
++ environments als values
+
 + arithmetik besser machen (zahlenformate etc.)
+
++ values verallgemeinern
+
++ soviel wie moeglich entzuckern
+
++ scheisse reentrant machen.
 
 *** schani:
 
