@@ -103,6 +103,59 @@ int errorsOccured = 0,
 static char printfString[1024];
 
 void
+issueWarningInLine (const char *filename, int lineNumber, int num, ...)
+{
+    va_list ap;
+    char *warningString = 0;
+
+    assert(num < 3000);
+
+    if (num < 1000)
+	warningString = frontendWarnings[num];
+    else if (num < 2000)
+	warningString = commandWarnings[num - 1000];
+    else if (num < 3000)
+	warningString = macroWarnings[num - 2000];
+
+    if (num < 1000)
+	sprintf(printfString, "%s: warning: %s\n", executableName, warningString);
+    else
+	sprintf(printfString, "%s:%d: warning: %s\n", filename, lineNumber,
+		warningString);
+    va_start(ap, num);
+    vfprintf(stderr, printfString, ap);
+    va_end(ap);
+
+    ++warningsOccured;
+}
+
+void
+issueErrorInLine (const char *filename, int lineNumber, int num, ...)
+{
+    va_list ap;
+    char *errorString = 0;
+
+    assert(num < 3000);
+
+    if (num < 1000)
+	errorString = frontendErrors[num];
+    else if (num < 2000)
+	errorString = commandErrors[num - 1000];
+    else if (num < 3000)
+	errorString = macroErrors[num - 2000];
+
+    if (num < 1000)
+	sprintf(printfString, "%s: %s\n", executableName, errorString);
+    else
+	sprintf(printfString, "%s:%d: %s\n", filename, lineNumber, errorString);
+    va_start(ap, num);
+    vfprintf(stderr, printfString, ap);
+    va_end(ap);
+
+    ++errorsOccured;
+}
+
+void
 issueWarning (int num, ...)
 {
     va_list ap;

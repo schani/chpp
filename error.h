@@ -26,6 +26,9 @@
 #ifndef __ERROR_H__
 #define __ERROR_H__
 
+void issueWarningInLine (const char *filename, int lineNumber, int num, ...);
+void issueErrorInLine (const char *filename, int lineNumber, int num, ...);
+
 void issueWarning (int num, ...);
 void issueError (int num, ...);
 
