@@ -33,6 +33,7 @@
 #include <sys/param.h>
 #include <unistd.h>
 #include <sys/file.h>
+#include <glob.h>
 
 #ifndef PATH_MAX
 #ifdef MAXPATHLEN
@@ -523,6 +524,74 @@ builtInFchdir (int numArgs, macroArgument *args, environment *env, outputWriter 
     chdir(transformArgumentToScalar(&args[0])->v.scalar.scalar.data);
 }
 
+#ifndef GLOB_PERIOD
+#define GLOB_PERIOD 0
+#endif
+
+void
+builtInFglob (int numArgs, macroArgument *args, environment *env, outputWriter *ow)
+{
+    glob_t globbuf;
+
+    if (!(numArgs == 1))
+    {
+	issueError(ERRMAC_WRONG_NUM_ARGS, "fglob");
+	return;
+    }
+
+    if (glob(transformArgumentToScalar(&args[0])->v.scalar.scalar.data,
+	     GLOB_PERIOD, 0, &globbuf) == 0)
+    {
+	value *list = valueNewList();
+	int i;
+
+	for (i = 0; i < globbuf.gl_pathc; ++i)
+	    valueListSetElement(list, i, valueNewScalarFromCString(globbuf.gl_pathv[i]));
+
+	globfree(&globbuf);
+
+	OUT_VALUE(ow, list);
+    }
+}
+
+void
+builtInFunlink (int numArgs, macroArgument *args, environment *env, outputWriter *ow)
+{
+    if (!(numArgs == 1))
+    {
+	issueError(ERRMAC_WRONG_NUM_ARGS, "funlink");
+	return;
+    }
+
+    if (unlink(transformArgumentToScalar(&args[0])->v.scalar.scalar.data) == 0)
+    {
+	OUT_CHAR(ow, '1');
+    }
+    else
+    {
+	OUT_CHAR(ow, '0');
+    }
+}
+
+void
+builtInFrmdir (int numArgs, macroArgument *args, environment *env, outputWriter *ow)
+{
+    if (!(numArgs == 1))
+    {
+	issueError(ERRMAC_WRONG_NUM_ARGS, "frmdir");
+	return;
+    }
+
+    if (rmdir(transformArgumentToScalar(&args[0])->v.scalar.scalar.data) == 0)
+    {
+	OUT_CHAR(ow, '1');
+    }
+    else
+    {
+	OUT_CHAR(ow, '0');
+    }
+}
+
 void
 registerFileOps (void)
 {
@@ -547,4 +616,8 @@ registerFileOps (void)
     registerBuiltIn("fstat", builtInFstat, 1, 0, 0);
     registerBuiltIn("fgetwd", builtInFgetwd, 1, 0, 0);
     registerBuiltIn("fchdir", builtInFchdir, 1, 0, 0);
+    registerBuiltIn("fglob", builtInFglob, 1, 0, 0);
+    registerBuiltIn("funlink", builtInFunlink, 1, 0, 0);
+    registerBuiltIn("frmdir", builtInFrmdir, 1, 0, 0);
 }
+

@@ -42,7 +42,9 @@ struct _environment;
 #define VALUE_LIST                   4
 #define VALUE_HASH                   5
 #define VALUE_LAMBDA                 6
-#define VALUE_WHATSIT                7
+#define VALUE_ENVIRONMENT            7
+#define VALUE_BYTECODE               8
+#define VALUE_WHATSIT                9
 
 typedef struct _value
 {
@@ -85,10 +87,20 @@ typedef struct _value
 	    int minVarArgs;
 	    int maxVarArgs;
 	    dynstring *paramNames;
-	    char metaChar;
 	    struct _bytecode *code;
 	    struct _environment *env;
+	    int evalParams;
 	} lambda;
+
+	struct
+	{
+	    struct _environment *env;
+	} env;
+
+	struct
+	{
+	    struct _bytecode *code;
+	} bytecode;
 
 	struct
 	{
@@ -108,8 +120,11 @@ value* valueNewScalarFromBytes (const char *scalar, int length);
 value* valueNewList (void);
 value* valueNewHash (void);
 value* valueNewLambda (int numParams, int minVarArgs, int maxVarArgs,
-		       dynstring *paramNames, char metaChar,
-		       struct _bytecode *code, struct _environment *env);
+		       dynstring *paramNames,
+		       struct _bytecode *code, struct _environment *env,
+		       int evalParams);
+value* valueNewEnvironment (struct _environment *env);
+value* valueNewBytecode (struct _bytecode *code);
 value* valueNewWhatsit (void *data);
 
 value* valueNewScalarFromValue (value *theValue);
@@ -127,8 +142,10 @@ int valueBoolValue (value *theValue);
 
 int valueHashCount (value *theValue);
 void valueHashDefine (value *aValue, dynstring *key, value *defValue);
+void valueHashDefineCString (value *theValue, const char *key, value *defValue);
 value* valueHashLookup (value *value, dynstring *key);
 value* valueHashLookupCString (value *value, const char *key);
+void valueHashDelete (value *value, dynstring *key);
 
 int valueListLength (value *value);
 value* valueListGetElement (value *value, int index);

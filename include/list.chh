@@ -1,5 +1,16 @@
 #ifndef __LIST_CHH__
 #define __LIST_CHH__
+%define(listSelect,crit,lst,
+%locals(newlst,
+    %<newlst=%list()>\
+    %foreach(el,%&lst,
+        %if(%crit(%&el),
+            %lappend(%&newlst,%&el)
+        )
+    )\
+    %&newlst
+))\
+\
 %define(listSearch,lst,crit,
 %locals(length,pos,
     %<length=%llength(%lst)>\

@@ -58,6 +58,8 @@ struct _value* envGetValueForBinding (environment *env, dynstring *name);
 
 void envAddBindings (environment *env, environment *additions);
 
+environment* envTop (environment *env);
+
 environment* envNewUnion (environment *env1, environment *env2);
 environment* envNewIntersection (environment *env1, environment *env2);
 

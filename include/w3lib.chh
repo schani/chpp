@@ -1,0 +1,238 @@
+#ifndef __w3lib_chh__
+#define __w3lib_chh__
+\
+#include files.chh
+\
+%<w3imageTypes=%<list( jpg, jpeg, gif )>>\
+%<w3imageInfoHash=%<hash()>>\
+#ifndef w3xliExecutable
+  %<w3xliExecutable=xli>\
+#endif
+\
+%<define( w3locateImageFile, imageName,
+  %<if( %<fexists( %<imageName> )>,
+    %<imageName>
+  ,
+    %<locals( imageUsed, iuError,
+      %<imageUsed=0>%<iuError=0>\
+      %<foreach( endung, %<w3imageTypes>,
+        %<if( %<fexists( %<imageName>.%<endung> )>,
+          %<if( %<imageUsed>, %<iuError=1> )>\
+          %<imageUsed=%<imageName>.%<endung>>
+        )>
+      )>\
+      %<if( %<iuError>,
+        %<warning( %'w3lib: multiple formats of ('%<imageName>%').' )>
+      )>\
+      %<if( %<imageUsed>,
+        %<imageUsed>
+      ,
+        0\
+        %<warning( w3lib: image not found "%<imageName>". )>
+      )>
+    )>
+  )>
+)>\
+\
+%<define( w3locateImageDataFile, imageName,
+  %<if( %<fexists( %<imageName>d )>,
+    %<imageName>d
+  ,
+    %<locals( imageUsed, iuError,
+      %<imageUsed=0>%<iuError=0>\
+      %<foreach( endung, %<w3imageTypes>,
+        %<if( %<fexists( %<imageName>.%<endung>d )>,
+          %if( %<imageUsed>, %<iuError=1> )\
+          %<imageUsed=%<imageName>.%<endung>d>
+        )>
+      )>\
+      %<if( %<iuError>, 
+        %<warning( %'w3lib: multiple image data files ('%<imageName>%').
+' )>
+      )>\
+      %<if( %<imageUsed>, 
+        %<imageUsed>
+      ,
+        0\
+        %<warning( %'w3lib: image data file not found ('%<imageName>%').' )>
+      )>
+    )>
+  )>
+)>\
+\
+%<define( w3locateImageInfo, imageName,
+  %<if( %<hcontains( %<w3imageInfoHash>, %<imageName> )>,
+    %<w3imageInfoHash{%<imageName>}>\
+  ,
+    %<locals( imageUsed, iuError,
+      %<imageUsed=0>%<iuError=0>\
+      %<foreach( endung, %<w3imageTypes>,
+        %<if( %<hcontains( %<w3imageInfoHash>, %<imageName>.%<endung> )>,
+          %<if( %<imageUsed>, %<iuError=1> )>\
+          %<imageUsed=%<imageName>.%<endung>>
+        )>
+      )>\
+      %<if( %<iuError>, 
+        %<warning( %'w3lib: multiple formats of ('%<imageName>%').' )>
+      )>\
+      %<if( %<imageUsed>, 
+        %<imageUsed>
+      ,
+        %<imageUsed=%<w3locateImageDataFile( %<imageName> )>>\
+        %<if( %<imageUsed>,
+          %<locals( file,
+            %<file=%<fopen( %<imageUsed> )>>\
+            %<imageUsed=%{%<fgets( %file )>}>\
+            %<w3imageInfoHash{%<imageName>}=%<imageUsed>>\
+            %<fclose( %file )>
+          )>\
+          %<imageUsed>
+        ,
+          %<warning( w3lib: image not found "%imageName". )>\
+          %<hash( %'height', 0, %'width', 0, %'src', %'broken' )>
+        )>
+      )>
+    )>
+  )>
+)>\
+\
+%<define( w3dependOnImage, imageName,
+  %<locals( imageUsed, tmpFlag, tmpofi, mresult,
+    %<imageUsed=%<w3locateImageFile( %<imageName> )>>\
+    %<if( %<imageUsed>,
+      %<depend( %<imageUsed> )>\
+      %<if( %<fneweras( %<imageUsed>, %<imageUsed>d )>,
+        %<pppipe=%<fpipe( r, %<w3xliExecutable>, %'-identify',\
+                          %<imageUsed> )>>\
+        %<if( %[ %<pppipe> == -1 ],
+          %<warning( w3lib: error calling xli %'('%<imageUsed>%')'. )>
+        ,
+          %<line=%<sremovews( %<fgets( %<pppipe> )>)>>\
+          %<tmpFlag=1>\
+          %<mresult=%list()>\
+          %<foreach( picFormat, %<list( JPEG, GIF, PNG )>,
+            %<if( %[ %<tmpFlag> && %<smatch( %'([^[:blank:]]+) is a '\
+                      %'([[:digit:]]+)x([[:digit:]]+) ([^[:blank:]]+ )?'
+                      %<picFormat>%' image', %<line>, %<&mresult> )> != -1 ],\
+              %<w3images=%<hash()>>\
+              %<w3images{%<imageName>}=%<hash()>>\
+              %<w3images{%<imageName>}{width}=%<mresult[2]>>\
+              %<w3images{%<imageName>}{height}=%<mresult[1]>>\
+              %<w3images{%<imageName>}{format}=%<picFormat>>\
+              %<w3images{%<imageName>}{src}=%<mresult[1]>>\
+              %<tmpofi=%<fopen( %<imageUsed>d, w )>>\
+              %<fputs( %<tmpofi>, %<encode( %<w3images{%<imageName>}>)>)>\
+              %<fclose( %<tmpofi> )>\
+              %<tmpFlag=0>
+            )>
+          )>\
+          %<if( %<tmpFlag>,\
+            %<warning( %'w3lib: unable to identify picture ('\
+                       %<imageUsed>%').' )>
+          )>
+        )>
+      )>
+    ,
+      %<warning( %'w3lib: image not found ('%<imageName>%')'. )>
+    )>
+  )>
+)>\
+\
+%<define( w3img, imageName, varargs:0:1,
+  %<if( %<dependencing>,
+    %<w3dependOnImage( %<imageName> )>
+  ,
+    %<locals( imageUsed,
+      %<imageUsed=%<w3locateImageInfo( %<imageName> )>>\
+      <IMG src="%<imageUsed{src}>" height="%<imageUsed{height}>" width="%<imageUsed{width}>"%<if( %<llength( %<varargs> )>, %' '%<varargs[0]>)>>
+    )>
+  )>
+)>\
+%<define( w3imglink, imageName, linkText, varargs:0:2,
+  geht noch nix
+)>\
+%<define( w3image, imageName, %<w3img( %<imageName> )>)>\
+\
+%<define( w3imgX, imageName,
+  %<if( %<dependencing>,
+    %<w3dependOnImage( %<imageName> )>
+  ,
+    %<locals( imageUsed,
+      %<imageUsed=%<w3locateImageInfo( %<imageName> )>>\
+      %<imageUsed{width}>
+    )>
+  )>
+)>\
+%<define( w3imgWidth, imageName, %<w3imgX( %<imageName> )>)>\
+\
+%<define( w3imgY, imageName,
+  %<if( %<dependencing>,
+    %<w3dependOnImage( %<imageName> )>
+  ,
+    %<locals( imageUsed,3
+      %<imageUsed=%<w3locateImageInfo(%<imageName>)>>\
+      %<imageUsed{height}>
+    )>
+  )>
+)>\
+%<define( w3imgHeight, imageName, %<w3imgY( %<imageName> )>)>\
+\
+%<define( w3rgbcolor, cred, cgreen, cblue,
+  %'#'\
+  %<foreach( param, %<list( %<cred>, %<cgreen>, %<cblue> )>,
+    %<if( %[ %<param> > 15 ],
+      %<snumber( %<param>, 16 )>
+    ,
+      0%<snumber( %<param>, 16 )>
+    )>
+  )>
+)>\
+\
+%<define( w3JSimgImgLink, imageName0, imageName1, linkText, varargs:0:2,
+  %<if(  %<dependencing>,
+    %<w3dependOnImage( %<imageName0> )>\
+    %<w3dependOnImage( %<imageName1> )>
+  ,
+    %<locals( imageUsed1, imageUsed2,
+      %<imageUsed0=%<w3locateImageInfo( %<imageName0> )>>\
+      %<imageUsed1=%<w3locateImageInfo( %<imageName1> )>>\
+      <A href="%<linkText>" onMouseover="w3libIIL_%<imageName0>_%<imageName1>_mouseover%'()'" onMouseout="w3libIIL_%<imageName0>_%<imageName1>_mouseout%'()'"><IMG src="%<imageUsed0{src}>" height="%<imageUsed0{height}>" width="%<imageUsed0{width}>" name="w3libIIL_%<imageName0>_%<imageName1>"%<if( %<llength( %<varargs> )>, %' '%<varargs[0]>)>></A>
+<SCRIPT language="JavaScript"><!---
+  function w3libIIL_%<imageName0>_%<imageName1>_mouseover%'()' {
+    document["w3libIIL_%<imageName0>_%<imageName1>"].src="%<imageUsed1{src}>";
+  }
+  function w3libIIL_%<imageName0>_%<imageName1>_mouseout%'()' {
+    document["w3libIIL_%<imageName0>_%<imageName1>"].src="%<imageUsed0{src}>";
+  }
+// --></SCRIPT>
+    )>
+  )>
+)>\
+\
+%<define( w3JSmenu, menuName, target, default,
+  %<locals( newMenu,
+    %<newMenu=%<hash()>>\
+    %<newMenu{target}=%<target>>\
+    %<newMenu{default}=%<default>>\
+    %<w3JSmenu_%<menuName>=%<newMenu>>
+  )>
+)>\
+%<define( w3JSmenuItem, menuName, image0, image1, linkText, varargs:0:2,
+  %<if(  %<dependencing>,
+    %<w3dependOnImage( %<image0> )>\
+    %<w3dependOnImage( %<image1> )>
+  ,
+    %<locals( imageUsed0, imageUsed1,
+      %<imageUsed0=%<w3locateImageInfo( %<image0> )>>\
+      %<imageUsed1=%<w3locateImageInfo( %<image1> )>>\
+      <A href="%<linkText>" \
+         target="%<(%<w3JSmenu_%<menuName>>){target}>" \
+      >\
+      <IMG src="%<imageUsed0{src}>" \
+           height="%<imageUsed0{height}>" \
+           width="%<imageUsed0{width}>"%<if( %<llength( %<varargs> )>, %' '%<varargs[0]>)>\
+      ></A>\
+    )>
+  )>
+)>
+#endif

@@ -60,8 +60,10 @@ void registerStringOps (void);
 void registerFlowCtl (void);
 void registerArrayOps (void);
 void registerHashOps (void);
+void registerTimeOps (void);
 void registerValues (void);
 void registerWWWBuiltIns (void);
+void registerEnvironmentOps (void);
 void registerDatabaseBuiltIns (void);
 
 typedef void (*builtIn) (int numArgs, macroArgument *args, struct _environment *env,

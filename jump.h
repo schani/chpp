@@ -60,5 +60,6 @@ extern jmp_buf *topmostJmpBuf;
 #define JUMP_INFO                 (jumpResult & JUMP_INFO_MASK)
 
 #define JUMP_HANDLE_RETURN        if (JUMP_CODE == JUMP_CODE_RETURN) REJUMP
+#define JUMP_HANDLE_BREAK_IN_LOOP if (JUMP_CODE == JUMP_CODE_BREAK) { if (JUMP_INFO == 0) return; else JUMP(JUMP_CODE_BREAK | (JUMP_INFO - 1)); }
 
 #endif

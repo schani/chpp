@@ -229,8 +229,11 @@ builtInSplit (int numArgs, macroArgument *args, environment *env, outputWriter *
 
 	valueListSetElement(result, elements++, inserted);
 
-	pos += elementLength + registers.end[0] - registers.start[0];
-	length -= elementLength + registers.end[0] - registers.start[0];
+	if (matchPos >= 0)
+	{
+	    pos += elementLength + registers.end[0] - registers.start[0];
+	    length -= elementLength + registers.end[0] - registers.start[0];
+	}
 
 	if (numArgs == 3)
 	    frontRegs = rearRegs;

@@ -53,6 +53,10 @@
                   %equal(%result{colinfo}{%colname}{type},time),
                       %foreach(row,%&result{rows},
                           %<row{%colname}=%timeFromString(%conn{dbinfo}{timeformat},%row{%colname})>
+                      ),
+                  %equal(%result{colinfo}{%colname}{type},datetime),
+                      %foreach(row,%&result{rows},
+                          %<row{%colname}=%timeFromString(%conn{dbinfo}{datetimeformat},%row{%colname})>
                       )
             )
         )

@@ -160,14 +160,9 @@ builtIn_sqlMysqlDatabaseInfo (int numArgs, macroArgument *args,
 	return;
     }
 
-    key = dsNewFrom("timeformat");
-    valueHashDefine(hash, &key, valueNewScalarFromCString("$H:$M:$S"));
-
-    key = dsNewFrom("dateformat");
-    valueHashDefine(hash, &key, valueNewScalarFromCString("$Y-$m-$d"));
-
-    key = dsNewFrom("datetimeformat");
-    valueHashDefine(hash, &key, valueNewScalarFromCString("$Y-$m-$d $H:$M:$S"));
+    valueHashDefineCString(hash, "timeformat", valueNewScalarFromCString("$H:$M:$S"));
+    valueHashDefineCString(hash, "dateformat", valueNewScalarFromCString("$Y-$m-$d"));
+    valueHashDefineCString(hash, "datetimeformat", valueNewScalarFromCString("$Y-$m-$d $H:$M:$S"));
 
     OUT_VALUE(ow, hash);
 }

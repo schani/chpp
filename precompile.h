@@ -1,11 +1,11 @@
 /* -*- c -*- */
 
 /*
- * internals.h
+ * precompile.h
  *
  * chpp
  *
- * Copyright (C) 1997-1998 Mark Probst
+ * Copyright (C) 1999 Mark Probst
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,24 +22,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef __INTERNALS_H__
-#define __INTERNALS_H__
+#ifndef __PRECOMPILE_H__
+#define __PRECOMPILE_H__
 
-struct _value;
-struct _outputWriter;
-struct _bcSubscript;
-struct _environment;
+#include <stdio.h>
 
-extern char metaChar;
-extern char quoteChar;
+#include "bytecode.h"
 
-typedef void (*internalSet) (struct _value *theValue, int needCopy,
-			     struct _bcSubscript *subscripts,
-			     struct _environment *env);
-typedef void (*internalGet) (struct _bcSubscript *subscripts,
-			     struct _environment *env,
-			     struct _outputWriter *ow);
-
-void registerInternals (void);
+void prcpWriteBytecode (FILE *out, bytecode *bc);
 
 #endif

@@ -90,7 +90,7 @@ envModifyOrAddBinding (environment *env, dynstring *name, struct _value *theValu
     binding *aBinding;
 
     if (theValue == 0)
-	theValue = valueNewScalarFromCString("<heinz>");
+	theValue = valueNewScalarFromCString("<heinz>"); /* FIXME: can this be true? */
 
     while (env != 0)
     {
@@ -154,6 +154,15 @@ envAddBindings (environment *env, environment *additions)
 	    envAddBinding(env, &aBinding->name, aBinding->value);
 	aBinding = aBinding->next;
     }
+}
+
+environment*
+envTop (environment *env)
+{
+    while (env->parent != 0)
+	env = env->parent;
+
+    return env;
 }
 
 environment*

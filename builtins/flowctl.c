@@ -208,14 +208,7 @@ builtInFor (int numArgs, macroArgument *args, environment *env, outputWriter *ow
 	    bcExecute(args[numArgs - 1].bytecode, newEnv, ow);
 	} WITH_JUMP_HANDLER {
 	    JUMP_HANDLE_RETURN;
-
-	    if (JUMP_CODE == JUMP_CODE_BREAK)
-	    {
-		if (JUMP_INFO == 0)
-		    return;
-		else
-		    JUMP(JUMP_CODE_BREAK | (JUMP_INFO - 1));
-	    }
+	    JUMP_HANDLE_BREAK_IN_LOOP;
 	} END_JUMP_HANDLER;
 
 	/* i = atoi(entry->value->v.scalar.scalar.data); */
@@ -265,7 +258,12 @@ builtInForeach (int numArgs, macroArgument *args, environment *env, outputWriter
 
 	    envAddBinding(newEnv, &counter, valueListGetElement(list, i));
 
-	    bcExecute(args[2].bytecode, newEnv, ow);
+	    DO_JUMP_CODE {
+		bcExecute(args[2].bytecode, newEnv, ow);
+	    } WITH_JUMP_HANDLER {
+		JUMP_HANDLE_RETURN;
+		JUMP_HANDLE_BREAK_IN_LOOP;
+	    } END_JUMP_HANDLER;
 	}
     }
 }
@@ -324,7 +322,12 @@ builtInForeachkey (int numArgs, macroArgument *args, environment *env, outputWri
 	hash_next(&state, &key);
 	envAddBinding(newEnv, &counter, valueNewScalarFromCString(key));
 
-	bcExecute(args[2].bytecode, newEnv, ow);
+	DO_JUMP_CODE {
+	    bcExecute(args[2].bytecode, newEnv, ow);
+	} WITH_JUMP_HANDLER {
+	    JUMP_HANDLE_RETURN;
+	    JUMP_HANDLE_BREAK_IN_LOOP;
+	} END_JUMP_HANDLER;
     }
 }
 
@@ -357,7 +360,14 @@ builtInWhile (int numArgs, macroArgument *args, environment *env, outputWriter *
     }
 
     while (valueBoolValue(bcExecuteIntoValue(args[0].bytecode, env, 0)))
-	bcExecute(args[1].bytecode, env, ow);
+    {
+	DO_JUMP_CODE {
+	    bcExecute(args[1].bytecode, env, ow);
+	} WITH_JUMP_HANDLER {
+	    JUMP_HANDLE_RETURN;
+	    JUMP_HANDLE_BREAK_IN_LOOP;
+	} END_JUMP_HANDLER;
+    }
 }
 
 void
@@ -377,7 +387,14 @@ builtInUntil (int numArgs, macroArgument *args, environment *env, outputWriter *
     }
 
     while (!valueBoolValue(bcExecuteIntoValue(args[0].bytecode, env, 0)))
-	bcExecute(args[1].bytecode, env, ow);
+    {
+	DO_JUMP_CODE {
+	    bcExecute(args[1].bytecode, env, ow);
+	} WITH_JUMP_HANDLER {
+	    JUMP_HANDLE_RETURN;
+	    JUMP_HANDLE_BREAK_IN_LOOP;
+	} END_JUMP_HANDLER;
+    }
 }
 
 void
@@ -398,7 +415,12 @@ builtInDowhile (int numArgs, macroArgument *args, environment *env, outputWriter
 
     do
     {
-	bcExecute(args[0].bytecode, env, ow);
+	DO_JUMP_CODE {
+	    bcExecute(args[0].bytecode, env, ow);
+	} WITH_JUMP_HANDLER {
+	    JUMP_HANDLE_RETURN;
+	    JUMP_HANDLE_BREAK_IN_LOOP;
+	} END_JUMP_HANDLER;
     } while (valueBoolValue(bcExecuteIntoValue(args[1].bytecode, env, 0)));
 }
 
@@ -424,7 +446,12 @@ builtInDountil (int numArgs, macroArgument *args, environment *env, outputWriter
 
     do
     {
-	bcExecute(args[0].bytecode, env, ow);
+	DO_JUMP_CODE {
+	    bcExecute(args[0].bytecode, env, ow);
+	} WITH_JUMP_HANDLER {
+	    JUMP_HANDLE_RETURN;
+	    JUMP_HANDLE_BREAK_IN_LOOP;
+	} END_JUMP_HANDLER;
     } while (!valueBoolValue(bcExecuteIntoValue(args[1].bytecode, env, 0)));
 }
 

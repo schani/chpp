@@ -1,0 +1,181 @@
+*** prioritaeten:
+
+** bis 0.4
+
++ solaris flock
+
++ env* leiwander docen
+
++ bytecode in file schreiben (i.e. precompiled code)
+
++ chpp schneller machen (listen, ...)
+
++ encode muss fuer closures nicht nur lambda sondern auch environment auskurden (let)
+
++ cgi-interface vercoolen
+
++ listq und hashq.
+
++ nullbyte handlen.
+
++ internals sollen ueber %<&heusl=kurde> aenderbar sein.
+
+** spaeta
+
++ continue
+
++ tutorial schreim
+
++ datenbank interfaces
+
++ arithmetik besser machen (zahlenformate etc.)
+
++ values verallgemeinern
+
++ soviel wie moeglich entzuckern
+
++ scheisse reentrant machen.
+
++ dynamically linked builtins
+
+*** schani:
+
+- --without-mysql, msql kurden
+
+- wenn man eval kurdet mit an nackaten environment und man macht a assignment, dann
+  wird das im GLOBALEN environment gebunden und ned im leeren!!!!
+
+- metachar aenderbar machen
+
+- break etc.
+
+- rm, rmdir
+
+- defspecial docen
+
+- env* und eval docen
+
+- environments als values
+
+- timeNow builtin
+
+- glob makro
+
+- varargs docen
+
+- autoconf
+
+- beim for einbauen, dass nicht immer globale vars definiert werden.
+
+- wir brauchen eine moeglichkeit, dass am ende einer zeile doch kein zeilenende ausgegeben wird.
+  beispiel:
+
+  ...
+  blabla
+  #ifdef iagndwos
+  ...
+
+  es ist momentan nicht moeglich, nach blabla kein zeilenende ausgeben zu lassen. mein
+  vorschlag: ein \ (moeglicherweise waehlbar) am ende der zeile (also als echtes letztes
+  zeichen vor '\n') bedeutet kein zeilenende, aber zwei \ (also \\) bedeutet sowohl \ als
+  auch zeilenende.
+
+- endlich ein scheiss define makro machen, mit dem man scheiss parametrisierte makros
+  definieren kann.
+
+- symtab auf hash-table umstellen.
+
+- test-suite zum regression-testen und zum geschwindigkeits-testen.
+
+- for soll so funken, dass man im body den zaehler aendern kann und dann von dort
+  weitergezaehlt wird.
+
+- for generalisieren fuer runterzaehlen und steps.
+
+- metachars fuer makros speichern.
+
+- endlich in die arithmetische evaluierung einbauen, dass auch doubles gecheckt werden.
+
+- speicher fuer assoziative arrays freigeben.
+
+- speicher fuer arrays freigeben.
+
+- assertion num < 300 ausbessern
+
+- files writen docen, neue builtins namen docen
+
+- %depend docen.
+
+- fstat docen
+
+- neue file builtins (fputs, fgets) docen
+
+- warning docen
+
+- gsub docen
+
+- mainfilename docen
+
+- interne vars docen
+
+- neues depend docen
+
+- vararg makros.
+
+- strneq docen
+
+- number docen
+
+- --help schreim
+
+- globalEffectors fuer and, or, cond und case schreiben.
+
+- a datenbank interface.
+
+- call oder exec makro mit dem man andere makros aufrufen kann. als argument kriegts das
+  makro und die argumentliste als liste.
+
++ alle asserts rausnehmen.
+
++ im input.c is ein fehler beim abfragen der zeilennummern. irgendwas in der art, wenn
+  was vom buffer uebrigbleibt, dann wird das nicht weggerechnet oder so...
+
+*** heinz:
+
+- scheiss warnings ausbessern, die kommen, wenn man scheisse.c mit -Wall compiliert.
+
+- error-kommando machen, damit man zum beispiel machen kann
+
+  #ifdef TITLE
+  <h1>%TITLE</h1>
+  #else
+  #error TITLE nicht definiert
+  #endif
+
+- zaehlung von zeilennummern einbauen (fuer fehlermeldungen)
+
+- includes sollten immer relativ zu dem verzeichnis sein, in dem sich das includende file
+  befindet.
+
+- if-kommando machen, fuer sowas zum beispiel:
+
+  #if %exists(xyz.chml)
+  #include xyz.chml
+  #endif
+
+- scheiss bug, der bei laengeren files vorkommt, ausbessern.
+
++ reihenfolge bei include?
+
++ zaehlung von zeilennummern richtig machen.
+
++ ist es ok, wenn initCommands() mehrere male aufgerufen wird (um mehrere files nacheinander
+  abzuarbeiten)?
+
++ file descriptors statt file-namen.
+
++ scheisse reentrant machen.
+
++ nullbyte handeln.
+
+*** irgendwer:

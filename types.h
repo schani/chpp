@@ -1,11 +1,11 @@
 /* -*- c -*- */
 
 /*
- * internals.h
+ * types.h
  *
  * chpp
  *
- * Copyright (C) 1997-1998 Mark Probst
+ * Copyright (C) 1997-1999 Mark Probst
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,24 +22,20 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef __INTERNALS_H__
-#define __INTERNALS_H__
+#ifndef __TYPES_H__
+#define __TYPES_H__
 
-struct _value;
-struct _outputWriter;
-struct _bcSubscript;
-struct _environment;
+typedef signed char signed1;
+typedef unsigned char unsigned1;
 
-extern char metaChar;
-extern char quoteChar;
+typedef signed short signed2;
+typedef unsigned short unsigned2;
 
-typedef void (*internalSet) (struct _value *theValue, int needCopy,
-			     struct _bcSubscript *subscripts,
-			     struct _environment *env);
-typedef void (*internalGet) (struct _bcSubscript *subscripts,
-			     struct _environment *env,
-			     struct _outputWriter *ow);
+#define NIL2     ((unsigned2)-1)
 
-void registerInternals (void);
+typedef signed int signed4;
+typedef unsigned int unsigned4;
+
+#define NIL4     ((unsigned4)-1)
 
 #endif

@@ -23,6 +23,7 @@
  */
 
 #include "memory.h"
+#include "precompile.h"
 
 #include "bcoutput.h"
 
@@ -190,6 +191,92 @@ bcwOutputOutEvaluation (void *theState, bytecode *bc)
     bcExecute(bcNewEvaluation(bc), state->env, state->ow);
 }
 
+void
+bcwFileFlush (bytecodeStateFile *state)
+{
+    if (state->string != 0)
+    {
+	prcpWriteBytecode(state->out, state->string);
+	state->string = 0;
+    }
+}
+
+void
+bcwFileOutChar (void *theState, char c)
+{
+    bytecodeStateFile *state = (bytecodeStateFile*)theState;
+
+    if (state->string == 0)
+    {
+	dynstring empty = dsEmpty();
+
+	state->string = bcNewString(&empty);
+    }
+
+    dsAppendChar(&state->string->v.string.string, c);
+}
+
+void
+bcwFileOutString (void *theState, const char *string, int length)
+{
+    bytecodeStateFile *state = (bytecodeStateFile*)theState;
+
+    if (state->string == 0)
+    {
+	dynstring empty = dsEmpty();
+
+	state->string = bcNewString(&empty);
+    }
+
+    dsAppendString(&state->string->v.string.string, string, length);
+}
+
+void
+bcwFileOutAssignment (void *theState, int modify, bytecode *varName, bcSubscript *subscript, bytecode *newValue)
+{
+    bytecodeStateFile *state = (bytecodeStateFile*)theState;
+
+    bcwFileFlush(state);
+    prcpWriteBytecode(state->out, bcNewAssignment(modify, varName, subscript, newValue));
+}
+
+void
+bcwFileOutMacro (void *theState, int flags, bytecode *nameOrValue, bcSubscript *subscript, int numArgs, bcArgument *args)
+{
+    bytecodeStateFile *state = (bytecodeStateFile*)theState;
+
+    bcwFileFlush(state);
+    prcpWriteBytecode(state->out, bcNewMacro(flags, nameOrValue, subscript, numArgs, args));
+}
+
+void
+bcwFileOutBeginQuote (void *theState)
+{
+}
+
+void
+bcwFileOutEndQuote (void *theState)
+{
+}
+
+void
+bcwFileOutArithmetic (void *theState, bytecode *arg)
+{
+    bytecodeStateFile *state = (bytecodeStateFile*)theState;
+
+    bcwFileFlush(state);
+    prcpWriteBytecode(state->out, bcNewArithmetic(arg));
+}
+
+void
+bcwFileOutEvaluation (void *theState, bytecode *arg)
+{
+    bytecodeStateFile *state = (bytecodeStateFile*)theState;
+
+    bcwFileFlush(state);
+    prcpWriteBytecode(state->out, bcNewEvaluation(arg));
+}
+
 bytecodeWriter*
 bcwNewBytecode (void)
 {
@@ -241,4 +328,37 @@ bcwNewOutput (environment *env, outputWriter *ow)
     bcw->outEvaluation = bcwOutputOutEvaluation;
 
     return bcw;
+}
+
+bytecodeWriter*
+bcwNewFile (FILE *out)
+{
+    bytecodeWriter *bcw = (bytecodeWriter*)memXAlloc(sizeof(bytecodeWriter));
+    bytecodeStateFile *state = (bytecodeStateFile*)memXAlloc(sizeof(bytecodeStateFile));
+
+    state->out = out;
+    state->string = 0;
+
+    bcw->state = state;
+    bcw->outChar = bcwFileOutChar;
+    bcw->outString = bcwFileOutString;
+    bcw->outAssignment = bcwFileOutAssignment;
+    bcw->outMacro = bcwFileOutMacro;
+    bcw->outBeginQuote = bcwFileOutBeginQuote;
+    bcw->outEndQuote = bcwFileOutEndQuote;
+    bcw->outArithmetic = bcwFileOutArithmetic;
+    bcw->outEvaluation = bcwFileOutEvaluation;
+
+    return bcw;
+}
+
+void
+bcwFileClose (bytecodeWriter *bcw)
+{
+    bytecodeStateFile *state = (bytecodeStateFile*)bcw->state;
+
+    bcwFileFlush(state);
+    fflush(state->out);
+
+    state->out = 0;
 }

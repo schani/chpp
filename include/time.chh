@@ -76,4 +76,9 @@
                 )
             ))
 )\
+\
+%define(timeNow,
+    %timeUNIX2Hash(%timeUNIX())
+)\
+\
 #endif

@@ -106,9 +106,27 @@ builtInKeys (int numArgs, macroArgument *args, environment *env, outputWriter *o
 }
 
 void
+builtInHdelete (int numArgs, macroArgument *args, environment *env, outputWriter *ow)
+{
+    if (!(numArgs == 2))
+    {
+	issueError(ERRMAC_WRONG_NUM_ARGS, "hdelete");
+	return;
+    }
+
+    if (args[0].value.value->type != VALUE_HASH)
+	issueError(ERRMAC_VALUE_WRONG_TYPE,
+		   cStringForValueType(args[0].value.value->type),
+		   cStringForValueType(VALUE_HASH));
+    else
+	valueHashDelete(args[0].value.value, &transformArgumentToScalar(&args[1])->v.scalar.scalar);
+}
+
+void
 registerHashOps (void)
 {
     registerBuiltIn("hcount", builtInHashcount, 1, 0, 0);
     registerBuiltIn("hcontains", builtInHcontains, 1, 0, 0);
     registerBuiltIn("hkeys", builtInKeys, 1, 0, 0);
+    registerBuiltIn("hdelete", builtInHdelete, 1, 0, 0);
 }

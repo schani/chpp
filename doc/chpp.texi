@@ -15,7 +15,7 @@
 @ifinfo
 This file documents the @code{chpp} Preprocessor.
 
-Copyright (C) 1997, 1998, Mark Probst
+Copyright (C) 1997-1999, Mark Probst, Heinz Deinhart
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -35,7 +35,7 @@ are preserved on all copies.
 @author Mark Probst (schani@@unix.cslab.tuwien.ac.at)
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1997, 1998 Mark Probst
+Copyright @copyright{} 1997-1999 Mark Probst, Heinz Deinhart
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -137,9 +137,8 @@ a preprocessor for HTML (@pxref{Web Site}). This was, by the way, our
 original motivation for @code{chpp} (@pxref{History}).
 
 @item
-a CGI scripting language. @code{chpp} will become even more attractive
-for this kind of application when the planned database interface
-(@pxref{Planned Features}) is available.
+a CGI scripting language. The database interface comes very handy for
+this type of application.
 
 @item
 a generator of Quake(tm) configuration files.
@@ -183,16 +182,15 @@ will load dynamically at run-time (@pxref{Extending chpp}).
 
 We would also like to add a few extension packages to @code{chpp}, which
 will make it more suitable for and easier to apply to various
-applications, most notably CGI scripting, HTML generation and database
-interfacing.
+applications, most notably advanced CGI scripting and HTML generation.
 
 @node Obtaining chpp, History, Planned Features, Introduction
 @comment  node-name,  next,  previous,  up
 @section Obtaining @code{chpp}
 
 @code{chpp} is available for free download on the world-wide-web. Point
-your web-browser at @url{http://chakotay.ml.org/} (or
-@url{http://chakotay.ml.org/chpp/} if you are using an ancient
+your web-browser at @url{http://chakotay.ist.org/} (or
+@url{http://chakotay.ist.org/chpp/} if you are using an ancient
 browser). From there you can download the latest version of @code{chpp}.
 
 @node History, Bugs, Obtaining chpp, Introduction
@@ -226,7 +224,7 @@ should, however, report any incident where @code{chpp} does anything
 wrong with a script which you believe is correct. In such a case, please
 write us an email containing the script that causes @code{chpp} to fail
 and any additional files that your script needs. Better yet, try to
-narrow the bug down to the smallest script possible. Do also include
+narrow down the bug to the smallest script possible. Do also include
 information on the configuration you ran @code{chpp} on, especially if
 the bug only happens to show up with this configuration. The email
 address you should send your bug-report to is
@@ -611,17 +609,16 @@ choice-bar:
 @example
 #include list.chh
 <h5><center>
-%<barentries=%list()>\
-%foreach(menuentry,%menu,
-    %lappend(%&barentries,
-        %if(%equal(%menuentry@{filename@},%thisentry@{filename@}),
-            %menuentry@{name@}
-        ,
-            <a href="%menuentry@{htmlfilename@}">%menuentry@{name@}</a>
-        )
-    )
-)\
-%listJoin(%' | ',%barentries)
+%listJoin(%' | ',
+          %listMap(
+              %lambda(menuentry,
+                  %if(%equal(%menuentry@{filename@},%thisentry@{filename@}),
+                      %menuentry@{name@}
+                  ,
+                      <a href="%menuentry@{htmlfilename@}">%menuentry@{name@}</a>
+                  )
+              ),
+              %&menu))
 </center></h5>
 @end example
 
@@ -638,7 +635,7 @@ CHFILES=header.chml footer.chml choicebar.chml choicestrip.chml
 all : news.html tips.html tricks.html
 
 %.html : %.csml
-	../../macros -o $@ $<
+	chpp -o $@ $<
 
 news.html tricks.html tips.html : $(CHFILES)
 
@@ -836,6 +833,13 @@ Defines the @code{chpp} variable @var{name} with the value @var{value}.
 @item --generate-dependencies
 @itemx -M
 Generates a dependency list suitable for @code{make} like @code{cpp}.
+
+@item --meta-char @var{char}
+Sets the meta-char to @var{char}.
+
+@item --command-char @var{char}
+Sets the command-char to @var{char}.
+
 @end table
 
 
@@ -1244,12 +1248,12 @@ New environments are created upon several occasions:
 
 @itemize @bullet
 @item
-The execution of a @code{locals} expression. The new environment is set
-up to contain bindings for all the variables mentioned as parameters to
-@code{locals}. The parent environment of the new environment is the
+The execution of @code{locals} and @code{let} expressions
+(@pxref{Special Forms}). The new environment is set up to contain
+bindings for all the variables mentioned as parameters to @code{locals}
+or @code{let}. The parent environment of the new environment is the
 environment active at the time of execution of the expression. The
-environment is active throughout the body of the @code{locals}
-expression.
+environment is active throughout the body of the expression.
 
 @item
 The execution of a closure (i.e. the value returned by an invocation of
@@ -1261,19 +1265,19 @@ the closure, i.e. of the invocation of @code{lambda}. That makes it
 possible to do things like this:
 
 @example
-%define(newcounter,%locals(c,%<c=0>%lambda(%<c=%[c+1]>%c)))\
+%define(newcounter,%let(c,0,%lambda(%<c=%[c+1]>%c)))\
 %<counter=%newcounter()>\
 %counter() %counter() %counter()
 @result{} 1 2 3
 @end example
 
 The parent environment for the environments of the closure invocations
-is the environment created by @code{locals}, mapping @code{c} to
-@code{0}, which is itself created every time @code{newcounter} is
-executed. Thus, in a way, @code{counter} carries a state, namely its
-private variable @code{c}. Had we called @code{newcounter} a second
-time, a second counter would have been created, with its own @code{c},
-initally set to @code{0}, completely independent of the first.
+is the environment created by @code{let}, mapping @code{c} to @code{0},
+which is itself created every time @code{newcounter} is executed. Thus,
+in a way, @code{counter} carries a state, namely its private variable
+@code{c}. Had we called @code{newcounter} a second time, a second
+counter would have been created, with its own @code{c}, initally set to
+@code{0}, completely independent of the first.
 
 @item
 The execution of @code{for}, @code{foreach} and @code{foreachkey}
@@ -1343,12 +1347,12 @@ Some examples:
 To prevent some string from evaluation, it can be quoted by enclosing it
 in a pair of single-quotes (@code{''}), preceded by the meta-char. The
 only special characters after the first double-quote are the quote-char
-(the backslash, @code{\}) and the closing double-quote. The quote-char
-gives special meanings to some characters following it: an @code{n}
-becomes a newline character and a @code{t} is interpreted as a
-tabulator. All other character preceded by the quote-char stand for
-themselves. This includes the quote-char and the double-quote,
-i.e. @code{%'\\\''} evaluates to @code{\'}.
+(by default the backslash, @code{\} (@pxref{Internal Variables}) and the
+closing double-quote. The quote-char gives special meanings to some
+characters following it: an @code{n} becomes a newline character and a
+@code{t} is interpreted as a tabulator. All other character preceded by
+the quote-char stand for themselves. This includes the quote-char and
+the double-quote, i.e. @code{%'\\\''} evaluates to @code{\'}.
 
 @node Explicit Evaluation,  , Quotation, Language Reference
 @comment  node-name,  next,  previous,  up
@@ -1546,6 +1550,43 @@ defines a macro @code{mac} taking at most five arguments.
 defines a macro @code{mac} taking at least four arguments.
 @end defspec
 
+
+@defspec defspecial (@var{name},@var{argname}[,@var{argname}...],@var{body})
+Defines a special form with the name @var{name} and the specified
+argument names. The body @var{body} is not evaluated.
+
+When a special form is called, its arguments are not evaluated. This is
+left to the special form. Instead, intermediate code of the arguments is
+bound to the @var{argname}s and @var{body} is evaluated. The special
+form can evaluate any of the arguments any time it wishes to by using
+the @code{eval} macro.
+
+The special form body is evaluated in an environment whose parent is the
+environment from which the special form was invoked.
+
+As an example, we give an implementation of a special form @code{unless}
+which evalutes its second argument only if its first argument evaluates
+to a boolean value of FALSE:
+
+@example
+%defspecial(unless,cond,body,
+  %if(%not(%eval(%cond)),
+    %eval(%body)
+  )
+)
+@end example
+
+Note that any side-effects that result from evalutating the second
+argument do not occur if the first argument evaluates to TRUE:
+
+@example
+%<a=123>
+%unless(1,%<a=xyz>)
+%%a is %a
+@result{} %a is 123
+@end example
+@end defspec
+
 @defspec lambda (@var{argname}[,@var{argname}...],@var{body})
 Creates an anonymous macro (closure) with the specified argument names
 and the body @var{body}, which is not evaluated.
@@ -1568,8 +1609,24 @@ is semantically equivalent to
 @end example
 @end defspec
 
+@defspec let (@var{name},@var{value}[,@var{name},@var{value}...],@var{body})
+Evaluates @var{body} in a new environment with the local variables
+@var{name}s bound to their corresponding @var{value}s. The variables are
+bound beginning with the first @var{name} from left to right and the
+bindings are immediately visible to the following @var{value}
+expressions, i.e. the second @var{value} is evaluated in an environment
+where the first @var{name} is already bound.  This is a behaviour
+similar to Lisp's @code{let*}.
+
+@example
+%let(a,1,b,%[a+1],%%a=%a %%b=%b)
+@result{} %a=1 %b=2
+@end example
+@end defspec
+
 @defspec locals (@var{symbol}[,@var{symbol}...],@var{body})
-Evaluates @var{body} in a new scope with the specified local variables.
+Evaluates @var{body} in a new environment with the specified local
+variables.
 @end defspec
 
 
@@ -1582,8 +1639,10 @@ Evaluates @var{body} in a new scope with the specified local variables.
 @menu
 * List Operations::             
 * Hash Operations::             
+* Environment Operations::      
 * File Operations::             
 * String Operations::           
+* Time Operations::             
 * Miscellaneous::               
 @end menu
 
@@ -1665,7 +1724,7 @@ boolean value of TRUE if they are equal, FALSE otherwise. If
 @end example
 @end defmac
 
-@node Hash Operations, File Operations, List Operations, Macro Reference
+@node Hash Operations, Environment Operations, List Operations, Macro Reference
 @comment  node-name,  next,  previous,  up
 @section Hash Operations
 
@@ -1687,7 +1746,38 @@ Returns a list of all keys in the hash @var{hash} in no particular
 order.
 @end defmac
 
-@node File Operations, String Operations, Hash Operations, Macro Reference
+@defmac hdelete (@var{hash},@var{key})
+Removes the key @var{key} from the hash @var{hash}. Does nothing if
+@var{key} is not contained in @var{hash}.
+
+@example
+%<h=%hash(a,1,b,2,c,3)>
+%hdelete(%&h,b)
+%encode(%h)
+@result{} %hash(%'a',%'1',%'c',%'3')
+@end example
+@end defmac
+
+@node Environment Operations, File Operations, Hash Operations, Macro Reference
+@comment  node-name,  next,  previous,  up
+@section Environment Operations
+
+@defmac envThis ()
+Returns the environment which the macro is executed in.
+@end defmac
+
+@defmac envNew ([@var{parent}])
+Returns a new environment. If @var{parent} is specified, it is used as
+the parent to the newly created environment. Otherwise, the new
+environment is a top-level environment, i.e. has no parent.
+@end defmac
+
+@defmac envAdd (@var{env},@var{name},@var{value})
+Adds a binding for the name @var{name} to the value @var{value} to the
+environment @var{env}.
+@end defmac
+
+@node File Operations, String Operations, Environment Operations, Macro Reference
 @comment  node-name,  next,  previous,  up
 @section File Operations
 
@@ -1773,6 +1863,18 @@ All times are given in seconds since January 1, 1970, 00:00:00 GMT. For
 detailed description of these values see @code{stat(2)}.
 @end defmac
 
+@defmac funlink (@var{filename})
+Removes the file with name @var{filename} using the @code{unlink} system
+call. Returns a boolean value of TRUE if successful, otherwise returns
+FALSE.
+@end defmac
+
+@defmac frmdir (@var{dirname})
+Removes the directory with name @var{dirname} using the @var{rmdir}
+system call. The directory must be empty. Returns a boolean value of
+TRUE if successful, otherwise returns FALSE.
+@end defmac
+
 @defmac fgetwd ()
 Returns the current working directory.
 @end defmac
@@ -1781,7 +1883,18 @@ Returns the current working directory.
 Changes the current working directory to @var{path}.
 @end defmac
 
-@node String Operations, Miscellaneous, File Operations, Macro Reference
+@defmac fglob (@var{pattern})
+Matches the pattern string @var{pattern} using shell pattern matching
+rules. Returns a list of all filenames matched or boolean FALSE if no
+filenames could be matched or in case of an error.
+
+@example
+%encode(%fglob(/b*))
+@result{} %list(%'/bin',%'/boot')
+@end example
+@end defmac
+
+@node String Operations, Time Operations, File Operations, Macro Reference
 @comment  node-name,  next,  previous,  up
 @section String Operations
 
@@ -1934,7 +2047,69 @@ Formats the decimal integer @var{number} according to the given base
 @end example
 @end defmac
 
-@node Miscellaneous,  , String Operations, Macro Reference
+@defmac srange (@var{char1},@var{char2})
+Generates a string by concatenating all characters between and including
+@var{char1} and @var{char2}. Example:
+
+@example
+%srange(a,f)
+@result{} abcdef
+@end example
+@end defmac
+
+@defmac smap (@var{src},@var{dest},@var{str})
+Returns a string where all characters of the string @var{str} included
+in @var{src} are translated to characters at the same position in
+@var{dest}. @var{src} and @var{dest} must be strings of the same
+length. Example:
+
+@example
+%smap(%srange(a,z),%srange(A,Z),Heinzi Deinzi)
+@result{} HEINZI DEINZI
+@end example
+@end defmac
+
+@node Time Operations, Miscellaneous, String Operations, Macro Reference
+@comment  node-name,  next,  previous,  up
+@section Time Operations
+
+Time values are represented in @code{chpp} by hashes containing values
+for some of the following keys:
+
+@table @code
+@item year
+@item month
+@item day
+@item hour
+@item minute
+@item second
+@end table
+
+@defmac timeUNIX ()
+Returns the current time in UNIX @code{time_t} format.
+
+@example
+%timeUNIX()
+@result{} 917465546
+@end example
+@end defmac
+
+@defmac timeUNIX2Hash (@var{utime})
+Returns a time hash that corresponds to the UNIX time @var{utime}.
+
+@example
+%<(%timeUNIX2Hash(917465546))@{year@}>
+@result{} 1999
+@end example
+@end defmac
+
+@defmac timeHash2UNIX (@var{htime})
+Returns the UNIX time corresponding to the time hash @var{htime}. The
+hash must contain sane values for at least the keys @code{second},
+@code{minute}, @code{hour}, @code{day}, @code{month} and @code{year}.
+@end defmac
+
+@node Miscellaneous,  , Time Operations, Macro Reference
 @comment  node-name,  next,  previous,  up
 @section Miscellaneous
 
@@ -2042,9 +2217,36 @@ Calls @var{lambda} with the elements of @var{arglist} as arguments.
 @end example
 @end defmac
 
+@defmac eval (@var{code}[,@var{env}])
+Evaluates the code @var{code} in the the environment @var{env} or in the
+local environment if @var{env} is not specified.
+
+@example
+%let(a,xyz,%eval(%%a))
+@result{} xyz
+%let(e,%envNew(),%envAdd(%&e,a,xyz)%eval(%%a,%&e))
+@result{} xyz
+@end example
+@end defmac
+
 @defmac not (@var{expr})
 Returns the negation of the boolean value of @var{expr}, i.e. returns
 @code{1} if @var{expr} is FALSE and @code{0} if @var{expr} is TRUE.
+@end defmac
+
+@defmac return ()
+Immediately returns from the currently executed macro. Example:
+
+@example
+%define(heinz,%for(i,0,9,%i%if(%[i==5],%return())))
+%heinz()
+@result{} 012345
+@end example
+@end defmac
+
+@defmac break ([@var{depth}])
+Immediately breaks out of the innermost @var{depth}+1 loops. If
+@var{depth} is omitted, the default of zero is used.
 @end defmac
 
 @defmac shexencode (@var{string})
@@ -2097,6 +2299,14 @@ Is a hash containing all environment variables of the process.
 @end example
 @end defvar
 
+@defvar metachar
+Contains the meta-char (@pxref{The Meta-Char}). Can be changed.
+@end defvar
+
+@defvar quotechar
+Contains the quote-char (@pxref{Quotation}). Can be changed.
+@end defvar
+
 @c ************* Package Reference
 
 @node  Package Reference, Macro Index, Internal Variables, Top
@@ -2110,6 +2320,7 @@ Is a hash containing all environment variables of the process.
 * time.chh::                    
 * sql.chh::                     
 * cgi.chh::                     
+* w3lib.chh::                   
 @end menu
 
 @node files.chh, strings.chh, Package Reference, Package Reference
@@ -2227,17 +2438,9 @@ sequential elements the string @var{string}. Example:
 @comment  node-name,  next,  previous,  up
 @section @file{time.chh}
 
-Time values are represented in @code{chpp} by hashes containing values
-for some of the following keys:
-
-@table @code
-@item year
-@item month
-@item day
-@item hour
-@item minute
-@item second
-@end table
+@defmac timeNow ()
+Returns a time hash for the current time.
+@end defmac
 
 @defmac timeToString (@var{format},@var{time})
 Converts a time value to a string according to the format string
@@ -2375,7 +2578,7 @@ changing the data of the database connected to by @var{connection}, like
 an insert or an update.
 @end defmac
 
-@node cgi.chh,  , sql.chh, Package Reference
+@node cgi.chh, w3lib.chh, sql.chh, Package Reference
 @comment  node-name,  next,  previous,  up
 @section @file{cgi.chh}
 
@@ -2387,6 +2590,77 @@ Returns a hash containing all parameters passed to the CGI
 script. Supported encodings are @code{application/x-www-form-urlencoded}
 (both @code{GET} and @code{POST}) and @code{multipart/form-data}.
 @end defmac
+
+@node w3lib.chh,  , cgi.chh, Package Reference
+@comment  node-name,  next,  previous,  up
+@section @file{w3lib.chh}
+
+This package provides rudimentary support for web page building.
+It requires the program @file{xli} to parse picture files.
+
+There is some experimental JavaScript code in @file{w3lib.chh}, but
+nothing is used by now. If you are a JavaScript guru you might want to
+code a bit?
+
+@defvar w3xliExecutable
+If set before @file{w3lib.chh} is included, it will use this as full
+path to the @file{xli} program.
+@end defvar
+
+@defmac w3img (@var{imagename},[@var{arg}...])
+@defmacx w3image (@var{imagename},[@var{arg}...])
+Generates an @code{img} tag for @var{imagename}. If @var{arg}s are
+supplied the will be added at the end of the @code{img}
+tag. @code{w3img} takes care of dependencies.
+@end defmac
+
+@defmac w3imgX (@var{imagename})
+@defmacx w3imgWidth (@var{imagename})
+Returns the width of the image @var{imagename}. Takes care of
+dependencies.
+@end defmac
+
+@defmac w3imgY (@var{imagename})
+@defmacx w3imgHeight (@var{imagename})
+Returns the height of the image @var{imagename}. Takes care of
+dependencies.
+@end defmac
+
+@defmac w3rgbcolor (@var{red},@var{green},@var{blue})
+Returns an HTML conforming color value string.
+@end defmac
+
+@file{w3lib.chh} is intended to be used together with @file{make}. A
+simple @file{Makefile} may look like this:
+
+@example
+# chpp Makefile for web pages
+
+HTML = Main.html News.html Authors.html Manual.html Wizard.html \
+       Download.html Links.html
+
+# --- general
+----------------------------------------------------------------
+
+all : $(HTML)
+
+clean :
+        rm -f *.d *.jpgd *.gifd *.pngd *.html core *~
+
+# --- chpp dependencies
+------------------------------------------------------
+
+%.html : %.csml
+        chpp $< > $@
+
+%.d : %.csml
+        chpp -M -o $(<:.csml=.html) $< > $@
+
+# --- includes
+---------------------------------------------------------------
+
+-include $(HTML:.html=.d)
+@end example
 
 @c ************* Macro Index
 

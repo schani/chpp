@@ -79,6 +79,8 @@ main (int argc, char *argv[])
     FILE *outputFile;
     int haveOutput = 0;
     int testFillBuffer = 0;
+    char theCommandChar = '#';
+    int precompile = 0;
 
     executableName = argv[0];
 
@@ -101,6 +103,9 @@ main (int argc, char *argv[])
 		{ "test-fillbuffer", no_argument, 0, 258 },
 		{ "generate-dependencies", no_argument, 0, 'M' },
 		{ "include-dir", required_argument, 0, 'I' },
+		{ "command-char", required_argument, 0, 259 },
+		{ "meta-char", required_argument, 0, 260 },
+		{ "precompile", no_argument, 0, 'P' },
 		{ 0, 0, 0, 0 }
 	    };
 
@@ -169,6 +174,10 @@ main (int argc, char *argv[])
 	    case 'M' :
 		generateDependencies = 1;
 		break;
+
+	    case 'P' :
+		precompile = 1;
+		break;
 		
 	    case 256 :
 		printf("chpp " VERSION "\n"
@@ -197,12 +206,25 @@ main (int argc, char *argv[])
 		       "  -I, --include-dir=DIR        add DIR to include search list\n"
 		       "  -D NAME=VALUE                define variable\n"
 		       "  -M, --generate-dependencies  generate dependency information\n"
+		       "  --command-char=CHAR          uses CHAR as the command char\n"
+		       "  --meta-char=CHAR             uses CHAR as the meta char\n"
+		       "  -P, --precompile             produce precompiled output\n"
 		       "\n"
 		       "Report bugs to chpp@unix.cslab.tuwien.ac.at\n");
 		exit(0);
 
 	    case 258 :
 		testFillBuffer = 1;
+		break;
+
+	    case 259 :
+		assert(strlen(optarg) == 1);
+		theCommandChar = optarg[0];
+		break;
+
+	    case 260 :
+		assert(strlen(optarg) == 1);
+		metaChar = optarg[0];
 		break;
 	}
     }
@@ -239,7 +261,7 @@ main (int argc, char *argv[])
 	    FILE *inputFile;
 
 	    if (strcmp(argv[i], "-") == 0)
-		inputFile = stdin;                     /* hae? */
+		inputFile = stdin; /* hae? */
 	    else
 	    {
 		inputFile = fopen(argv[i], "r");
@@ -252,7 +274,7 @@ main (int argc, char *argv[])
 			int result;
 			static char buffer[8192];
 
-			initCommands(inputFile, '#', argv[i], "./");
+			initCommands(inputFile, theCommandChar, argv[i], "./");
 			do
 			{
 			    result = fillBuffer(buffer, 8192);
@@ -275,7 +297,7 @@ main (int argc, char *argv[])
 			    dsAppendChar(&dir, '/');
 
 			toplevelInputReader = irNewPreprocessor();
-			initCommands(inputFile, '#', file.data, dir.data);
+			initCommands(inputFile, theCommandChar, file.data, dir.data);
 			currentFileName = dsNewFrom(argv[i]);
 			mainFileName = dsNewFrom(argv[i]);
 			addDependency(0, &mainFileName);
@@ -294,7 +316,7 @@ main (int argc, char *argv[])
 	    int result;
 	    static char buffer[8192];
 
-	    initCommands(stdin, '#', "-", "./");
+	    initCommands(stdin, theCommandChar, "-", "./");
 	    do
 	    {
 		result = fillBuffer(buffer, 8192);
@@ -308,7 +330,7 @@ main (int argc, char *argv[])
 					       &toplevelOutputWriter);
 
 	    toplevelInputReader = irNewPreprocessor();
-	    initCommands(stdin, '#', "-", "./");
+	    initCommands(stdin, theCommandChar, "-", "./");
 	    currentFileName = dsNewFrom("-");
 	    mainFileName = dsNewFrom("-");
 	    addDependency(0, &mainFileName);

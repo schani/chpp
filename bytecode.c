@@ -296,7 +296,7 @@ bcExecute (bytecode *bc, environment *env, outputWriter *ow)
 			    newValue = valueCopy(newValue);
 
 			assert(newValue != 0);
-			envAddBinding(globalEnvironment, &aValue->v.scalar.scalar, newValue);
+			envAddBinding(envTop(env), &aValue->v.scalar.scalar, newValue);
 		    }
 		    else
 		    {
@@ -447,9 +447,14 @@ bcExecute (bytecode *bc, environment *env, outputWriter *ow)
 			}
 			else if (aValue->type == VALUE_LAMBDA)
 			{
-			    environment *macroEnv = envNew(aValue->v.lambda.env);
+			    environment *macroEnv;
 			    bcArgument *arg = bc->v.macro.arguments;
 			    int i;
+
+			    if (aValue->v.lambda.evalParams)
+				macroEnv = envNew(aValue->v.lambda.env);
+			    else
+				macroEnv = envNew(env);
 
 			    if (bc->v.macro.numArgs
 				< aValue->v.lambda.numParams + aValue->v.lambda.minVarArgs
@@ -465,10 +470,16 @@ bcExecute (bytecode *bc, environment *env, outputWriter *ow)
 			    for (i = 0; i < aValue->v.lambda.numParams; ++i)
 			    {
 				int needCopy;
-				value *argValue = bcExecuteIntoValue(arg->bc, env, &needCopy);
-
-				if (needCopy)
-				    argValue = valueCopy(argValue);
+				value *argValue;
+				
+				if (aValue->v.lambda.evalParams)
+				{
+				    argValue = bcExecuteIntoValue(arg->bc, env, &needCopy);
+				    if (needCopy)
+					argValue = valueCopy(argValue);
+				}
+				else
+				    argValue = valueNewBytecode(arg->bc);
 
 				assert(argValue != 0);
 				envAddBinding(macroEnv, &aValue->v.lambda.paramNames[i],
@@ -484,11 +495,16 @@ bcExecute (bytecode *bc, environment *env, outputWriter *ow)
 				for ( ; i < bc->v.macro.numArgs; ++i)
 				{
 				    int needCopy;
-				    value *argValue =
-					bcExecuteIntoValue(arg->bc, env, &needCopy);
+				    value *argValue;
 
-				    if (needCopy)
-					argValue = valueCopy(argValue);
+				    if (aValue->v.lambda.evalParams)
+				    {
+					argValue = bcExecuteIntoValue(arg->bc, env, &needCopy);
+					if (needCopy)
+					    argValue = valueCopy(argValue);
+				    }
+				    else
+					argValue = valueNewBytecode(arg->bc);
 
 				    valueListSetElement(theList, i - aValue->v.lambda.numParams,
 							argValue);

@@ -5,7 +5,7 @@
  *
  * chpp
  *
- * Copyright (C) 1997-1998 Heinz Deinhart
+ * Copyright (C) 1997-1999 Heinz Deinhart
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "memory.h"
 #include "dynstring.h"
@@ -444,10 +445,10 @@ cmd_ende( const char * args ) {
     inputReader ir = irNewDynstring(&ef2, 0);
     
     envModifyOrAddBinding(globalEnvironment, &edef_evaldName,
-			  valueNewLambda(edef_dynNr, 0, 0, edef_dynAr, '%',
+			  valueNewLambda(edef_dynNr, 0, 0, edef_dynAr,
 					 parParseIntoBCUntil(&ir, 0, 1,
 							     globalEnvironment, 0),
-					 globalEnvironment),
+					 globalEnvironment, 1),
 			  globalEnvironment);
 
   }
@@ -515,10 +516,10 @@ cmd_define( const char *args ) {
 	inputReader ir = irNewDynstring(&evaldName, 0);
 
       envModifyOrAddBinding(globalEnvironment, &evaldName,
-			    valueNewLambda(dynNr, 0, 0, dynAr, '%',
+			    valueNewLambda(dynNr, 0, 0, dynAr,
 					   parParseIntoBCUntil(&ir, 0, 1,
 							       globalEnvironment, 0),
-					   globalEnvironment),
+					   globalEnvironment, 1),
 			    globalEnvironment);
       }
       return;

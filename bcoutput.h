@@ -55,6 +55,12 @@ typedef struct
     outputWriter *ow;
 } bytecodeStateOutput;
 
+typedef struct
+{
+    FILE *out;
+    bytecode *string;
+} bytecodeStateFile;
+
 #define BCW_OUT_CHAR(bcw,c)             ((bcw)->outChar((bcw)->state,(c)))
 #define BCW_OUT_STRING(bcw,s,l)         ((bcw)->outString((bcw)->state,(s),(l)))
 #define BCW_OUT_ASSIGNMENT(bcw,m,v,s,n) ((bcw)->outAssignment((bcw)->state,(m),(v),(s),(n)))
@@ -68,5 +74,7 @@ bytecodeWriter* bcwNewBytecode (void);
 bytecode* bcwBytecodeBytecode (bytecodeWriter *bcw);
 
 bytecodeWriter* bcwNewOutput (environment *env, outputWriter *ow);
+
+bytecodeWriter* bcwNewFile (FILE *out);
 
 #endif

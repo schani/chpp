@@ -202,7 +202,7 @@ parParseUntil (inputReader *ir, const char *delimiters, bytecodeWriter *bcw, int
 
 	consume = 1;
 
-	if (THIS_CHAR(ir) == *metaChar)
+	if (THIS_CHAR(ir) == metaChar)
 	{
 	    if (NEXT_CHAR(ir) == EOF) return;
 
@@ -400,9 +400,9 @@ parParseUntil (inputReader *ir, const char *delimiters, bytecodeWriter *bcw, int
 		    break;
 
 		default :
-		    if (THIS_CHAR(ir) == *metaChar)
+		    if (THIS_CHAR(ir) == metaChar)
 		    {
-			BCW_OUT_CHAR(bcw, *metaChar);
+			BCW_OUT_CHAR(bcw, metaChar);
 		    }
 		    else
 		    {
@@ -414,7 +414,7 @@ parParseUntil (inputReader *ir, const char *delimiters, bytecodeWriter *bcw, int
 			    byRef = BYTECODE_MACRO_BYREF;
 			    if (NEXT_CHAR(ir) == EOF)
 			    {
-				BCW_OUT_CHAR(bcw, *metaChar);
+				BCW_OUT_CHAR(bcw, metaChar);
 				BCW_OUT_CHAR(bcw, '&');
 				return;
 			    }
@@ -431,7 +431,7 @@ parParseUntil (inputReader *ir, const char *delimiters, bytecodeWriter *bcw, int
 			} while (THIS_CHAR(ir) != EOF);
 			if (ds.length == 0)
 			{
-			    BCW_OUT_CHAR(bcw, *metaChar);
+			    BCW_OUT_CHAR(bcw, metaChar);
 			    if (byRef)
 				BCW_OUT_CHAR(bcw, '&');
 			    BCW_OUT_CHAR(bcw, THIS_CHAR(ir));
@@ -444,7 +444,7 @@ parParseUntil (inputReader *ir, const char *delimiters, bytecodeWriter *bcw, int
 				&& (globalEffects == 0
 				    || envGetBinding(globalEffects, &ds) == 0))
 			    {
-				BCW_OUT_CHAR(bcw, *metaChar);
+				BCW_OUT_CHAR(bcw, metaChar);
 				if (byRef)
 				    BCW_OUT_CHAR(bcw, '&');
 				BCW_OUT_STRING(bcw, ds.data, ds.length);

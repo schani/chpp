@@ -1,6 +1,6 @@
 bin_PROGRAMS = chpp
 
-chpp_SOURCES = avl.c avl.h bcoutput.c bcoutput.h bytecode.c bytecode.h chash.c chash.h jump.c jump.h commands.c commands.h depends.c depends.h dynstring.c dynstring.h environment.c environment.h error.c error.h filler.c filler.h getopt.c getopt.h getopt1.c input.c input.h internals.c internals.h list.c list.h main.c main.h memory.c memory.h output.c output.h parser.c parser.h recorder.c recorder.h regex.c regex.h value.c value.h arith.h arithparse.y arithscan.l
+chpp_SOURCES = avl.c avl.h bcoutput.c bcoutput.h bytecode.c bytecode.h precompile.c precompile.h byteorder.h types.h chash.c chash.h jump.c jump.h commands.c commands.h depends.c depends.h dynstring.c dynstring.h environment.c environment.h error.c error.h filler.c filler.h getopt.c getopt.h getopt1.c input.c input.h internals.c internals.h list.c list.h main.c main.h memory.c memory.h output.c output.h parser.c parser.h recorder.c recorder.h regex.c regex.h value.c value.h arith.h arithparse.y arithscan.l
 
 INCLUDES = -DCHPP_INCLUDEDIR=\"@chppincludedir@\"
 chpp_LDADD = builtins/libbuiltins.a builtins/database/libdatabase.a gc/gc.a @MYSQL_LIBS@ @MSQL_LIBS@ @LIBOBJS@ -lm
@@ -12,7 +12,7 @@ YFLAGS = -d
 gc/gc.a :
 	( cd gc ; make gc.a )
 
-EXTRA_DIST = arithparse.h configure
+EXTRA_DIST = arithparse.h configure chpp.spec
 
 dist-hook :
 	( cd gc ; make clean )

@@ -151,6 +151,133 @@ builtInTypeof (int numArgs, macroArgument *args, environment *env, outputWriter 
 }
 
 void
+encodeDynstring (dynstring *ds, outputWriter *ow)
+{
+    int i;
+
+    OUT_CHAR(ow, metaChar);
+    OUT_CHAR(ow, '\'');
+    for (i = 0; i < ds->length; ++i)
+    {
+	char c = ds->data[i];
+
+	if (c == '\'' || c == quoteChar)
+	    OUT_CHAR(ow, quoteChar);
+	OUT_CHAR(ow, c);
+    }
+    OUT_CHAR(ow, '\'');
+}
+
+void encodeBytecode (bytecode *bc, outputWriter *ow);
+
+void
+encodeSubscripts (bcSubscript *subscript, outputWriter *ow)
+{
+    while (subscript != 0)
+    {
+	if (subscript->type == BYTECODE_SUBSCRIPT_LIST)
+	{
+	    OUT_CHAR(ow, '[');
+	}
+	else
+	{
+	    OUT_CHAR(ow, '{');
+	}
+	encodeBytecode(subscript->bc, ow);
+	if (subscript->type == BYTECODE_SUBSCRIPT_LIST)
+	{
+	    OUT_CHAR(ow, ']');
+	}
+	else
+	{
+	    OUT_CHAR(ow, '}');
+	}
+
+	subscript = subscript->next;
+    }
+}
+
+void
+encodeBytecode (bytecode *bc, outputWriter *ow)
+{
+    while (bc != 0)
+    {
+	switch (bc->type)
+	{
+	    case BYTECODE_STRING :
+	    case BYTECODE_QUOTED_STRING :
+		encodeDynstring(&bc->v.string.string, ow);
+		break;
+
+	    case BYTECODE_EVAL :
+		OUT_CHAR(ow, metaChar);
+		OUT_CHAR(ow, '{');
+		encodeBytecode(bc->v.eval.bc, ow);
+		OUT_CHAR(ow, '}');
+		break;
+
+	    case BYTECODE_ARITH :
+		OUT_CHAR(ow, metaChar);
+		OUT_CHAR(ow, '[');
+		encodeBytecode(bc->v.arith.bc, ow);
+		OUT_CHAR(ow, ']');
+		break;
+
+	    case BYTECODE_ASSIGNMENT :
+		{
+		    bcSubscript *subscript;
+
+		    OUT_CHAR(ow, metaChar);
+		    OUT_CHAR(ow, '<');
+		    if (bc->v.assignment.modify)
+			OUT_CHAR(ow, '&');
+		    encodeBytecode(bc->v.assignment.varName, ow);
+		    encodeSubscripts(bc->v.assignment.subscript, ow);
+		    OUT_CHAR(ow, '=');
+		    encodeBytecode(bc->v.assignment.newValue, ow);
+		    OUT_CHAR(ow, '>');
+		}
+		break;
+
+	    case BYTECODE_MACRO :
+		{
+		    bcSubscript *subscript;
+
+		    OUT_CHAR(ow, metaChar);
+		    OUT_CHAR(ow, '<');
+		    if (bc->v.macro.flags & BYTECODE_MACRO_BYREF)
+			OUT_CHAR(ow, '&');
+		    if (bc->v.macro.flags & BYTECODE_MACRO_SUBVALUE)
+			OUT_CHAR(ow, '(');
+		    encodeBytecode(bc->v.macro.nameOrValue, ow);
+		    if (bc->v.macro.flags & BYTECODE_MACRO_SUBVALUE)
+			OUT_CHAR(ow, ')');
+		    encodeSubscripts(bc->v.macro.subscript, ow);
+		    if (bc->v.macro.numArgs >= 0)
+		    {
+			bcArgument *argument;
+
+			OUT_CHAR(ow, '(');
+			for (argument = bc->v.macro.arguments; argument != 0; argument = argument->next)
+			{
+			    encodeBytecode(argument->bc, ow);
+			    if (argument->next != 0)
+			    {
+				OUT_CHAR(ow, ',');
+			    }
+			}
+			OUT_CHAR(ow, ')');
+		    }
+		    OUT_CHAR(ow, '>');
+		}
+		break;
+	}
+
+	bc = bc->next;
+    }
+}
+
+void
 encodeValue (value *theValue, outputWriter *ow)
 {
     assert(theValue != 0);
@@ -169,28 +296,14 @@ encodeValue (value *theValue, outputWriter *ow)
 	    break;
 
 	case VALUE_SCALAR :
-	    {
-		int i;
-
-		OUT_CHAR(ow, *metaChar);
-		OUT_CHAR(ow, '\'');
-		for (i = 0; i < theValue->v.scalar.scalar.length; ++i)
-		{
-		    char c = theValue->v.scalar.scalar.data[i];
-		    
-		    if (c == '\'' || c == quoteChar)
-			OUT_CHAR(ow, quoteChar);
-		    OUT_CHAR(ow, c);
-		}
-		OUT_CHAR(ow, '\'');
-	    }
+	    encodeDynstring(&theValue->v.scalar.scalar, ow);
 	    break;
 
 	case VALUE_LIST :
 	    {
 		int i;
 
-		OUT_CHAR(ow, *metaChar);
+		OUT_CHAR(ow, metaChar);
 		OUT_STRING(ow, "list(", 5);
 		if (valueListLength(theValue) > 0)
 		{
@@ -212,7 +325,7 @@ encodeValue (value *theValue, outputWriter *ow)
 		char *aKey;
 		hstate state;
 
-		OUT_CHAR(ow, *metaChar);
+		OUT_CHAR(ow, metaChar);
 		OUT_STRING(ow, "hash(", 5);
 		state = hash_state(theValue->v.hash.hash);
 		if ((aValue = (value*)hash_next(&state, &aKey)) != 0)
@@ -235,7 +348,27 @@ encodeValue (value *theValue, outputWriter *ow)
 	    break;
 
 	case VALUE_LAMBDA :
-	    OUT_STRING(ow, "<lambda>", 8);
+	    {
+		int i;
+
+		OUT_CHAR(ow, metaChar);
+		OUT_STRING(ow, "lambda(", 7);
+		for (i = 0; i < theValue->v.lambda.numParams; ++i)
+		{
+		    encodeDynstring(&theValue->v.lambda.paramNames[i], ow);
+		    OUT_CHAR(ow, ',');
+		}
+		encodeBytecode(theValue->v.lambda.code, ow);
+		OUT_CHAR(ow, ')');
+	    }
+	    break;
+
+	case VALUE_ENVIRONMENT :
+	    OUT_STRING(ow, "<environment>", 13);
+	    break;
+
+	case VALUE_BYTECODE :
+	    OUT_STRING(ow, "<bytecode>", 10);
 	    break;
 
 	case VALUE_WHATSIT :

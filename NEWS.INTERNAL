@@ -1769,8 +1769,280 @@ optionaler parameter ist die lockoption:
 
 wenn nix angegeben wird, ist x default.
 
-* schani, 2. 10. 1999, nachmittag
+* schani, 2. 10. 1998, nachmittag
 
 ** scrypt
 
 scrypt macht a crypt. erster parameter key, zweiter salt.
+
+* schani, 14. 11. 1998, nach babylon 5
+
+** listSelect
+
+in list.chh gibts a neues makro namens listSelect. als ersten
+parameter nimmts eine closure, die einen parameter nehmen und einen
+wahrheitswert zurueckgeben sollte. als zweiten parameter nimmts eine
+liste. es gibt eine neue liste zurueck, die alle elemente vom zweiten
+parameter enthaelt, fuer die die closure true zurueckgegeben hat. bsp:
+
+  %encode(%listSelect(%lambda(e,%[e>4]),%list(1,2,3,4,5,6,5,4,3,2,1)))
+
+gibt
+
+  %list(%'5',%'6',%'5')
+
+* schani, 20. 1. 1999, waehrend da jin tf trainiert
+
+** fglob
+
+es gibt a neues makro namens fglob. nimmt als parameter a filenamen
+pattern (mit shell patterns). der wird dann geglobbed und zurueck
+kommt a liste mit allen gematcheden filenamen. bsp:
+
+  %foreach(fn,%fglob(*),do gibts a feil des haast %fn%'\n')
+
+bei an fehler (zum bleistift ka match) kommt nix zrueck (i.e. man kann
+den wahrheitswert checken).
+
+* schani, 27. 1. 1999, kurz nachdem biffl ausm cslab kurdet is
+
+** timeUNIX, timeUNIX2Hash, timeHash2UNIX, timeNow
+
+lauta leiwande neue time makros. schon komplett dokumentiert. foi supa
+im hirn geistiga natur.
+
+* schani, 28. 1. 1999, zmittag
+
+** lambdas encoden
+
+man kann jetzt mit %encode auch lambdas encoden. beispiel:
+
+  %encode(%lambda(a,%a ist ein kurde))
+
+ergibt
+
+  %lambda(%'a',%<%'a'>%' ist ein kurde')
+
+* schani, 29. 1. 1999, waehrend simpsons
+
+** let
+
+es gibt jetzt a %let. funkt so wie let* in lisp. is schon dokumentiert.
+
+** environments und eval
+
+environments kann ma jetzt auch im chpp erzeugen und
+verwalten. funktioniert so: in jedem evaluationskontext gibts ein
+aktuelles environment (eh kloa). dieses kriegt ma mit %envThis().  mit
+%envNew kann ma a neues environment erzeugen. wenn ma kan parameter
+angibt, dann is es ein environment ohne parent, also voll nackat mit
+uebahaupt nix drin (kane builtins, kane special forms, kane variablen,
+ka gar nix). oder man gibt als parameter das parent-environment an.
+mit %envAdd kann ma zu an environment a neues binding
+hinzufuegen. erster parameter is das environment, zweiter der name des
+bindings (variablenname) und dritter der wert.
+
+dann gibts jetzt no a cooles builtin namens %eval. das uebernimmt die
+funktion von %{}, obwohls das natuerlich immer no gibt, obwohl i
+ueberleg es rauszukurden, weil mans eh ur selten braucht und dann
+haetma a neue klammer frei (hehe). also %eval(heuslscheisse) is genau
+dasselbe wie %{heuslscheisse}. dem eval kamma allerdings no als
+zweiten parameter das environment angeben, in dem er die kurderei
+evalen soll (standardmaessig natuerlich das aktuelle
+environment). bleistift:
+
+  %<e=%envNew(%envThis())>
+  %envAdd(%e,a,heinz) 
+  %eval(%'%a',%e)
+
+gibt
+
+  heinz
+
+ma kann das recht cool brauchen zum passen von daten von cgi-skript
+zum naechsten ohne sicherheitsluecke. wenn man jetzt einem cgi-skript
+ein %encode'tes irgendwas als parameter gibt und das dann im skript
+evaled, dann koennte ja der user so boese sein und statt dessen an
+chpp-code uebergeben, der schlimme sachen macht. mit den environments
+kann ma jetzt a umgebung zum evalen machen, wo nix passieren
+kann. bsp:
+
+  %<e=%envNew()>
+  %envAdd(%e,list,%list)
+  %envAdd(%e,hash,%hash)
+
+wenn man jetzt einen string im environment e ausfuehrt, kann
+ueberhaupt nix passieren, ausser dass vielleicht a paar listen und
+hashes erzeugt werden, weil verwenden kamma dort nedamal a
+%if. skulge?
+
+* schani, 30. 1. 1999, ua frua
+
+** defspecial
+
+es gibt jetzt eine moeglichkeit wie man sich eigene special forms
+definen kann. %defspecial funkt so wie %define nur dass beim aufruf
+des makros die argumente nicht evaled werden, sondern dem makro als
+bytecode uebergeben werden. diesen bytecode kann das makro dann nach
+belieben evalen (mit %eval kloaraweis). ein zweita untaschied is, dass
+das environment, in dem ein %defspecial'tes makro evaled wird ein
+unter-environment vom environment is, aus dem aus es aufgerufen wird
+und nicht dessen, in dem es %defspecial'ed wurde.
+
+bsp:
+
+  %defspecial(heusl,name,code,
+      %for(%eval(%name),0,2,
+          %eval(%code)
+      )
+  )
+  %heusl(kurde,kurde is jetz %<kurde>%'\n')
+
+gibt
+
+  kurde is jetz 0
+  kurde is jetz 1
+  kurde is jetz 2
+
+jetz fragst di sicher fuer was braucht ma den schas? sei dir
+versichert: i heds ned implementiert wenn is ned braucht hed.
+
+* schani, 3. 2. 1999, waehrend jin quaken tut
+
+** hdelete
+
+mit %hdelete kama keys aus an hash rausloeschen. is gedoced.
+
+* schani, 4. 2. 1999
+
+** release 0.3.5
+
+it's a long way to 1.0
+
+* schani, 7. 2. 1999, vorm mittagessen
+
+** funlink, frmdir
+
+name says it all (hoff i). is scho doced.
+
+* schani, 12. 3. 1999, kuaz foa mittanacht
+
+** idee(n)
+
+i hab jetzt die idee, die alle probleme aus der welt schaffen wird
+(hunger, krieg, windows, handys, ...). die sache ist eine
+verallgemeinerung des aenderns des metachars. was ich moeglich machen
+will ist folgendes:
+
+man soll jeder beliebigen zeichenkette eine chpp-bedeutung geben
+koennen. beispiele fuer chpp-bedeutungen sind: meta-char, oeffnende
+und schliessende klammer bei makro-aufrufen, argumenttrenner fuer
+makroaufrufe...
+
+ich stell mir das in etwa so vor: ich will zum bleistift, dass ab
+jetzt der string ||| auch meta-char wird:
+
+  %defstring(|||,metachar)
+
+und dann will ich dass % nicht mehr meta-char ist:
+
+  %undefstring(%%)
+
+dann will ich noch kurden, dass jeder beliebige string auch als
+makro-aufruf (mit null argumenten) agieren kann. dann kann ich mir im
+parser zum beispiel den special case von metachar-quoting ersparen (%%
+ergibt %) indem ich definiere:
+
+  %defstring(%'%%',macro,%'%')
+
+skullge? aber es kommt no besser: wenn i zum beispiel den chpp nur
+dazu verwenden will, html kommentare zu entfernen und keine
+macro-expansion zu machen, kann i folgendes machen:
+
+  %defstring(<!--,macro,%outputenable(0))
+  %defstring(-->,macro,%outputenable(1))
+  %undefstring(%%)
+
+oder i kann c-style kommentare fuern chpp machen:
+
+  %defstring(/*,macro,%outputenable(0))
+  %defstring(*/,macro,%outputenable(1))
+
+packst es? mit klammern soll das in etwa so funken:
+
+  %defparens(%'(<',%'>)',macroargs)
+
+dann koennte man makros wahlweise mit ( ) oder mit (< >)
+aufrufen. letzteres hat kloaraweis den vorteil, dass man dann in den
+macro-argumenten die normalen klammern ganz unbefangen verwenden kann
+ohne quoten zu muessen. man koennt dann auch zum bleistift die %{} und
+%[] klammern im chpp selbst definen:
+
+  %defparens([,],macro,%arith)
+  %defparens({,},macro,%eval)
+
+um nochamal zu den c-style kommentaren zurueckzukommen: natuerlich
+rulen die ned so wie is oben aufgschriem hab, weil natuerlich der code
+zwischen /* und */ seiteneffekte haben kann. aus diesem grund (und
+anderen) wird ma si a klammern definen koennen, die ohne metachar
+funken und einfach ein makro oder a special form aufrufen:
+
+  %defspecial(comment,c,)
+  %defparens(/*,*/,call,%comment)
+
+das heisst, jedes mal wenn ma schreibt /* scheisse */ dann wird das
+comment special form aufgerufen (argumente von special forms werden
+nicht evaluiert) und das tut genau nix. skullge? mit dem feature kann
+ma dann zum bleistift ur cool html preprocessen indem ma defined
+
+  %defparens(<,>,call,%mytagprocessor)
+
+wenn i also schreib
+
+  <heusl> </kurde>
+
+dann wird daraus eigentlich
+
+  %mytagprocessor(heusl) %mytagprocessor(/kurde)
+
+ein paar dinge muss i ma no uebalegn, zum bleistift wie das mit
+whitespace bei den parametern fuer diese dinger ist usw. 
+
+das coole bei der sache ist ausserdem, dass es nur die komplexitaet
+vom parser vergroessert und ansonsten keinerlei auswirkungen hat. das
+heisst, wenn ich dann einmal einbau, dass ma bytecode in a file
+schreiben kann, hat man keinerlei nachteil.
+
+* schani, 13. 3. 1999, nachm mittagessen
+
+** --command-char, --meta-char
+
+es gibt jetzt zwei command line options mit denen man command und meta
+char aendern kann.
+
+** metachar, quotechar
+
+mit den variablen metachar und quotechar kamma jetzt den meta char und
+den quote char abfragen und aendern. zb
+
+  %<metachar=&>
+  %des %is %ka %makro &<makro=oba des scho>&makro
+
+gibt
+
+    %des %is %ka %makro oba des scho
+
+** break
+
+break funkt jetzt auf ganzer linie. zb:
+
+  %foreach(heusl,%list(a,b,c,d),%if(%equal(%heusl,c),%break(),%heusl))
+
+gibt
+
+  ab
+
+man kann auch ein numerisches argument angeben, das bestimmt aus
+wievielen schleifen ausgebrochen wird. 0 steigt nur aus der innersten
+aus, 1 aus den innersten zwei usw. aus zu vielen schleifen
+auszubrechen ist natuerlich nicht erlaubt.

@@ -5,7 +5,7 @@
  *
  * chpp
  *
- * Copyright (C) 1997-1998 Mark Probst
+ * Copyright (C) 1997-1999 Mark Probst
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -109,8 +109,8 @@ builtInLambda (int numArgs, macroArgument *args, environment *env, outputWriter 
     else
 	numMacroArgs = numArgs - 1;
 
-    OUT_VALUE_REF(ow, valueNewLambda(numMacroArgs, minVarArgs, maxVarArgs, macroArgs, '%',
-				     args[numArgs - 1].bytecode, env));
+    OUT_VALUE_REF(ow, valueNewLambda(numMacroArgs, minVarArgs, maxVarArgs, macroArgs,
+				     args[numArgs - 1].bytecode, env, 1));
 }
 
 environment*
@@ -146,7 +146,7 @@ builtInLambdaEnvironmentor (int numArgs, bcArgument *args, environment *parentEn
 }
 
 void
-builtInDefine (int numArgs, macroArgument *args, environment *env, outputWriter *ow)
+builtInGenericDefine (int numArgs, macroArgument *args, environment *env, outputWriter *ow, int evalParams)
 {
     dynstring name;
     char *pos1;
@@ -196,8 +196,20 @@ builtInDefine (int numArgs, macroArgument *args, environment *env, outputWriter 
 
     envModifyOrAddBinding(env, &name,
 			  valueNewLambda(numMacroArgs, minVarArgs, maxVarArgs,
-					 macroArgs, '%', args[numArgs - 1].bytecode, env),
+					 macroArgs, args[numArgs - 1].bytecode, env, evalParams),
 			  globalEnvironment);
+}
+
+void
+builtInDefine (int numArgs, macroArgument *args, environment *env, outputWriter *ow)
+{
+    builtInGenericDefine(numArgs, args, env, ow, 1);
+}
+
+void
+builtInDefspecial (int numArgs, macroArgument *args, environment *env, outputWriter *ow)
+{
+    builtInGenericDefine(numArgs, args, env, ow, 0);
 }
 
 void
@@ -296,6 +308,94 @@ builtInLocalsEnvironmentor (int numArgs, bcArgument *args, environment *parentEn
     }
 
     return env;
+}
+
+void
+builtInLet (int numArgs, macroArgument *args, environment *env, outputWriter *ow)
+{
+    environment *newEnv;
+    int i;
+
+    if (!(numArgs >= 3 && numArgs % 2 == 1))
+    {
+	issueError(ERRMAC_WRONG_NUM_ARGS, "let");
+	return;
+    }
+
+    newEnv = envNew(env);
+
+    for (i = 0; i < numArgs - 2; i += 2)
+    {
+	dynstring var;
+	value *val;
+
+	var = bcExecuteIntoDS(args[i].bytecode, newEnv);
+	val = bcExecuteIntoCopiedValue(args[i + 1].bytecode, newEnv);
+
+	envAddBinding(newEnv, &var, val);
+    }
+
+    bcExecute(args[numArgs - 1].bytecode, newEnv, ow);
+}
+
+environment*
+builtInLetEnvironmentor (int numArgs, bcArgument *args, environment *parentEnv)
+{
+    environment *env;
+
+    if (numArgs <= 1)
+	return parentEnv;
+
+    env = envNew(parentEnv);
+    while (args != 0 && args->next != 0)
+    {
+	if (bcIsString(args->bc))
+	{
+	    dynstring name = bcExecuteIntoDS(args->bc, 0);
+
+	    if (envGetBinding(env, &name) == 0)
+		envAddBinding(env, &name, 0);
+	}
+	args = args->next->next;
+    }
+
+    return env;
+}
+
+void
+builtInEval (int numArgs, macroArgument *args, environment *env, outputWriter *ow)
+{
+    int needCopy;
+    inputReader ir;
+
+    if (!(numArgs == 1 || numArgs == 2))
+    {
+	issueError(ERRMAC_WRONG_NUM_ARGS, "eval");
+	return;
+    }
+
+    if (numArgs == 2)
+    {
+	value *environment = args[1].value.value;
+
+	if (environment->type != VALUE_ENVIRONMENT)
+	{
+	    issueError(ERRMAC_VALUE_WRONG_TYPE,
+		       cStringForValueType(environment->type),
+		       cStringForValueType(VALUE_ENVIRONMENT));
+	    return;
+	}
+
+	env = environment->v.env.env;
+    }
+
+    if (args[0].value.value->type == VALUE_BYTECODE)
+	bcExecute(args[0].value.value->v.bytecode.code, env, ow);
+    else
+    {
+	ir = irNewDynstring(&transformArgumentToScalar(&args[0])->v.scalar.scalar, 0);
+	parParseUntil(&ir, 0, bcwNewOutput(env, ow), 1, env, 0);
+    }
 }
 
 void
@@ -455,8 +555,12 @@ registerBuiltIns (void)
 {
     registerBuiltIn("lambda", builtInLambda, 0, 0, builtInLambdaEnvironmentor);
     registerBuiltIn("locals", builtInLocals, 0, 0, builtInLocalsEnvironmentor);
+    registerBuiltIn("let", builtInLet, 0, 0, builtInLetEnvironmentor);
     registerBuiltIn("define", builtInDefine, 0,
 		    builtInDefineGlobalEffector, builtInDefineEnvironmentor);
+    registerBuiltIn("defspecial", builtInDefspecial, 0,
+		    builtInDefineGlobalEffector, builtInDefineEnvironmentor);
+    registerBuiltIn("eval", builtInEval, 1, 0, 0);
     registerBuiltIn("apply", builtInApply, 1, 0, 0);
     registerBuiltIn("bound", builtInBound, 1, 0, 0);
     registerBuiltIn("void", builtInVoid, 1, 0, 0);
@@ -472,6 +576,8 @@ registerBuiltIns (void)
     registerFileOps();
     registerArrayOps();
     registerHashOps();
+    registerTimeOps();
+    registerEnvironmentOps();
     registerWWWBuiltIns();
     registerDatabaseBuiltIns();
 }

@@ -1,5 +1,5 @@
 #ifndef __STRINGS_CHH__
 #define __STRINGS_CHH__
-%define(replacesubstring,str,s,l,ns,%substring(0,%s,%str)%ns%substring(%[%s+%l],%str))\
-%define(strneq,str1,str2,%[!%streq(%str1,%str2)])\
+%define(replacesubstring,str,s,l,ns,%ssub(0,%s,%str)%ns%ssub(%[%s+%l],%str))\
+%define(strneq,str1,str2,%[!%equal(%str1,%str2)])\
 #endif

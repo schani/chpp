@@ -142,7 +142,8 @@ valueNewHash (void)
 
 value*
 valueNewLambda (int numParams, int minVarArgs, int maxVarArgs,
-		dynstring *paramNames, char metaChar, bytecode *code, environment *env)
+		dynstring *paramNames, bytecode *code, environment *env,
+		int evalParams)
 {
     value *theValue = allocValue();
     int i;
@@ -160,9 +161,31 @@ valueNewLambda (int numParams, int minVarArgs, int maxVarArgs,
     for (i = 0; i < numParams; ++i)
 	theValue->v.lambda.paramNames[i] = dsCopy(&paramNames[i]);
 
-    theValue->v.lambda.metaChar = metaChar;
     theValue->v.lambda.code = code;
     theValue->v.lambda.env = env;
+    theValue->v.lambda.evalParams = evalParams;
+
+    return theValue;
+}
+
+value*
+valueNewEnvironment (environment *env)
+{
+    value *theValue = allocValue();
+
+    theValue->type = VALUE_ENVIRONMENT;
+    theValue->v.env.env = env;
+
+    return theValue;
+}
+
+value*
+valueNewBytecode (bytecode *code)
+{
+    value *theValue = allocValue();
+
+    theValue->type = VALUE_BYTECODE;
+    theValue->v.bytecode.code = code;
 
     return theValue;
 }
@@ -204,6 +227,12 @@ valueNewScalarFromValue (value *theValue)
 	case VALUE_LAMBDA :
 	    return valueNewScalarFromCString("<lambda>");
 
+	case VALUE_ENVIRONMENT :
+	    return valueNewScalarFromCString("<environment>");
+
+	case VALUE_BYTECODE :
+	    return valueNewScalarFromCString("<bytecode>");
+
 	case VALUE_WHATSIT :
 	    return valueNewScalarFromCString("<whatsit>");
     }
@@ -223,6 +252,8 @@ valueCopy (value *theValue)
 	case VALUE_UNDEFINED :
 	case VALUE_INTERNAL :
 	case VALUE_BUILT_IN :
+	case VALUE_ENVIRONMENT :
+	case VALUE_BYTECODE :
 	case VALUE_WHATSIT :
 	    *theCopy = *theValue;
 	    return theCopy;
@@ -278,7 +309,6 @@ valueCopy (value *theValue)
 		for (i = 0; i < theValue->v.lambda.numParams; ++i)
 		    theCopy->v.lambda.paramNames[i] =
 			dsCopy(&theValue->v.lambda.paramNames[i]);
-		theCopy->v.lambda.metaChar = theValue->v.lambda.metaChar;
 		theCopy->v.lambda.code = theValue->v.lambda.code;
 		theCopy->v.lambda.env = theValue->v.lambda.env;
 	    }
@@ -303,6 +333,8 @@ valueCopyDeep (value *theValue)
 	case VALUE_UNDEFINED :
 	case VALUE_INTERNAL :
 	case VALUE_BUILT_IN :
+	case VALUE_ENVIRONMENT :
+	case VALUE_BYTECODE :
 	case VALUE_WHATSIT :
 	    *theCopy = *theValue;
 	    return theCopy;
@@ -359,7 +391,6 @@ valueCopyDeep (value *theValue)
 		for (i = 0; i < theValue->v.lambda.numParams; ++i)
 		    theCopy->v.lambda.paramNames[i] =
 			dsCopy(&theValue->v.lambda.paramNames[i]);
-		theCopy->v.lambda.metaChar = theValue->v.lambda.metaChar;
 		theCopy->v.lambda.code = theValue->v.lambda.code;
 		theCopy->v.lambda.env = theValue->v.lambda.env;
 	    }
@@ -454,6 +485,12 @@ valueAreEqual (value *value1, value *value2)
 	case VALUE_LAMBDA :
 	    return value1->v.lambda.code == value2->v.lambda.code;
 
+	case VALUE_ENVIRONMENT :
+	    return value1->v.env.env == value2->v.env.env;
+
+	case VALUE_BYTECODE :
+	    return value1->v.bytecode.code == value2->v.bytecode.code;
+
 	case VALUE_WHATSIT :
 	    return value1->v.whatsit.data == value2->v.whatsit.data;
 
@@ -516,6 +553,17 @@ valueHashDefine (value *theValue, dynstring *key, value *defValue)
     hash_insert(theValue->v.hash.hash, key->data, defValue);
 }
 
+void
+valueHashDefineCString (value *theValue, const char *key, value *defValue)
+{
+    value *hashEntry;
+
+    assert(theValue->type == VALUE_HASH);
+
+    hashEntry = (value*)hash_lookup(theValue->v.hash.hash, key);
+    hash_insert(theValue->v.hash.hash, key, defValue);
+}
+
 value*
 valueHashLookup (value *theValue, dynstring *key)
 {
@@ -530,6 +578,14 @@ valueHashLookupCString (value *theValue, const char *key)
     assert(theValue->type == VALUE_HASH);
 
     return (value*)hash_lookup(theValue->v.hash.hash, key);
+}
+
+void
+valueHashDelete (value *theValue, dynstring *key)
+{
+    assert(theValue->type == VALUE_HASH);
+
+    hash_delete(theValue->v.hash.hash, key->data);
 }
 
 int
@@ -659,6 +715,8 @@ cStringForValueType (int type)
 	    "list",
 	    "hash",
 	    "lambda",
+	    "environment",
+	    "bytecode",
 	    "whatsit"
 	};
 

@@ -1,4 +1,4 @@
-CHPP 0.3.2
+CHPP 0.3.5
 ==========
 
 CHPP is a powerful preprocessor originally designed for, but not
@@ -42,12 +42,16 @@ A reference manual for CHPP is included in the distribution.
 Platforms
 ---------
 
-Our main development platform for CHPP is gnu-linux-i386. CHPP has
-been tested on the following platforms:
+Our main development platform for CHPP is gnu-linux-alpha. The
+current version of CHPP has been tested on the following platforms: 
 
     gnu-linux-i386
     gnu-linux-powerpc
     gnu-linux-alpha
+
+Previous versions of CHPP have also been tested on the following
+platforms:
+
     digitalunix-alpha
     openstep-i386
     aix-rs6000
@@ -60,11 +64,7 @@ CHPP is distributed under the terms of the GPL.
 
 The source of CHPP is available at the CHPP homepage at
 
-  http://chakotay.ml.org/
-
-or, if your browser does not grok HTTP/1.1
-
-  http://chakotay.ml.org/chpp/
+  http://www.unix.cslab.tuwien.ac.at/~chpp/
 
 
 Mailing Lists

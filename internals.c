@@ -39,10 +39,10 @@
 extern int generateDependencies;
 extern dynstring mainFileName;
 
-char topLevelMetaChar = '%';
-
-char *metaChar = &topLevelMetaChar;
+char metaChar = '%';
 char quoteChar = '\\';
+
+extern char filler_cmdChar;
 
 extern char **environ;
 
@@ -52,7 +52,7 @@ internalSetMetaChar (value *val, int needCopy, bcSubscript *subscripts, environm
     assert(subscripts == 0);
     assert(val->type == VALUE_SCALAR && val->v.scalar.scalar.length == 1);
 
-    *metaChar = val->v.scalar.scalar.data[0];
+    metaChar = val->v.scalar.scalar.data[0];
 }
 
 void
@@ -60,7 +60,24 @@ internalGetMetaChar (bcSubscript *subscripts, environment *env, outputWriter *ow
 {
     assert(subscripts == 0);
 
-    OUT_CHAR(ow, *metaChar);
+    OUT_CHAR(ow, metaChar);
+}
+
+void
+internalSetCommandChar (value *val, int needCopy, bcSubscript *subscripts, environment *env)
+{
+    assert(subscripts == 0);
+    assert(val->type == VALUE_SCALAR && val->v.scalar.scalar.length == 1);
+
+    filler_cmdChar = val->v.scalar.scalar.data[0];
+}
+
+void
+internalGetCommandChar (bcSubscript *subscripts, environment *env, outputWriter *ow)
+{
+    assert(subscripts == 0);
+
+    OUT_CHAR(ow, filler_cmdChar);
 }
 
 void
@@ -204,8 +221,9 @@ registerInternal (const char *name, internalSet setFunc, internalGet getFunc)
 void
 registerInternals (void)
 {
-    registerInternal("v_metachar", internalSetMetaChar, internalGetMetaChar);
-    registerInternal("v_quotechar", internalSetQuoteChar, internalGetQuoteChar);
+    registerInternal("metachar", internalSetMetaChar, internalGetMetaChar);
+    /* registerInternal("commandchar", internalSetCommandChar, internalGetCommandChar); */
+    registerInternal("quotechar", internalSetQuoteChar, internalGetQuoteChar);
     registerInternal("outputenabled", internalSetOutputenabled, internalGetOutputenabled);
     registerInternal("dependencing", 0, internalGetDependencing);
     registerInternal("mainfilename", 0, internalGetMainfilename);
