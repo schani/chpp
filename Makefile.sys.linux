@@ -24,7 +24,7 @@
 #ENABLE_MSQL=yes
 
 # If you want support for MySQL, uncomment the following two lines
-#ENABLE_MYSQL=yes
+ENABLE_MYSQL=yes
 
 CC=gcc
 CFLAGS=-g -Wall -D_LINUX

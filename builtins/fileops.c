@@ -28,6 +28,7 @@
 #include <string.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <sys/param.h>
 #include <unistd.h>
 #ifdef _NEXT
 #include <libc.h>
@@ -407,6 +408,33 @@ builtInFstat (int numArgs, macroArgument *args, environment *env, outputWriter *
 }
 
 void
+builtInFgetwd (int numArgs, macroArgument *args, environment *env, outputWriter *ow)
+{
+    char buffer[PATH_MAX];
+
+    if (!(numArgs == 0))
+    {
+	issueError(ERRMAC_WRONG_NUM_ARGS, "fgetwd");
+	return;
+    }
+
+    getcwd(buffer, PATH_MAX);
+    OUT_STRING(ow, buffer, strlen(buffer));
+}
+
+void
+builtInFchdir (int numArgs, macroArgument *args, environment *env, outputWriter *ow)
+{
+    if (!(numArgs == 1))
+    {
+	issueError(ERRMAC_WRONG_NUM_ARGS, "fchdir");
+	return;
+    }
+
+    chdir(transformArgumentToScalar(&args[0])->v.scalar.scalar.data);
+}
+
+void
 registerFileOps (void)
 {
     int fileNum;
@@ -426,4 +454,6 @@ registerFileOps (void)
     registerBuiltIn("fputs", builtInFputs, 1, 0, 0);
     registerBuiltIn("feof", builtInFeof, 1, 0, 0);
     registerBuiltIn("fstat", builtInFstat, 1, 0, 0);
+    registerBuiltIn("fgetwd", builtInFgetwd, 1, 0, 0);
+    registerBuiltIn("fchdir", builtInFchdir, 1, 0, 0);
 }
