@@ -1,21 +1,21 @@
 %define(chop,num,dec,
     %<regs=%list()>\
-    %void(%smatch(%"(-?)([0-9]*)(\\.?)([0-9]*)",%num,%&regs))\
+    %void(%smatch(%'(-?)([0-9]*)(\\.?)([0-9]*)',%num,%&regs))\
     %regs[1]%regs[2]%regs[3]%ssub(%regs[4],0,%dec)
 )\
 \
 %define(outputtable,n,m,bvs,mat,pspalte,pzeile,
     %<k=%[n+m]>\
-    \begin{tabular}{|c|c|%for(i,1,%n,c)|%for(i,%[n+1],%k,c)|c|} \hline%"\n"\
-    Zeile & BV & %for(i,1,%k,$x_%i$ &) rS \\ \hline%"\n"\
+    \begin{tabular}{|c|c|%for(i,1,%n,c)|%for(i,%[n+1],%k,c)|c|} \hline%'\n'\
+    Zeile & BV & %for(i,1,%k,$x_%i$ &) rS \\ \hline%'\n'\
     %for(i,0,%m,
         $%i$ & %if(%[i==0],$Z$,$x_%bvs[%i]$) & \
         %for(j,1,%k,
-            $%if(%[i==pzeile && j==pspalte],\bf%" ")%chop(%mat[%i][%j],3)$ &
-        ) $%chop(%mat[%i][0],3)$ \\ %if(%[i==0],\hline)%"\n"
+            $%if(%[i==pzeile && j==pspalte],\bf%' ')%chop(%mat[%i][%j],3)$ &
+        ) $%chop(%mat[%i][0],3)$ \\ %if(%[i==0],\hline)%'\n'
     )\
     \hline\
-    \end{tabular}%"\n\n"
+    \end{tabular}%'\n\n'
 )\
 \
 %define(simplex,ziel,nebenb,
@@ -39,13 +39,20 @@
         )
     )\
     %<bvs=%list(0)>\
+    %<isbv=%list(0)>\
     %for(i,1,%m,
         %<bvs[%i]=%[n+i]>
     )\
+    %for(i,1,%n,
+        %<isbv[%i]=0>
+    )\
+    %for(i,%[n+1],%k,
+        %<isbv[%i]=1>
+    )\
     %dountil(
         %<kleinst=0>%<pspalte=-1>\
-        %for(j,1,%n,
-            %if(%[%mat[0][%j] < kleinst],
+        %for(j,1,%k,
+            %if(%and(%not(%isbv[%j]),%[%mat[0][%j] < kleinst]),
                 %<kleinst=%mat[0][%j]>\
                 %<pspalte=%j>
             )
@@ -58,21 +65,28 @@
                     %<pzeile=%i>
                 )
             )\
-            %outputtable(%n,%m,%&bvs,%&mat,%pspalte,%pzeile)\
-            %<plist=%&mat[%pzeile]>\
-            %<pelem=%plist[%pspalte]>\
-            %for(j,0,%k,%<plist[%j]=%[%plist[%j]/pelem]>)\
-            %for(i,0,%m,
-                %if(%[i != pzeile],
-                    %<faktor=%mat[%i][%pspalte]>\
-                    %if(%[faktor != 0],
-                        %for(j,0,%k,
-                            %<mat[%i][%j]=%[%mat[%i][%j]-%plist[%j]*faktor]>
+            %if(%[pzeile == -1],
+                The domain is unbounded.%'\n\n'\
+                %<pspalte=-1>
+            ,
+                %outputtable(%n,%m,%&bvs,%&mat,%pspalte,%pzeile)\
+                %<plist=%&mat[%pzeile]>\
+                %<pelem=%plist[%pspalte]>\
+                %for(j,0,%k,%<plist[%j]=%[%plist[%j]/pelem]>)\
+                %for(i,0,%m,
+                    %if(%[i != pzeile],
+                        %<faktor=%mat[%i][%pspalte]>\
+                        %if(%[faktor != 0],
+                            %for(j,0,%k,
+                                %<mat[%i][%j]=%[%mat[%i][%j]-%plist[%j]*faktor]>
+                            )
                         )
                     )
-                )
-            )\
-            %<bvs[%pzeile]=%pspalte>
+                )\
+                %<isbv[%bvs[%pzeile]]=0>\
+                %<isbv[%pspalte]=1>\
+                %<bvs[%pzeile]=%pspalte>
+            )
         )
     ,%[pspalte == -1])\
     %outputtable(%n,%m,%&bvs,%&mat,-1,-1)
@@ -81,8 +95,37 @@
 \documentclass[a4paper]{article}
 \begin{document}
 
-\section*{24}
+\section*{28}
 
+%simplex(%list(5.0,1.0,3.0,4.0),
+         %list(%list(20.0, 1.0,-2.0,4.0,3.0),
+               %list(40.0, -4.0,6.0,5.0,-4.0),
+               %list(50.0, 2.0,-3.0,3.0,8.0)))
+
+\section*{29}
+
+\subsection*{$\alpha$}
+
+%simplex(%list(2.0,3.0),
+         %list(%list(4.0, 1.0,2.0),
+               %list(3.0, 1.0,1.0)))
+
+#discard
+\subsection*{$\beta$}
+
+%simplex(%list(2.0,3.0),
+         %list(%list(4.0, 1.0,2.0),
+               %list(-3.0, -1.0,-1.0)))
+#endd
+
+\section*{32}
+
+%simplex(%list(1.0,1.0),
+         %list(%list(3.0, 2.0,1.0),
+               %list(2.0, 1.0,1.0),
+               %list(3.0, 1.0,2.0)))
+
+#discard
 %simplex(%list(5.0,10.0),%list(%list(25.0,-1.0,2.0),%list(20.0,1.0,1.0),%list(75.0,5.0,3.0)))
 #! %simplex(%list(3.0,5.0),%list(%list(4.0,1.0,0.0),%list(12.0,0.0,2.0),%list(18.0,3.0,2.0)))
 
@@ -106,5 +149,6 @@
 %simplex(%list(1.0,1.0),
          %list(%list(3.0,2.0,1.0),
                %list(2.0,1.0,1.0)))
+#endd
 
 \end{document}
