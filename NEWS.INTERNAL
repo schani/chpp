@@ -1816,3 +1816,23 @@ gibt
   012345
 
 in naechster zeit kommt dann auch noch break und continue dazu.
+
+* schani, 31. 9. 1998, nachmittag
+
+** flock
+
+flock lockt a file. erster parameter ist der filename. zweiter
+optionaler parameter ist die lockoption:
+
+  l      shared
+  x      exclusive
+  u      unlock
+  n      non-blocking
+
+wenn nix angegeben wird, ist x default.
+
+* schani, 2. 10. 1999, nachmittag
+
+** scrypt
+
+scrypt macht a crypt. erster parameter key, zweiter salt.

@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "../regex.h"
 #include "../error.h"
@@ -762,6 +763,22 @@ builtInHexdecode (int numArgs, macroArgument *args, environment *env, outputWrit
 }
 
 void
+builtInScrypt (int numArgs, macroArgument *args, environment *env, outputWriter *ow)
+{
+    char *result;
+
+    if (!(numArgs == 2))
+    {
+	issueError(ERRMAC_WRONG_NUM_ARGS, "scrypt");
+	return;
+    }
+
+    result = crypt(transformArgumentToScalar(&args[0])->v.scalar.scalar.data,
+		   transformArgumentToScalar(&args[1])->v.scalar.scalar.data);
+    OUT_STRING(ow, result, strlen(result));
+}
+
+void
 registerStringOps (void)
 {
     int i;
@@ -783,6 +800,7 @@ registerStringOps (void)
     registerBuiltIn("snumber", builtInNumber, 1, 0, 0);
     registerBuiltIn("shexencode", builtInHexencode, 1, 0, 0);
     registerBuiltIn("shexdecode", builtInHexdecode, 1, 0, 0);
+    registerBuiltIn("scrypt", builtInScrypt, 1, 0, 0);
 
     re_syntax_options = CHPP_SYNTAX_BITS;
 }
