@@ -1636,3 +1636,23 @@ soviel heisst wie case-insensitive match.
 evaluated zu
 
   SH*IT* on *It*!
+
+* schani, 30.4.1998, nachmittag
+
+** cvs
+
+cvs tut laufen. zumindest behauptet das der murman. man muss sich
+einloggen mit
+
+	cvs login
+
+wobei CVSROOT gesetzt ist auf
+
+	:pserver:heinz@mondoshawan.ml.org:/cvshome/chpp
+
+dann
+
+	cvs checkout
+
+den rest im cvs manual lesen.
+
