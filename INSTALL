@@ -1,5 +1,5 @@
 INSTALLING CHPP
----------------
+===============
 
 CHPP is configured and installed using the configure script.
 It has been tested on the following platforms:

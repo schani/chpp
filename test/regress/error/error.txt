@@ -1,0 +1,7 @@
+1
+2%<heinz>
+3
+#include error2.txt
+5
+6%<heinz>
+7

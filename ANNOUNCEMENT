@@ -8,8 +8,8 @@ CHPP is a powerful preprocessor originally designed for, but not
 limited to, HTML.
 
 We have used CHPP successfully in the creation of simple and complex
-web-pages, QuakeWorld (tm) configuration files and data processing
-tasks usually done with tools like GAWK.
+web-pages, web-databases, QuakeWorld (tm) configuration files and data
+processing tasks usually done with tools like GAWK.
 
 
 Features
@@ -45,18 +45,15 @@ A reference manual for CHPP is included in the distribution.
 Platforms
 ---------
 
-Our main development platform for CHPP is linux-i386. CHPP has been
-tested on the following platforms:
+Our main development platform for CHPP is gnu-linux-i386. CHPP has
+been tested on the following platforms:
 
-    linux-i386
-    linux-alpha
-    linux-powerpc
-    openstep-i386
+    gnu-linux-i386
+    gnu-linux-powerpc
+    gnu-linux-alpha
     digitalunix-alpha
-
-CHPP is very portable and should compile and run out-of-the-box on
-pretty much any UN*X platform, provided that the tools required for
-building it (GNU make, flex, bison) are available.
+    openstep-i386
+    aix-rs6000
 
 
 Licence and Availability
