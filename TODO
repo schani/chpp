@@ -1,3 +1,25 @@
+*** prioritaeten:
+
++ varargs docen
+
++ metachar aenderbar machen
+
++ bytecode in file schreiben (i.e. precompiled code)
+
++ chpp schneller machen
+
++ glob makro
+
++ datenbank interfaces
+
++ listq und hashq.
+
++ scheisse reentrant machen.
+
++ nullbyte handeln.
+
++ arithmetik besser machen (zahlenformate etc.)
+
 *** schani:
 
 - beim for einbauen, dass nicht immer globale vars definiert werden.

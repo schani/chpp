@@ -1668,3 +1668,14 @@ oder a writing pipe is:
   %fpipe(w, /usr/sbin/sendmail,philipp)
 
 damit is der chpp scho viel mehr cgi-tauglich...
+
+* schani, 6.5.1998, vorm aufstehen aber nachm schlafengehn :-)
+
+** priorities
+
+ich hab im TODO file meine prioritaeten fuer die naechsten aenderungen
+am chpp zusammengschrieben. wenn noch wem was einfaellt, moege er das
+auch reinschreim. als ich mir dann die prioritaeten so ansah, hab ich
+beschlossen, ein paar wochen (naja, vielleicht auch nur ein paar tage)
+chpp abstinenz zu machen, weil mein lieblingspunkt (chpp schneller
+machen) kommt leider erst an vierten stelle :-(.
