@@ -47,6 +47,8 @@ void dsAppendChar (dynstring *ds, char c);
 void dsShrinkFront (dynstring *ds, int num);
 void dsShrinkRear (dynstring *ds, int num);
 
+void dsSplitPath (dynstring *path, dynstring *dir, dynstring *file);
+
 void dsRemoveOuterWS (dynstring *ds);
 void dsRemoveFrontWS (dynstring *ds);
 void dsRemoveRearWS (dynstring *ds);

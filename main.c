@@ -252,7 +252,7 @@ main (int argc, char *argv[])
 			int result;
 			static char buffer[8192];
 
-			initCommands(inputFile, '#', argv[i]);
+			initCommands(inputFile, '#', argv[i], "./");
 			do
 			{
 			    result = fillBuffer(buffer, 8192);
@@ -264,9 +264,18 @@ main (int argc, char *argv[])
 		    {
 			bytecodeWriter *bcw = bcwNewOutput(globalEnvironment,
 							   &toplevelOutputWriter);
+			dynstring path = dsNewFrom(argv[i]),
+			    dir,
+			    file;
+
+			dsSplitPath(&path, &dir, &file);
+			if (dir.length == 0)
+			    dir = dsNewFrom("./");
+			else
+			    dsAppendChar(&dir, '/');
 
 			toplevelInputReader = irNewPreprocessor();
-			initCommands(inputFile, '#', argv[i]);
+			initCommands(inputFile, '#', file.data, dir.data);
 			currentFileName = dsNewFrom(argv[i]);
 			mainFileName = dsNewFrom(argv[i]);
 			addDependency(0, &mainFileName);
@@ -285,7 +294,7 @@ main (int argc, char *argv[])
 	    int result;
 	    static char buffer[8192];
 
-	    initCommands(stdin, '#', "-");
+	    initCommands(stdin, '#', "-", "./");
 	    do
 	    {
 		result = fillBuffer(buffer, 8192);
@@ -299,7 +308,7 @@ main (int argc, char *argv[])
 					       &toplevelOutputWriter);
 
 	    toplevelInputReader = irNewPreprocessor();
-	    initCommands(stdin, '#', "-");
+	    initCommands(stdin, '#', "-", "./");
 	    currentFileName = dsNewFrom("-");
 	    mainFileName = dsNewFrom("-");
 	    addDependency(0, &mainFileName);

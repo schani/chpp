@@ -165,6 +165,23 @@ dsShrinkRear (dynstring *ds, int num)
 }
 
 void
+dsSplitPath (dynstring *path, dynstring *dir, dynstring *file)
+{
+    char *lastSlash = strrchr(path->data, '/');
+
+    if (lastSlash != 0)
+    {
+	*dir = dsNewFromBytes(path->data, lastSlash - path->data);
+	*file = dsNewFrom(lastSlash + 1);
+    }
+    else
+    {
+	*dir = dsNewFrom("");
+	*file = dsCopy(path);
+    }
+}
+
+void
 dsRemoveRearWS (dynstring *ds)
 {
     int i = ds->length;

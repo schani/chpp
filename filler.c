@@ -264,7 +264,7 @@ generateCommands() {
 }
 
 void
-initCommands( FILE *inputFile, char commandChar, const char *filename/* hierher */ ) { /* ,const char *filepath ) { */
+initCommands( FILE *inputFile, char commandChar, const char *filename, const char *filepath) {
   inFile = inputFile;
   incFiles = 1;
   filler_cmdChar = commandChar;
@@ -281,7 +281,7 @@ initCommands( FILE *inputFile, char commandChar, const char *filename/* hierher 
   flowStack->openCmd = 0;
 
   currentFileName = dsNewFrom(filename);
-  currentFilePath = dsNewFrom( /* hierher */"./" ); /* filepath ); */
+  currentFilePath = dsNewFrom(filepath);
 }
 
 /* processActiveNL

@@ -33,7 +33,7 @@
 
 /* am anfang aufrufen */
 void
-initCommands( FILE *inputFile, char commandChar, const char *filename );
+initCommands( FILE *inputFile, char commandChar, const char *filename, const char *filepath );
 
 int /* returnd anzahl or -1 if all done */
 fillBuffer( char *buf, int max ); /* max is anzahl */
