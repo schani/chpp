@@ -22,6 +22,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "../../config.h"
+
+#ifdef HAVE_LIBMYSQLCLIENT
+
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -306,3 +310,5 @@ registerDatabaseMysqlBuiltIns (void)
     registerBuiltIn("_sqlMysqlUpdate", builtIn_sqlMysqlUpdate, 1, 0, 0);
     registerBuiltIn("_sqlMysqlError", builtIn_sqlMysqlError, 1, 0, 0);
 }
+
+#endif

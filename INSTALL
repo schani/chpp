@@ -1,46 +1,44 @@
 INSTALLING CHPP
 ---------------
 
-CHPP currently supports the following configurations through
-the configure script:
+CHPP is configured and installed using the configure script.
+It has been tested on the following platforms:
 
     gnu-linux-i386
-    gnu-linux-alpha
     gnu-linux-powerpc
-    openstep-i386
+    gnu-linux-alpha
     digitalunix-alpha
+    openstep-i386
+    aix-rs6000
 
-Building CHPP on other platforms should not be a problem, since
-it is written very portably and does not use a lot of platform
-dependent features. Just try one of the configurations and see
-how it goes.
+It should work on similar platforms without much problems.  Please
+report any success or failure in building CHPP on other platforms
+(mail to chpp@unix.cslab.tuwien.ac.at).
 
 One big problem on some uncommon architecture may be the garbage
 collector located in directory gc/. Although it runs on a lot of
 platforms out-of-the-box, you may have to change the Makefile to make
 it run on your machine. On some machines it may never run.
 
-Be sure you have GNU make, flex and GNU bison installed.
-
 Change to the directory you have unpacked CHPP in:
 
-    cd chpp-0.3
+    cd chpp-0.3.2
 
-Use the configure script to choose the platform you want to build on.
-configure recognizes the following configuration names:
+Start the configure script to determine your platform parameters:
 
-    linux       GNU/Linux
-    next        NEXTSTEP, OPENSTEP
-    dgux        Digital UNIX
+    ./configure
 
-For example, type
+If you want CHPP installed in a place other than /usr/local you have
+to tell configure where it should be installed, using the option
+--prefix. For example, to install CHPP in /opt (binary in /opt/bin,
+includes in /opt/lib/chpp/include), call
 
-    ./configure linux
+    ./configure --prefix=/opt
 
-If you want to have support for the mSQL or MySQL databases, edit the
-Makefile and uncomment the corresponding lines.
+If configure fails, something is wrong. In case you cannot fix it for
+yourself please drop us a mail.
 
-Now, just call GNU make, i.e.
+In case everything went right, just call make, i.e. type:
 
     make
 
@@ -57,6 +55,13 @@ In this release, CHPP relies on being installed in /usr/local.
     make install
 
 Now you are set! Documentation in Texinfo format is contained in the
-directory doc/. HTML-format documentation can be found in doc/html/.
+directory doc/. The Info documentation is installed automatically. You can
+produce a PostScript version of the documentation with
+
+    cd doc
+    make chpp.ps
+
+if you have a working TeX distribution installed.
 
 Happy CHPPing
+chpp@unix.cslab.tuwien.ac.at

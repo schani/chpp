@@ -1,0 +1,4 @@
+#undef PACKAGE
+#undef VERSION
+#undef HAVE_LIBMYSQLCLIENT
+#undef HAVE_LIBMSQL

@@ -4,6 +4,8 @@
 
 + metachar aenderbar machen
 
++ break etc.
+
 + bytecode in file schreiben (i.e. precompiled code)
 
 + chpp schneller machen (listen, ...)

@@ -22,6 +22,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "config.h"
+
 #include <sys/param.h>
 #include <string.h>
 #include <stdio.h>
@@ -29,8 +31,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <assert.h>
-#ifdef _NEXT
-#include <libc.h>
+
+#ifndef PATH_MAX
+#ifdef MAXPATHLEN
+#define PATH_MAX MAXPATHLEN
+#else
+#define PATH_MAX 1024
+#endif
 #endif
 
 #include "memory.h"
@@ -81,7 +88,7 @@ main (int argc, char *argv[])
     registerInternals();
 
     defDirs = (dynstring*)memXAlloc(256 * sizeof(dynstring));
-    defDirs[0] = dsNewFrom("/usr/local/lib/chpp/include/");
+    defDirs[0] = dsNewFrom(CHPP_INCLUDEDIR "/");
     nrOfDefDirs = 1;
 
     while (1)
@@ -145,9 +152,9 @@ main (int argc, char *argv[])
 		    assert(length > 0);
 		    if (optarg[0] != '/')
 		    {
-			char currentPath[MAXPATHLEN + 1];
+			char currentPath[PATH_MAX];
 
-			getwd(currentPath);
+			getcwd(currentPath, PATH_MAX);
 			defDirs[nrOfDefDirs] = dsNewFrom(currentPath);
 			dsAppendChar(&defDirs[nrOfDefDirs], '/');
 		    }
@@ -164,7 +171,7 @@ main (int argc, char *argv[])
 		break;
 		
 	    case 256 :
-		printf("chpp 0.3\n"
+		printf("chpp " VERSION "\n"
 		       "\n"
 		       "This program is free software; you can redistribute it and/or modify\n"
 		       "it under the terms of the GNU General Public License as published by\n"

@@ -22,6 +22,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "../config.h"
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,8 +32,13 @@
 #include <sys/stat.h>
 #include <sys/param.h>
 #include <unistd.h>
-#ifdef _NEXT
-#include <libc.h>
+
+#ifndef PATH_MAX
+#ifdef MAXPATHLEN
+#define PATH_MAX MAXPATHLEN
+#else
+#define PATH_MAX 1024
+#endif
 #endif
 
 #include "../memory.h"
@@ -388,11 +395,15 @@ builtInFstat (int numArgs, macroArgument *args, environment *env, outputWriter *
 	sprintf(numberString, "%lu", (unsigned long)buf.st_size);
 	valueHashDefine(theHash, &sizeName, valueNewScalarFromCString(numberString));
 
+#ifdef HAVE_ST_BLKSIZE
 	sprintf(numberString, "%lu", (unsigned long)buf.st_blksize);
 	valueHashDefine(theHash, &blksizeName, valueNewScalarFromCString(numberString));
+#endif
 
+#ifdef HAVE_ST_BLOCKS
 	sprintf(numberString, "%lu", (unsigned long)buf.st_blocks);
 	valueHashDefine(theHash, &blocksName, valueNewScalarFromCString(numberString));
+#endif
 
 	sprintf(numberString, "%lu", (unsigned long)buf.st_atime);
 	valueHashDefine(theHash, &atimeName, valueNewScalarFromCString(numberString));

@@ -1685,3 +1685,25 @@ machen) kommt leider erst an vierten stelle :-(.
 ** fgetwd und fchdir
 
 sind hoffe ich selbsterklaerend.
+
+* schani, 25.5.1998, ur fruah
+
+** autoconf
+
+ich hab die ganze configuration auf autoconf und automake umgestellt.
+funktionieren sollte autoconf 2.12 und automake 1.3. nach dem
+auschecken einfach
+
+  aclocal
+  autoheader
+  automake
+  autoconf
+
+machen. dann hat man ein configure. das aufrufen und die scheisse
+laeuft. wichtige targets sind dann
+
+  make           eh klar
+  clean          a klar
+  distclean      raeumt auch alle makefiles und so weg
+  install        klar
+  dist           macht ein .tar.gz zum distributen. ur cool.

@@ -1,7 +1,7 @@
 /* -*- c -*- */
 
 /*
- * builtins/database/database.c
+ * strerror.c
  *
  * chpp
  *
@@ -22,20 +22,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "../../config.h"
-
-#include "database.h"
-
-void
-registerDatabaseBuiltIns (void)
+const char*
+strerror (int theErrno)
 {
-#ifdef HAVE_LIBMSQL
-    registerDatabaseMsqlBuiltIns();
-#endif
-#ifdef HAVE_LIBMYSQLCLIENT
-    registerDatabaseMysqlBuiltIns();
-#endif
-#ifdef HAVE_LIBADABAS
-    registerDatabaseAdabasBuiltIns();
-#endif
+    return "unknown error";
 }

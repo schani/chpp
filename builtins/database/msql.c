@@ -22,6 +22,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "../../config.h"
+
+#ifdef HAVE_LIBMSQL
+
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -255,3 +259,5 @@ registerDatabaseMsqlBuiltIns (void)
     registerBuiltIn("_sqlMsqlUpdate", builtIn_sqlMsqlUpdate, 1, 0, 0);
     registerBuiltIn("_sqlMsqlError", builtIn_sqlMsqlError, 1, 0, 0);
 }
+
+#endif

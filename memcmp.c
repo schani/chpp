@@ -1,7 +1,7 @@
 /* -*- c -*- */
 
 /*
- * builtins/database/database.c
+ * memcmp.c
  *
  * chpp
  *
@@ -22,20 +22,26 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "../../config.h"
+#include <stdlib.h>
 
-#include "database.h"
-
-void
-registerDatabaseBuiltIns (void)
+int
+memcmp (const void *s1, const void *s2, size_t n)
 {
-#ifdef HAVE_LIBMSQL
-    registerDatabaseMsqlBuiltIns();
-#endif
-#ifdef HAVE_LIBMYSQLCLIENT
-    registerDatabaseMysqlBuiltIns();
-#endif
-#ifdef HAVE_LIBADABAS
-    registerDatabaseAdabasBuiltIns();
-#endif
+    unsigned char *p1 = (unsigned char*)s1,
+	*p2 = (unsigned char*)s2;
+
+    while (n-- != 0)
+    {
+	if (*p1 != *p2)
+	{
+	    if (*p1 < *p2)
+		return -1;
+	    else
+		return 1;
+	}
+	++p1;
+	++p2;
+    }
+
+    return 0;
 }

@@ -292,6 +292,10 @@ void GC_print_callers (/* struct callinfo info[NFRAMES] */);
  * not really clock ticks).
  */
 #   endif
+#   if defined(__KERNEL_HZ)
+#     undef CLOCKS_PER_SEC
+#     define CLOCKS_PER_SEC __KERNEL_HZ
+#   endif
 #   define CLOCK_TYPE clock_t
 #   define GET_TIME(x) x = clock()
 #   define MS_TIME_DIFF(a,b) ((unsigned long) \

@@ -26,9 +26,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#ifdef _NEXT
-#include <libc.h>
-#endif
 
 #include "dynstring.h"
 #include "error.h"

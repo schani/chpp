@@ -1,7 +1,7 @@
 /* -*- c -*- */
 
 /*
- * builtins/database/database.c
+ * getcwd.c
  *
  * chpp
  *
@@ -22,20 +22,35 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "../../config.h"
+#include "config.h"
 
-#include "database.h"
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#else
+char* getwd (char *buf);
+#endif
 
-void
-registerDatabaseBuiltIns (void)
+#include <sys/param.h>
+
+#ifndef PATH_MAX
+#ifdef MAXPATHLEN
+#define PATH_MAX MAXPATHLEN
+#else
+#define PATH_MAX 1024
+#endif
+#endif
+
+char*
+getcwd (char *buf, size_t size)
 {
-#ifdef HAVE_LIBMSQL
-    registerDatabaseMsqlBuiltIns();
-#endif
-#ifdef HAVE_LIBMYSQLCLIENT
-    registerDatabaseMysqlBuiltIns();
-#endif
-#ifdef HAVE_LIBADABAS
-    registerDatabaseAdabasBuiltIns();
-#endif
+    char path[PATH_MAX];
+
+    getwd(path);
+
+    if (strlen(path) >= size)
+	return 0;
+
+    strcpy(buf, path);
+
+    return buf;
 }

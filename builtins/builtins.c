@@ -26,9 +26,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#ifdef _NEXT
-#include <libc.h>
-#endif
 
 #include "../memory.h"
 #include "../error.h"
