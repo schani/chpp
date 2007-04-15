@@ -1,15 +1,11 @@
 The Authors of CHPP
 -------------------
 
-CHPP was designed and implemented by Heinz Deinhart and Mark Probst
-and is being actively maintained by the two.
+CHPP was designed and implemented by Heinz Deinhart and Mark Probst.
 
 If you have any bugs to report, patches to apply, suggestions or
 criticism to make or any problems with CHPP, please write a mail to
+one of the authors:
 
-    chpp@unix.cslab.tuwien.ac.at
-
-or directly to one of the authors:
-
-    Heinz Deinhart <emperor@ei.ml.org>
-    Mark Probst <schani@unix.cslab.tuwien.ac.at>
+    Mark Probst <schani@complang.tuwien.ac.at>
+    Heinz Deinhart <heinz@tilab.tuwien.ac.at>

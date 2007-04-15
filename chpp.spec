@@ -2,7 +2,7 @@ Summary: chpp is the chakotay preprocessor language
 Name: chpp
 Version: 0.3.6
 Release: 1
-Copyright: GPL
+License: GNU General Public License
 Group: Utilities/Text
 Source: chpp-0.3.6.tar.gz
 %description

@@ -5,7 +5,7 @@
  *
  * chpp
  *
- * Copyright (C) 1997-1999 Mark Probst
+ * Copyright (C) 1997-2007 Mark Probst
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -81,6 +81,8 @@ main (int argc, char *argv[])
     int testFillBuffer = 0;
     char theCommandChar = '#';
     int precompile = 0;
+
+    GC_INIT();
 
     executableName = argv[0];
 

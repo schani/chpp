@@ -5,7 +5,7 @@
  *
  * chpp
  *
- * Copyright (C) 1994-1998 Mark Probst
+ * Copyright (C) 1994-2007 Mark Probst
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,7 +44,7 @@ typedef struct
 } avlTree;
 
 #define AVL_LINK(a,N)            (((a) == -1) ? (N)->left : (N)->right)
-#define AVL_LINK_SET(s,P,V)      ((((s) == -1) ? (P)->left : (P)->right) = (V))
+#define AVL_LINK_SET(s,P,V)      (((s) == -1) ? ((P)->left = (V)) : ((P)->right = (V)))
 
 int avlCompare (avlTree*, void*, unsigned int, avlNode*);
 int avlBalance (avlNode*, int, avlNode**);
