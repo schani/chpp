@@ -1,0 +1,12 @@
+Source: chpp
+Section: interpreters
+Priority: optional
+Maintainer: Mark Probst <mark.probst@gmail.com>
+Build-Depends: debhelper (>= 5), texinfo, autoconf, automake
+Standards-Version: 3.7.2
+
+Package: chpp
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, gcc
+Description: chpp is a preprocessor which can be applied to a myriad
+ of applications.
