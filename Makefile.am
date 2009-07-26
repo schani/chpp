@@ -12,7 +12,7 @@ AM_YFLAGS = -d
 gc6.8/.libs/libgc.a :
 	( cd gc6.8 ; ./configure --disable-threads ; make )
 
-EXTRA_DIST = arithparse.h configure chpp.spec
+EXTRA_DIST = arithparse.h configure chpp.spec build.sh
 
 dist-hook :
 	( cd gc6.8 ; ./configure --disable-threads ; make distclean )

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 aclocal
-autoconf
 automake
+autoconf
 autoheader
 ./configure "$@"

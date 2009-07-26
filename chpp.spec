@@ -1,10 +1,11 @@
 Summary: chpp is the chakotay preprocessor language
 Name: chpp
 Version: 0.3.6
-Release: 1
+Release: 2
 License: GNU General Public License
 Group: Utilities/Text
-Source: chpp-0.3.6.tar.gz
+Source: %{name}-%{version}.tar.gz
+BuildRoot: %{_tmppath}/%{name}-%{version}-build
 %description
 chpp is a preprocessor which can be applied to a myriad of applications.
 
@@ -12,15 +13,15 @@ chpp is a preprocessor which can be applied to a myriad of applications.
 %setup
 
 %build
-./configure --prefix=/usr
+./configure --prefix=%{_prefix} --datarootdir=%{_datadir} --bindir=%{_bindir}
 make
 
 %install
-make install
+make DESTDIR=$RPM_BUILD_ROOT install
 
 %files
 %doc AUTHORS TODO NEWS INSTALL README COPYING ChangeLog
 
-/usr/info/chpp.info*
-/usr/lib/chpp/include
-/usr/bin/chpp
+%{_infodir}/chpp.info*
+%{_datadir}/chpp/include
+%{_bindir}/chpp

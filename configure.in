@@ -42,7 +42,7 @@ dnl AC_FUNC_VPRINTF
 AC_FUNC_MEMCMP
 AC_REPLACE_FUNCS(strerror getcwd)
 
-chppincludedir=$libdir/chpp/include
+chppincludedir=$datarootdir/chpp/include
 AC_SUBST(chppincludedir)
 dnl AC_DEFINE_UNQUOTED(CHPP_INCLUDEDIR, "$prefix/lib/chpp/include")
 
