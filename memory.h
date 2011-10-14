@@ -27,7 +27,7 @@
 
 #ifndef USE_EFENCE
 
-#include "gc6.8/include/gc.h"
+#include "gc-7.2alpha6/include/gc.h"
 
 #define memAlloc(n)              GC_malloc(n)
 #define memAllocAtomic(n)        GC_malloc_atomic(n)
