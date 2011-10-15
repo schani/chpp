@@ -82,7 +82,9 @@ main (int argc, char *argv[])
     char theCommandChar = '#';
     int precompile = 0;
 
+#ifndef USE_EFENCE
     GC_INIT();
+#endif
 
     executableName = argv[0];
 
