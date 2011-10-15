@@ -1,0 +1,47 @@
+#include list.chh
+\
+%define(snumberp,x,
+    %let(result, %smatch(%'^-?[0-9]+$',%x),
+         %[result != -1]))\
+\
+%define(lrest,l,
+    %ldelete(%&l,0)\
+    %l)\
+\
+%<scmGlobal=%hash()>\
+\
+%<scmSpecial=%hash()>\
+%<scmSpecial{quote}=%lambda(x,%x)>\
+\
+%define(scmLookup, env, x,
+    %for(i, %[%llength(%&env) - 1], 0, -1,
+    	 %let(h, %env[%i],
+	      %if(%hcontains(%x),
+	          %return(%h{%x}))))\
+    %scmGlobal{%x}
+)\
+\
+%define(scmEval, code, env,
+    %case(%typeof(%&code),
+          %list(lambda, built-in), %code,
+	  %list(scalar), %if(%snumberp(%code),
+			     %code,
+			     %scmLookup(%&env, %code)),
+          %list(list), %let(first, %code[0],
+	  	       	    %if(%hcontains(%&scmSpecial, %first),
+			        %apply(%scmSpecial{%first}, %lrest(%code)),
+				%let(evaled, %listMap(%lambda(c, %scmEval(%c, %&env)), %&code),
+				     func, %evaled[0],
+				     %ldelete(%&evaled, 0)\
+				     %apply(%func, %&evaled))))))\
+\
+%define(scmPrint, x,
+    %case(%typeof(%&x),
+	  %list(lambda, built-in), <function>,
+	  %list(scalar), %x,
+          %list(list), %'('%listJoin(%' ', %listMap(%scmPrint, %&x))%')'))\
+\
+%<scmGlobal{list}=%list>\
+%scmPrint(%scmEval(123, %list()))
+%scmPrint(%scmEval(%list(list, 1, 2, 3), %list()))
+%scmPrint(%scmEval(%list(quote, %list(list, 1, 2, 3)), %list()))
