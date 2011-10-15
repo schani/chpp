@@ -1,29 +1,44 @@
 #include list.chh
 \
-%define(snumberp,x,
+%define(snumberp, x,
     %let(result, %smatch(%'^-?[0-9]+$',%x),
          %[result != -1]))\
 \
-%define(lrest,l,
+%define(lrest, l,
     %ldelete(%&l,0)\
     %l)\
 \
-%define(lprepend,x,l,
+%define(llast, l,
+    %l[%[%llength(%&l) - 1]])\
+\
+%define(lbutlast, l,
+    %ldelete(%&l, %[%llength(%&l) - 1])\
+    %l)\
+\
+%define(lprepend, x, l,
     %linsert(%&l, 0, %&x)\
     %l)\
 \
-%<scmGlobal=%hash()>\
+%define(hzip, ks, vs,
+    %let(h, %hash(),
+        %for(i, 0, %[%llength(%&ks) - 1],
+	     %<h{%ks[%i]}=%vs[%i]>)\
+	%h))\
 \
+%<scmGlobal=%hash()>\
 %<scmSpecial=%hash()>\
-%<scmSpecial{quote}=%lambda(e,x,%x)>\
 \
 %define(scmLookup, env, x,
     %for(i, %[%llength(%&env) - 1], 0, -1,
     	 %let(h, %env[%i],
-	      %if(%hcontains(%x),
-	          %return(%h{%x}))))\
+	      %if(%hcontains(%&h, %x),
+	          %h{%x}%return())))\
     %scmGlobal{%x}
 )\
+\
+%define(scmMakeEnv, env, names, vals,
+    %lappend(%&env, %hzip(%&names, %&vals))\
+    %env)\
 \
 %define(scmEval, code, env,
     %case(%typeof(%&code),
@@ -45,7 +60,18 @@
 	  %list(scalar), %x,
           %list(list), %'('%listJoin(%' ', %listMap(%scmPrint, %&x))%')'))\
 \
+%<scmSpecial{quote}=%lambda(e, x, %x)>\
+%<scmSpecial{lambda}=%lambda(env, args::,
+			     %let(argnames, %lbutlast(%args),
+				  body, %llast(%&args),
+				  %lambda(fargs::,
+					  %let(newenv, %scmMakeEnv(%env, %&argnames, %&fargs),
+					       %scmEval(%&body, %&newenv)))))>\
+\
 %<scmGlobal{list}=%list>\
+\
 %scmPrint(%scmEval(123, %list()))
 %scmPrint(%scmEval(%list(list, 1, 2, 3), %list()))
 %scmPrint(%scmEval(%list(quote, %list(list, 1, 2, 3)), %list()))
+%scmPrint(%scmEval(%list(%list(lambda, x, x), 123), %list()))
+%scmPrint(%scmEval(%list(%list(lambda, x, y, %list(list, y, x)), 1, 2), %list()))
