@@ -48,6 +48,8 @@
 				  %evaled))>\
 \
 %<scmGlobal{list}=%list>\
+%<scmGlobal{first}=%lambda(l, %l[0])>\
+%<scmGlobal{rest}=%lambda(l, %listRest(%l))>\
 \
 %define(scmTokenize, str,
     %listMappend(%lambda(s, %stokenize(%'[()]|[^()]+', %s)),
@@ -82,3 +84,5 @@
 %scmPrint(%scmEval(%scmRead(%'((lambda (x y) (list y x)) 1 2)'), %list()))
 %scmPrint(%scmEval(%scmRead(%'(define num 123)'), %list()))
 %scmPrint(%scmEval(%scmRead(%'num'), %list()))
+%scmPrint(%scmEval(%scmRead(%'(first (quote (1 2 3)))'), %list()))
+%scmPrint(%scmEval(%scmRead(%'(rest (quote (1 2 3)))'), %list()))
