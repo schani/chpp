@@ -39,6 +39,8 @@
 	  %list(scalar), %x,
           %list(list), %'('%listJoin(%' ', %listMap(%scmPrint, %&x))%')'))\
 \
+%define(scmTrue, x, %not(%equal(%x, %list())))\
+\
 %<scmSpecial{quote}=%lambda(e, x, %x)>\
 %<scmSpecial{lambda}=%lambda(env, argnames, body,
 			     %lambda(fargs::,
@@ -48,6 +50,10 @@
 			     %let(evaled, %scmEval(%&val, %&env),
 			          %<scmGlobal{%name}=%&evaled>\
 				  %evaled))>\
+%<scmSpecial{if}=%lambda(env, condition, consequent, alternative,
+			 %if(%scmTrue(%scmEval(%&condition, %&env)),
+			     %scmEval(%&consequent, %&env),
+			     %scmEval(%&alternative, %&env)))>\
 \
 %<scmGlobal{t}=t>\
 %<scmGlobal{list}=%list>\
@@ -96,3 +102,5 @@
 %scmTest(%'(rest (quote (1 2 3)))', %'(2 3)')\
 %scmTest(%'t', %'t')\
 %scmTest(%'()', %'()')\
+%scmTest(%'(if () 1 2)', %'2')\
+%scmTest(%'(if t 1 2)', %'1')\
