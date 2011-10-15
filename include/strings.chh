@@ -2,4 +2,7 @@
 #define __STRINGS_CHH__
 %define(replacesubstring,str,s,l,ns,%ssub(0,%s,%str)%ns%ssub(%[%s+%l],%str))\
 %define(strneq,str1,str2,%[!%equal(%str1,%str2)])\
+%define(snumberp, x,
+    %let(result, %smatch(%'^-?[0-9]+$',%x),
+         %[result != -1]))\
 #endif

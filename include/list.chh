@@ -76,4 +76,27 @@
     %listLeftAccumulate(%lambda(a,b,%a%sep%b),%&lst,%'')
 )\
 \
+%define(listRest, l,
+    %ldelete(%&l,0)\
+    %l)\
+\
+%define(listLast, l,
+    %l[%[%llength(%&l) - 1]])\
+\
+%define(listButLast, l,
+    %ldelete(%&l, %[%llength(%&l) - 1])\
+    %l)\
+\
+%define(listPrepend, x, l,
+    %linsert(%&l, 0, %&x)\
+    %l)\
+\
+%define(listMappend, f, l,
+    %let(result, %list(),
+    	 %foreach(x, %&l,
+	 	  %let(ys, %f(%&x),
+		       %foreach(y, %&ys,
+		       		%lappend(%&result, %&y))))\
+	 %&result))\
+\
 #endif

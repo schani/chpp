@@ -1,37 +1,6 @@
+#include strings.chh
 #include list.chh
-\
-%define(snumberp, x,
-    %let(result, %smatch(%'^-?[0-9]+$',%x),
-         %[result != -1]))\
-\
-%define(lrest, l,
-    %ldelete(%&l,0)\
-    %l)\
-\
-%define(llast, l,
-    %l[%[%llength(%&l) - 1]])\
-\
-%define(lbutlast, l,
-    %ldelete(%&l, %[%llength(%&l) - 1])\
-    %l)\
-\
-%define(lprepend, x, l,
-    %linsert(%&l, 0, %&x)\
-    %l)\
-\
-%define(lmappend, f, l,
-    %let(result, %list(),
-    	 %foreach(x, %&l,
-	 	  %let(ys, %f(%&x),
-		       %foreach(y, %&ys,
-		       		%lappend(%&result, %&y))))\
-	 %&result))\
-\
-%define(hzip, ks, vs,
-    %let(h, %hash(),
-        %for(i, 0, %[%llength(%&ks) - 1],
-	     %<h{%ks[%i]}=%vs[%i]>)\
-	%h))\
+#include hash.chh
 \
 %<scmGlobal=%hash()>\
 %<scmSpecial=%hash()>\
@@ -45,7 +14,7 @@
 )\
 \
 %define(scmMakeEnv, env, names, vals,
-    %lappend(%&env, %hzip(%&names, %&vals))\
+    %lappend(%&env, %hashZip(%&names, %&vals))\
     %env)\
 \
 %define(scmEval, code, env,
@@ -56,7 +25,7 @@
 			     %scmLookup(%&env, %code)),
           %list(list), %let(first, %code[0],
 	  	       	    %if(%hcontains(%&scmSpecial, %first),
-			        %apply(%scmSpecial{%first}, %lprepend(%&env, %lrest(%code))),
+			        %apply(%scmSpecial{%first}, %listPrepend(%&env, %listRest(%code))),
 				%let(evaled, %listMap(%lambda(c, %scmEval(%c, %&env)), %&code),
 				     func, %evaled[0],
 				     %ldelete(%&evaled, 0)\
@@ -64,14 +33,14 @@
 \
 %define(scmPrint, x,
     %case(%typeof(%&x),
-	  %list(lambda, built-in), <function>,
+	  %list(lambda, built-in), %'#<function>',
 	  %list(scalar), %x,
           %list(list), %'('%listJoin(%' ', %listMap(%scmPrint, %&x))%')'))\
 \
 %<scmSpecial{quote}=%lambda(e, x, %x)>\
 %<scmSpecial{lambda}=%lambda(env, args::,
-			     %let(argnames, %lbutlast(%args),
-				  body, %llast(%&args),
+			     %let(argnames, %listButLast(%args),
+				  body, %listLast(%&args),
 				  %lambda(fargs::,
 					  %let(newenv, %scmMakeEnv(%env, %&argnames, %&fargs),
 					       %scmEval(%&body, %&newenv)))))>\
@@ -83,8 +52,8 @@
 %<scmGlobal{list}=%list>\
 \
 %define(scmTokenize, str,
-    %lmappend(%lambda(s, %stokenize(%'[()]|[^()]+', %s)),
-    	      %ssplit(%'[ \t\n]+', %str)))\
+    %listMappend(%lambda(s, %stokenize(%'[()]|[^()]+', %s)),
+    		 %ssplit(%'[ \t\n]+', %str)))\
 \
 %define(scmParse, tokens, i, )\
 %define(scmParseList, tokens, i,
