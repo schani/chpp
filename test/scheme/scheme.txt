@@ -77,12 +77,17 @@
     	 result, %scmParse(%&tokens, 0),
 	 %result[0]))\
 \
-%scmPrint(%scmEval(%scmRead(%'123'), %list()))
-%scmPrint(%scmEval(%scmRead(%'(list 1 2 3)'), %list()))
-%scmPrint(%scmEval(%scmRead(%'(quote (list 1 2 3))'), %list()))
-%scmPrint(%scmEval(%scmRead(%'((lambda (x) x) 123)'), %list()))
-%scmPrint(%scmEval(%scmRead(%'((lambda (x y) (list y x)) 1 2)'), %list()))
-%scmPrint(%scmEval(%scmRead(%'(define num 123)'), %list()))
-%scmPrint(%scmEval(%scmRead(%'num'), %list()))
-%scmPrint(%scmEval(%scmRead(%'(first (quote (1 2 3)))'), %list()))
-%scmPrint(%scmEval(%scmRead(%'(rest (quote (1 2 3)))'), %list()))
+%define(scmTest, str, expected,
+    %let(result, %scmPrint(%scmEval(%scmRead(%str), %list())),
+         %if(%not(%equal(%result, %expected)),
+	     %warning(Test failed: %str gave result %result expected %expected))))\
+\
+%scmTest(%'123', %'123')\
+%scmTest(%'(list 1 2 3)', %'(1 2 3)')\
+%scmTest(%'(quote (list 1 2 3))', %'(list 1 2 3)')\
+%scmTest(%'((lambda (x) x) 123)', %'123')\
+%scmTest(%'((lambda (x y) (list y x)) 1 2)', %'(2 1)')\
+%scmTest(%'(define num 123)', %'123')\
+%scmTest(%'num', %'123')\
+%scmTest(%'(first (quote (1 2 3)))', %'1')\
+%scmTest(%'(rest (quote (1 2 3)))', %'(2 3)')\
