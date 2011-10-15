@@ -19,6 +19,14 @@
     %linsert(%&l, 0, %&x)\
     %l)\
 \
+%define(lmappend, f, l,
+    %let(result, %list(),
+    	 %foreach(x, %&l,
+	 	  %let(ys, %f(%&x),
+		       %foreach(y, %&ys,
+		       		%lappend(%&result, %&y))))\
+	 %&result))\
+\
 %define(hzip, ks, vs,
     %let(h, %hash(),
         %for(i, 0, %[%llength(%&ks) - 1],
@@ -74,10 +82,36 @@
 \
 %<scmGlobal{list}=%list>\
 \
-%scmPrint(%scmEval(123, %list()))
-%scmPrint(%scmEval(%list(list, 1, 2, 3), %list()))
-%scmPrint(%scmEval(%list(quote, %list(list, 1, 2, 3)), %list()))
-%scmPrint(%scmEval(%list(%list(lambda, x, x), 123), %list()))
-%scmPrint(%scmEval(%list(%list(lambda, x, y, %list(list, y, x)), 1, 2), %list()))
-%scmPrint(%scmEval(%list(define, num, 123), %list()))
-%scmPrint(%scmEval(num, %list()))
+%define(scmTokenize, str,
+    %lmappend(%lambda(s, %stokenize(%'[()]|[^()]+', %s)),
+    	      %ssplit(%'[ \t\n]+', %str)))\
+\
+%define(scmParse, tokens, i, )\
+%define(scmParseList, tokens, i,
+    %let(result, %list(),
+        %while(%not(%equal(%tokens[%i], %')')),
+	       %let(r, %scmParse(%&tokens, %i),
+	       	    x, %r[0],
+		    newi, %r[1],
+		    %lappend(%&result, %&x)\
+		    %<i=%newi>))\
+	%list(%&result, %[i+1])))\
+\
+%define(scmParse, tokens, i,
+    %let(t, %tokens[%i],
+    	 %if(%equal(%t, %'('),
+	     %scmParseList(%&tokens, %[i+1]),
+	     %list(%t, %[i+1]))))\
+\
+%define(scmRead, str,
+    %let(tokens, %scmTokenize(%str),
+    	 result, %scmParse(%&tokens, 0),
+	 %result[0]))\
+\
+%scmPrint(%scmEval(%scmRead(%'123'), %list()))
+%scmPrint(%scmEval(%scmRead(%'(list 1 2 3)'), %list()))
+%scmPrint(%scmEval(%scmRead(%'(quote (list 1 2 3))'), %list()))
+%scmPrint(%scmEval(%scmRead(%'((lambda x x) 123)'), %list()))
+%scmPrint(%scmEval(%scmRead(%'((lambda x y (list y x)) 1 2)'), %list()))
+%scmPrint(%scmEval(%scmRead(%'(define num 123)'), %list()))
+%scmPrint(%scmEval(%scmRead(%'num'), %list()))
