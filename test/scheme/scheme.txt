@@ -67,6 +67,10 @@
 				  %lambda(fargs::,
 					  %let(newenv, %scmMakeEnv(%env, %&argnames, %&fargs),
 					       %scmEval(%&body, %&newenv)))))>\
+%<scmSpecial{define}=%lambda(env, name, val,
+			     %let(evaled, %scmEval(%&val, %&env),
+			          %<scmGlobal{%name}=%&evaled>\
+				  %evaled))>\
 \
 %<scmGlobal{list}=%list>\
 \
@@ -75,3 +79,5 @@
 %scmPrint(%scmEval(%list(quote, %list(list, 1, 2, 3)), %list()))
 %scmPrint(%scmEval(%list(%list(lambda, x, x), 123), %list()))
 %scmPrint(%scmEval(%list(%list(lambda, x, y, %list(list, y, x)), 1, 2), %list()))
+%scmPrint(%scmEval(%list(define, num, 123), %list()))
+%scmPrint(%scmEval(num, %list()))
