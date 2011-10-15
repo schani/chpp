@@ -38,12 +38,10 @@
           %list(list), %'('%listJoin(%' ', %listMap(%scmPrint, %&x))%')'))\
 \
 %<scmSpecial{quote}=%lambda(e, x, %x)>\
-%<scmSpecial{lambda}=%lambda(env, args::,
-			     %let(argnames, %listButLast(%args),
-				  body, %listLast(%&args),
-				  %lambda(fargs::,
-					  %let(newenv, %scmMakeEnv(%env, %&argnames, %&fargs),
-					       %scmEval(%&body, %&newenv)))))>\
+%<scmSpecial{lambda}=%lambda(env, argnames, body,
+			     %lambda(fargs::,
+				     %let(newenv, %scmMakeEnv(%env, %&argnames, %&fargs),
+					  %scmEval(%&body, %&newenv))))>\
 %<scmSpecial{define}=%lambda(env, name, val,
 			     %let(evaled, %scmEval(%&val, %&env),
 			          %<scmGlobal{%name}=%&evaled>\
@@ -80,7 +78,7 @@
 %scmPrint(%scmEval(%scmRead(%'123'), %list()))
 %scmPrint(%scmEval(%scmRead(%'(list 1 2 3)'), %list()))
 %scmPrint(%scmEval(%scmRead(%'(quote (list 1 2 3))'), %list()))
-%scmPrint(%scmEval(%scmRead(%'((lambda x x) 123)'), %list()))
-%scmPrint(%scmEval(%scmRead(%'((lambda x y (list y x)) 1 2)'), %list()))
+%scmPrint(%scmEval(%scmRead(%'((lambda (x) x) 123)'), %list()))
+%scmPrint(%scmEval(%scmRead(%'((lambda (x y) (list y x)) 1 2)'), %list()))
 %scmPrint(%scmEval(%scmRead(%'(define num 123)'), %list()))
 %scmPrint(%scmEval(%scmRead(%'num'), %list()))
