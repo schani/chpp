@@ -8,10 +8,14 @@
     %ldelete(%&l,0)\
     %l)\
 \
+%define(lprepend,x,l,
+    %linsert(%&l, 0, %&x)\
+    %l)\
+\
 %<scmGlobal=%hash()>\
 \
 %<scmSpecial=%hash()>\
-%<scmSpecial{quote}=%lambda(x,%x)>\
+%<scmSpecial{quote}=%lambda(e,x,%x)>\
 \
 %define(scmLookup, env, x,
     %for(i, %[%llength(%&env) - 1], 0, -1,
@@ -29,7 +33,7 @@
 			     %scmLookup(%&env, %code)),
           %list(list), %let(first, %code[0],
 	  	       	    %if(%hcontains(%&scmSpecial, %first),
-			        %apply(%scmSpecial{%first}, %lrest(%code)),
+			        %apply(%scmSpecial{%first}, %lprepend(%&env, %lrest(%code))),
 				%let(evaled, %listMap(%lambda(c, %scmEval(%c, %&env)), %&code),
 				     func, %evaled[0],
 				     %ldelete(%&evaled, 0)\
