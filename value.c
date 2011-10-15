@@ -240,6 +240,26 @@ valueNewScalarFromValue (value *theValue)
     return 0;
 }
 
+static void
+copyLambda (value *theCopy, value *theValue)
+{
+    int i;
+    int numParams;
+
+    numParams = theCopy->v.lambda.numParams = theValue->v.lambda.numParams;
+    if (theValue->v.lambda.maxVarArgs != 0)
+	++numParams;
+    theCopy->v.lambda.minVarArgs = theValue->v.lambda.minVarArgs;
+    theCopy->v.lambda.maxVarArgs = theValue->v.lambda.maxVarArgs;
+    theCopy->v.lambda.paramNames =
+	(dynstring*)memXAllocAtomic(sizeof(dynstring) * numParams);
+    for (i = 0; i < numParams; ++i)
+	theCopy->v.lambda.paramNames[i] =
+	    dsCopy(&theValue->v.lambda.paramNames[i]);
+    theCopy->v.lambda.code = theValue->v.lambda.code;
+    theCopy->v.lambda.env = theValue->v.lambda.env;
+}
+
 value*
 valueCopy (value *theValue)
 {
@@ -297,21 +317,7 @@ valueCopy (value *theValue)
 	    return theCopy;
 
 	case VALUE_LAMBDA :
-	    {
-		int i;
-
-		theCopy->v.lambda.numParams = theValue->v.lambda.numParams;
-		theCopy->v.lambda.minVarArgs = theValue->v.lambda.minVarArgs;
-		theCopy->v.lambda.maxVarArgs = theValue->v.lambda.maxVarArgs;
-		theCopy->v.lambda.paramNames =
-		    (dynstring*)memXAllocAtomic(sizeof(dynstring)
-						* theValue->v.lambda.numParams);
-		for (i = 0; i < theValue->v.lambda.numParams; ++i)
-		    theCopy->v.lambda.paramNames[i] =
-			dsCopy(&theValue->v.lambda.paramNames[i]);
-		theCopy->v.lambda.code = theValue->v.lambda.code;
-		theCopy->v.lambda.env = theValue->v.lambda.env;
-	    }
+	    copyLambda (theCopy, theValue);
 	    return theCopy;
 
 	default :
@@ -379,21 +385,7 @@ valueCopyDeep (value *theValue)
 	    return theCopy;
 
 	case VALUE_LAMBDA :
-	    {
-		int i;
-
-		theCopy->v.lambda.numParams = theValue->v.lambda.numParams;
-		theCopy->v.lambda.minVarArgs = theValue->v.lambda.minVarArgs;
-		theCopy->v.lambda.maxVarArgs = theValue->v.lambda.maxVarArgs;
-		theCopy->v.lambda.paramNames =
-		    (dynstring*)memXAllocAtomic(sizeof(dynstring)
-						* theValue->v.lambda.numParams);
-		for (i = 0; i < theValue->v.lambda.numParams; ++i)
-		    theCopy->v.lambda.paramNames[i] =
-			dsCopy(&theValue->v.lambda.paramNames[i]);
-		theCopy->v.lambda.code = theValue->v.lambda.code;
-		theCopy->v.lambda.env = theValue->v.lambda.env;
-	    }
+	    copyLambda (theCopy, theValue);
 	    return theCopy;
 
 	default :
