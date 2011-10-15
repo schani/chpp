@@ -23,13 +23,15 @@
 	  %list(scalar), %if(%snumberp(%code),
 			     %code,
 			     %scmLookup(%&env, %code)),
-          %list(list), %let(first, %code[0],
-	  	       	    %if(%hcontains(%&scmSpecial, %first),
-			        %apply(%scmSpecial{%first}, %listPrepend(%&env, %listRest(%code))),
-				%let(evaled, %listMap(%lambda(c, %scmEval(%c, %&env)), %&code),
-				     func, %evaled[0],
-				     %ldelete(%&evaled, 0)\
-				     %apply(%func, %&evaled))))))\
+          %list(list), %if(%[%llength(%&code) == 0],
+	  	       	   %code,
+			   %let(first, %code[0],
+	  	       	        %if(%hcontains(%&scmSpecial, %first),
+				    %apply(%scmSpecial{%first}, %listPrepend(%&env, %listRest(%code))),
+				    %let(evaled, %listMap(%lambda(c, %scmEval(%c, %&env)), %&code),
+				         func, %evaled[0],
+					 %ldelete(%&evaled, 0)\
+					 %apply(%func, %&evaled)))))))\
 \
 %define(scmPrint, x,
     %case(%typeof(%&x),
@@ -47,6 +49,7 @@
 			          %<scmGlobal{%name}=%&evaled>\
 				  %evaled))>\
 \
+%<scmGlobal{t}=t>\
 %<scmGlobal{list}=%list>\
 %<scmGlobal{first}=%lambda(l, %l[0])>\
 %<scmGlobal{rest}=%lambda(l, %listRest(%l))>\
@@ -91,3 +94,5 @@
 %scmTest(%'num', %'123')\
 %scmTest(%'(first (quote (1 2 3)))', %'1')\
 %scmTest(%'(rest (quote (1 2 3)))', %'(2 3)')\
+%scmTest(%'t', %'t')\
+%scmTest(%'()', %'()')\
