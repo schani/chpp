@@ -5,6 +5,7 @@ define
 fileops
 hanoi
 include
+lambda
 loops
 regex
 stringops

@@ -133,7 +133,7 @@ builtInLambdaEnvironmentor (int numArgs, bcArgument *args, environment *parentEn
 		char *pos = strchr(name.data, ':');
 
 		if (pos != 0)
-		    dsShrinkRear(&name, pos - name.data);
+		    dsShrinkRear(&name, name.length - (pos - name.data));
 	    }
 
 	    if (envGetBinding(env, &name) == 0)
