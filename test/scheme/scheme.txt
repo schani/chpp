@@ -59,6 +59,8 @@
 %<scmGlobal{list}=%list>\
 %<scmGlobal{first}=%lambda(l, %l[0])>\
 %<scmGlobal{rest}=%lambda(l, %listRest(%l))>\
+%<scmGlobal{cons}=%lambda(fi, r, %listPrepend(%&fi, %r))>\
+%<scmGlobal{empty?}=%lambda(l, %if(%[%llength(%&l) == 0], t, %list()))>\
 \
 %define(scmTokenize, str,
     %listMappend(%lambda(s, %stokenize(%'[()]|[^()]+', %s)),
@@ -104,3 +106,10 @@
 %scmTest(%'()', %'()')\
 %scmTest(%'(if () 1 2)', %'2')\
 %scmTest(%'(if t 1 2)', %'1')\
+%scmTest(%'(cons 1 (list 2 3))', %'(1 2 3)')\
+%scmTest(%'(define map (lambda (f l)
+                         (if (empty? l)
+                           ()
+                           (cons (f (first l)) (map f (rest l))))))',
+	 %'#<function>')\
+%scmTest(%'(map list (list 1 2 3))', %'((1) (2) (3))')\
