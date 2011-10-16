@@ -58,8 +58,8 @@
 %<scmGlobal{t}=t>\
 %<scmGlobal{list}=%list>\
 %<scmGlobal{first}=%lambda(l, %l[0])>\
-%<scmGlobal{rest}=%lambda(l, %listRest(%l))>\
-%<scmGlobal{cons}=%lambda(fi, r, %listPrepend(%&fi, %r))>\
+%<scmGlobal{rest}=%listRest>\
+%<scmGlobal{cons}=%listPrepend>\
 %<scmGlobal{empty?}=%lambda(l, %if(%[%llength(%&l) == 0], t, %list()))>\
 \
 %define(scmTokenize, str,
