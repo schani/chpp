@@ -57,10 +57,10 @@
 \
 %<scmGlobal{t}=t>\
 %<scmGlobal{list}=%list>\
-%<scmGlobal{first}=%lambda(l, %l[0])>\
-%<scmGlobal{rest}=%listRest>\
+%<scmGlobal{car}=%lambda(l, %l[0])>\
+%<scmGlobal{cdr}=%listRest>\
 %<scmGlobal{cons}=%listPrepend>\
-%<scmGlobal{empty?}=%lambda(l, %if(%[%llength(%&l) == 0], t, %list()))>\
+%<scmGlobal{null?}=%lambda(l, %if(%[%llength(%&l) == 0], t, %list()))>\
 \
 %define(scmTokenize, str,
     %listMappend(%lambda(s, %stokenize(%'[()]|[^()]+', %s)),
@@ -100,16 +100,16 @@
 %scmTest(%'((lambda (x y) (list y x)) 1 2)', %'(2 1)')\
 %scmTest(%'(define num 123)', %'123')\
 %scmTest(%'num', %'123')\
-%scmTest(%'(first (quote (1 2 3)))', %'1')\
-%scmTest(%'(rest (quote (1 2 3)))', %'(2 3)')\
+%scmTest(%'(car (quote (1 2 3)))', %'1')\
+%scmTest(%'(cdr (quote (1 2 3)))', %'(2 3)')\
 %scmTest(%'t', %'t')\
 %scmTest(%'()', %'()')\
 %scmTest(%'(if () 1 2)', %'2')\
 %scmTest(%'(if t 1 2)', %'1')\
 %scmTest(%'(cons 1 (list 2 3))', %'(1 2 3)')\
 %scmTest(%'(define map (lambda (f l)
-                         (if (empty? l)
+                         (if (null? l)
                            ()
-                           (cons (f (first l)) (map f (rest l))))))',
+                           (cons (f (car l)) (map f (cdr l))))))',
 	 %'#<function>')\
 %scmTest(%'(map list (list 1 2 3))', %'((1) (2) (3))')\
