@@ -1,0 +1,26 @@
+#include w3lib.chh 
+
+#define file Manual
+
+#include head.chml
+
+#include register.chml
+
+<TABLE cellspacing="15" cellpadding="5" width="100%">
+  <TR>
+    <TD bgcolor="#E0E0FF" width="100%">
+%depend(%'doc/manual.html')
+%locals(file,%<file=%fopen(%'doc/manual.html')>%until(%feof(%file),%fgets(%file))%fclose(%file))
+
+    </TD>
+  </TR>
+</TABLE>  
+
+          </TD>
+        </TR>     
+      </TABLE>
+    </TD>
+  </TR>
+</TABLE>
+  </BODY>
+</HTML>

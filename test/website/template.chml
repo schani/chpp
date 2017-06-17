@@ -1,3 +1,0 @@
-#include header.chml
-#include %<FILENAME>_t.chml
-#include footer.chml

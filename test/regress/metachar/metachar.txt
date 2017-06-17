@@ -1,6 +1,0 @@
-%define(cms,%<v_metachar=$>"$$" = "$v_metachar")\
-"%%" = "%v_metachar"
-%cms()
-"%%" = "%v_metachar"
-%<v_metachar=$>\
-"$$" = "$v_metachar"

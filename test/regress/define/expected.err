@@ -1,9 +1,0 @@
-define.txt:24: warning: possibly unbound variable 'i'
-define.txt:38: warning: possibly wrong number (3) of arguments for macro varfunc2
-define.txt:38: user-defined macro called with 3 instead of expected 1 arguments
-define.txt:44: warning: possibly wrong number (5) of arguments for macro varfunc3
-define.txt:44: user-defined macro called with 5 instead of expected 1 arguments
-define.txt:47: warning: possibly wrong number (3) of arguments for macro varfunc4
-define.txt:47: user-defined macro called with 3 instead of expected 1 arguments
-define.txt:50: warning: possibly wrong number (6) of arguments for macro varfunc4
-define.txt:50: user-defined macro called with 6 instead of expected 1 arguments

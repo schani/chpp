@@ -1,0 +1,115 @@
+
+
+%<topElements=%list(,
+  Main,
+  News,
+  Authors,
+  Manual
+,,)>
+%<leftElements=%list(,
+  Wizard,
+  Download,
+  Links
+,,)>
+
+<TABLE border="0" cellspacing="0" cellpadding="0">
+ <TR>
+   <TD colspan="2">
+    <TABLE border="0" cellspacing="0" cellpadding="0">
+      <TR>\
+        <TD width="%w3imgX( ordnerohw )"
+            height="%w3imgY( ordnerlhw )">\
+        </TD>
+        <TD width="%w3imgX( ordnerlhw )"
+            height="%w3imgY( ordnerlhw )">\
+          %w3img( %if( %[ !%<equal( %file, %<topElements[1]> )>], ordnerldw, ordnerlhw ), border="0")\
+        </TD>\
+%<for( i, 1, %[ %<llength( %topElements )> - 3 ],
+  %<locals( isActive,
+    %<isActive=%<equal( %<file>, %<topElements[%i]>)>>\
+        <TD width="%<w3imgX( reg%<topElements[%i]>%<isActive> )>"
+            height="%<w3imgY( ordnerlhw )>">\
+          <A href="%<topElements[%i]>.html">\
+            %<w3img( reg%<topElements[%i]>%<isActive>, border="0")>\
+          </A>\
+        </TD>\
+        <TD width="%<w3imgX( ordnerrdw )>"
+            height="%<w3imgY( ordnerrdw )>">\
+          %<if( %<isActive>,
+            %<if( %[ %<i> != (%<llength( %<topElements> )> - 3 ) ],
+              %<w3img( ordnerrdb, border="0" )>
+            ,
+              %<w3img( ordnerrhw, border="0" )>
+            )>
+          ,
+            %<if( %[ %i == %<llength( %topElements )> - 3 ],
+              %<w3img( ordnerrdw, border="0" )>
+            ,
+              %<if( %<equal( %<file>, %<topElements[%[ %<i> + 1 ]]>)>,
+                %<w3img( ordnerldb, border="0" )>
+              ,
+                %<w3img( ordnerm, border="0" )>
+              )>
+            )>
+          )>\
+        </TD>
+  )>
+)>
+      </TR>
+    </TABLE>
+  </TD>
+  <TD></TD>
+ </TR>
+ </TABLE>
+
+ <TABLE width="100%" border="0" cellspacing="0" cellpadding="0">
+ <TR align="center">
+  <TD width="%w3imgX( ordnerohw )" valign="top">
+          <TABLE border="0" cellspacing="0" cellpadding="0" width="%w3imgX( ordnerohw )">
+            <TR>\
+              <TD width="%w3imgX( ordnerohw )"
+                  height="%w3imgY( ordnerohw )">\
+                %w3img( %if( %[ !%<equal( %file, %<leftElements[1]> )>], ordnerodw, ordnerohw ), border="0")\
+              </TD>\
+	     </TR>
+%<for( i, 1, %[ %<llength( %leftElements )> - 3 ],
+  %<locals( isActive,
+    %<isActive=%<equal( %<file>, %<leftElements[%i]>)>>\
+       <TR>\
+        <TD width="%w3imgX( ordnerohw )"
+            height="%<w3imgY( ordnerohw )>">\
+          <A href="%<leftElements[%i]>.html">\
+            %<w3img( reg%<leftElements[%i]>%<isActive>, border="0")>\
+          </A>\
+        </TD>\
+       </TR>
+       <TR>
+        <TD width="%<w3imgX( ordnerodw )>"
+            height="%<w3imgY( ordnerodw )>">\
+          %<if( %<isActive>,
+            %<if( %[ %<i> != (%<llength( %<leftElements> )> - 3 ) ],
+              %<w3img( ordnerudb, border="0" )>
+            ,
+              %<w3img( ordneruhw, border="0" )>
+            )>
+          ,
+            %<if( %[ %i == %<llength( %leftElements )> - 3 ],
+              %<w3img( ordnerudw, border="0" )>
+            ,
+              %<if( %<equal( %<file>, %<leftElements[%[ %<i> + 1 ]]>)>,
+                %<w3img( ordnerodb, border="0" )>
+              ,
+                %<w3img( ordnerm2, border="0" )>
+              )>
+            )>
+          )>\
+        </TD>
+       </TR>
+  )>
+)>
+
+      </TABLE>
+    </TD>
+ 
+    <TD bgcolor="blue" width="100%" valign="top">
+

@@ -1,5 +1,0 @@
-blabla1 \
-#ifdef deinzi
-soll nicht kommen
-#endif
-    blabla2

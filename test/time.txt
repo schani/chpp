@@ -1,8 +1,0 @@
-#include ../include/time.chh
-%encode(%timeFromString($d.$m.$Y,29.12.1975))
-
-%encode(%timeFromString($b $d $Y,Dec 29 1975))
-
-%timeToString($d.$m.$Y,%hash(day,29,month,12,year,1975))
-
-%timeToString($B $d $Y,%hash(day,29,month,12,year,1975))

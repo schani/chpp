@@ -1,3 +1,0 @@
-Muhahahaha
-#include faz.txt
-

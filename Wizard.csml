@@ -1,0 +1,33 @@
+#include w3lib.chh 
+
+#define file Wizard
+
+#include head.chml
+#include register.chml
+
+<TABLE cellspacing="15" cellpadding="5" width="100%">
+  <TR>
+    <TD bgcolor="#E0E0FF" width="100%">
+      <TABLE cellspacing="0" cellpadding="2" width="100%">
+        <TR>
+          <TD>
+            <BR><BR><BR><BR><BR>
+            <CENTER>
+              %w3img( wizardanim2 )<BR><BR><BR>
+              Like many other applications, <B>Chakotay</B> has a <B>Built-In-Wizard(tm)</B>.<BR>
+              He is as nice, friendly and cute as the wizards of commercial applications and also equally useless (see above).
+            <BR><BR><BR><BR><BR>
+            </CENTER>
+          </TD>
+        </TR>     
+      </TABLE>
+    </TD>
+  </TR>
+</TABLE>
+
+        </TD>
+      </TR>
+    </TABLE>
+
+  </BODY>
+</HTML>

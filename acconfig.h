@@ -1,6 +1,0 @@
-#undef PACKAGE
-#undef VERSION
-#undef HAVE_LIBMYSQLCLIENT
-#undef HAVE_LIBMSQL
-#undef USE_FCNTL
-#undef USE_FLOCK

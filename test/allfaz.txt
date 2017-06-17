@@ -1,3 +1,0 @@
-FAZ FAZ FAZ FAZ FAZ
-#include faz3.txt
-

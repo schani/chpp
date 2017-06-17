@@ -1,0 +1,50 @@
+#include w3lib.chh 
+
+#define file News
+
+#include head.chml
+#include register.chml
+
+<TABLE cellspacing="15" cellpadding="5" width="100%">
+  <TR>
+    <TD bgcolor="#E0E0FF" width="100%">
+      <TABLE cellspacing="0" cellpadding="2" width="100%">
+        <TR><TD>
+
+%depend( news.items )
+%<infile=%<fopen( news.items )>>
+%<firsttime=1>
+%<until( %[ %<dependencing> || %<feof( %<infile> )> ],
+  %<inline=%<fgets( %<infile> )>>\
+  %<ms=%list()>\
+  %<if( %[ %<smatch( %'^NEWS#(.+)#(.+)#(.+)#(.+)', %<inline>, %&ms )> != -1 ],
+      %<if( %firsttime, %<firsttime=0>, <BR><BR> )>
+      </TD>
+    </TR>
+    <TR>
+      <TD bgcolor="#A0A0FF" align="left" width="100%">
+        <FONT size="6" color="black">%<ms[4]></FONT>
+      </TD>
+      <TD bgcolor="#A0A0FF" align="right" nowrap>
+        %<ms[1]> / %<ms[2]><BR>by %<ms[3]>
+      </TD>
+    </TR>
+    <TR>
+      <TD width="100%" colspan="2"><BR>
+  ,
+    %<inline><BR>
+  )>
+)>\
+          </TD>
+        </TR>     
+      </TABLE>
+    </TD>
+  </TR>
+</TABLE>
+
+        </TD>
+      </TR>
+    </TABLE>
+
+  </BODY>
+</HTML>

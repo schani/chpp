@@ -1,0 +1,51 @@
+#include w3lib.chh 
+
+#define file Download
+
+#include head.chml
+
+#include register.chml
+
+
+<TABLE cellspacing="15" cellpadding="5" width="100%">
+  <TR>
+    <TD bgcolor="#E0E0FF" width="100%">
+      <TABLE cellspacing="0" cellpadding="2" width="100%">
+
+%depend(download.items)
+%<infile=%<fopen( download.items )>>
+%<until( %[ %<dependencing> || %<feof( %<infile> )> ],
+  %<inline=%<fgets( %<infile> )>>\
+  %<ms=%list()>\
+  %<if( %[ %<smatch( %'^#(.+)#$', %<inline>, %&ms )> != -1 ],
+    <TR><TD><BR></TD></TR>
+    <TR>
+      <TD bgcolor="#A0A0FF" align="left" width="100%">
+        <FONT size="6" color="black">%<ms[1]></FONT>
+      </TD>
+    </TR>
+  ,
+    %<if( %[ %<smatch( %'^(.+)#(.+)$', %<inline>, %&ms )> != -1 ],
+      <TR>
+        <TD width="100%" align="left">
+          %<ms[1]>: <A href="files/%<ms[2]>">%<ms[2]></A> \
+          %'('%[ %<(%<fstat(files/%<ms[2]>)>){size}> / 1024 ]%'k)'
+        </TD>
+      </TR>
+    )>
+  )>
+)>\
+          </TD>
+        </TR>     
+      </TABLE>
+    <BR>
+    </TD>
+  </TR>
+</TABLE>
+
+        </TD>
+      </TR>
+    </TABLE>
+
+  </BODY>
+</HTML>

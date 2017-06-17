@@ -1,0 +1,55 @@
+#include w3lib.chh 
+
+#define file Authors
+
+#include head.chml
+
+#include register.chml
+
+<TABLE cellspacing="15" cellpadding="5" width="100%%">
+  <TR valign="top">
+    <TD bgcolor="#E0E0FF" width="50%%">
+      <BR>
+      <HR>
+      <BR>
+      <CENTER>
+        <FONT size="+3">Mark Probst</FONT>
+        <BR>
+        &lt;<A href="mailto:schani@complang.tuwien.ac.at">schani@complang.tuwien.ac.at</A>&gt;
+      </CENTER> 
+      <BR>
+      <HR>
+      <BR><BR>
+	Check out my <a href="http://www.complang.tuwien.ac.at/~schani/">Homepage</a>!
+      <BR><BR>
+   </TD>
+    <TD bgcolor="#E0E0FF" width="50%%">
+      <BR>
+      <HR>
+      <BR>
+      <CENTER><FONT size="+3">Heinz Deinhart</FONT>
+        <BR>
+        &lt;<A href="mailto:emp@nix.at">emp@nix.at</A>&gt;
+     </CENTER>
+     <BR>
+     <HR>
+     <BR><BR>
+       Quake rules the World!<BR>
+      <BR><BR>
+   </TD>
+  </TR>
+  <TR>
+    <TD colspan="2" bgcolor="#E0E0FF" align="left">
+      <FONT size="+2"><B>Contributors:</B></FONT><BR><BR>
+      <B>Herbert P&ouml;tzl</B> &lt;<A href="mailto:herbert@13thfloor.at">herbert@13thfloor.at</A>&gt;: Hash-Table code, Tips, Ignorance<BR>
+      <B>Tatjana Svizensky</B> &lt;<A href="mailto:tatjana@13thfloor.at">tatjana@13thfloor.at</A>&gt;: Docu stuff<BR>
+      <B>Jin</B>: Pizza fetcher
+    </TD>
+  </TR>
+</TABLE>
+        </TD>
+      </TR>
+    </TABLE>
+
+  </BODY>
+</HTML>

@@ -1,0 +1,99 @@
+#include w3lib.chh 
+
+#define file Main
+
+#include head.chml
+#include register.chml
+
+<TABLE cellspacing="15" cellpadding="5" width="100%">
+  <TR>
+    <TD bgcolor="#E0E0FF" width="100%">
+      <TABLE cellspacing="0" cellpadding="2" width="100%">
+        <TR><TD height="50"></TD></TR>
+        <TR><TD> 
+          <CENTER>%w3img( chakotay )</CENTER>
+        </TR></TD>
+        <TR><TD height="50"></TD></TR>
+        <TR><TD width="100%">
+<p><tt>chpp</tt> is a preprocessor which can be applied to a myriad of
+applications. One of the more impressive applications of <tt>chpp</tt>
+is this very web-site (you can download the complete source for this
+page from the <a href="Download.html">download section</a>.
+
+<p>For little more specific information on <tt>chpp</tt> see the official <a
+href="ANNOUNCEMENT">announcement</a> of the latest version. For
+in-depth coverage, you should check out the
+<a href="Manual.html">manual</a>, which is of course also included in the
+distribution.
+
+<p>If you feel that <tt>chpp</tt> is the way to go for you, or if you just
+want to give it a try, you can download <tt>chpp</tt> right from
+<a href="Download.html">this site</a>. The program is distributed under
+the terms of the <a href="COPYING">GNU General Public Licence</a>.
+
+<p>Whether you like <tt>chpp</tt> or not, we would very much
+appreciate if you told us what you think about it by dropping us a
+mail (<a href="mailto:chpp@unix.cslab.tuwien.ac.at">chpp@unix.cslab.tuwien.ac.at</a>).
+If you are doing anything interesting with <tt>chpp</tt>, we would of
+course also love to hear about it.
+
+<a name="ml"><h1>Mailing Lists</h2></a>
+
+There are two mailing lists for <tt>chpp</tt>, namely
+
+<table>
+<tr>
+<td><tt>chpp-announce</tt>
+<td>Announcements regarding <tt>chpp</tt>.
+<tr>
+<td><tt><a href="mailto:chpp-general@mondoshawan.unix.cslab.tuwien.ac.at">chpp-general</a></tt>
+<td>Discussions about using <tt>chpp</tt>, bug reports, development of <tt>chpp</tt> etc.
+</table>
+
+Everything that gets posted to <tt>chpp-announce</tt> gets posted to
+<tt>chpp-general</tt> too, so you only have to subscribe to one list.  To
+subscribe to one of the lists, write a mail to either
+
+<table>
+<tr><td><tt><a href="mailto:chpp-announce-request@mondoshawan.unix.cslab.tuwien.ac.at">chpp-announce-request@mondoshawan.unix.cslab.tuwien.ac.at</a></tt>
+<tr><td><tt><a href="mailto:chpp-general-request@mondoshawan.unix.cslab.tuwien.ac.at">chpp-general-request@mondoshawan.unix.cslab.tuwien.ac.at</a></tt>
+</table>
+
+with the line
+
+<pre>
+  subscribe
+</pre>
+
+in the body.
+
+<p>A web archive of the mailing lists can be found at
+<a href="http://mondoshawan.unix.cslab.tuwien.ac.at/ml/">http://mondoshawan.unix.cslab.tuwien.ac.at/ml/</a>.
+
+	</TD></TR>
+        <TR><TD>
+          <TABLE width="100%">
+            <TR valign="bottom">
+              <TD align="left">%w3img( gimp_pb )</TD>
+              <TD align="center">%w3img( apache_pb )</TD>
+              <TD align="right">%w3img( linux_pb )</TD>
+            </TR>
+          </TABLE>
+        </TD></TR>
+      </TABLE>
+    </TD>
+  </TR>
+</TABLE>
+          </TD>
+        </TR>     
+      </TABLE>
+    </TD>
+  </TR>
+</TABLE>
+
+        </TD>
+      </TR>
+    </TABLE>
+
+  </BODY>
+</HTML>
