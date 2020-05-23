@@ -1,6 +1,8 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(main.c)
-AM_INIT_AUTOMAKE(chpp, 0.3.6)
+AC_INIT([chpp], [0.3.6])
+AC_CONFIG_SRCDIR([main.c])
+AM_INIT_AUTOMAKE
+
 AM_CONFIG_HEADER(config.h)
 
 dnl Checks for programs.
