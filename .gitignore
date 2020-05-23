@@ -16,8 +16,11 @@ config.status
 configure
 doc/chpp.info
 doc/stamp-vti
-gc6.8/*.lo
-gc6.8/.libs/
-gc6.8/libgc.la
-gc6.8/libtool
+gc-7.2alpha6/*.lo
+gc-7.2alpha6/.libs/
+gc-7.2alpha6/libgc.la
+gc-7.2alpha6/libtool
+gc-7.2alpha6/bdw-gc.pc
+gc-7.2alpha6/libcord.la
 stamp-h1
+compile
